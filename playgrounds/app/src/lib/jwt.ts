@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 
 const TOKEN_SIGNING_KEY = process.env.TOKEN_SIGNING_KEY!
 
-console.log('Has quotes', TOKEN_SIGNING_KEY.matchAll(/"/g))
+console.log('Has quotes', TOKEN_SIGNING_KEY.matchAll(/"/g).toArray().length)
 
 export function decodeToken(token: string) {
   return jwt.verify(token, TOKEN_SIGNING_KEY, {
