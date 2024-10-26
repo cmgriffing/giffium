@@ -7,20 +7,21 @@ import type { APIEvent } from '@solidjs/start/server'
 export async function getUser({ request }: APIEvent) {
   const token = request.headers.get('Authorization')?.replace('Bearer ', '')
 
-  console.log({ token })
-
   if (!token) {
     return null
   }
 
-  const decoded = await decodeToken(token)
+  try {
+    const decoded = await decodeToken(token)
 
-  console.log({ decoded })
+    const user = await db.query.users.findFirst({
+      // @ts-ignore
+      where: eq(usersTable.id, decoded?.sub?.id),
+    })
 
-  const user = await db.query.users.findFirst({
-    // @ts-ignore
-    where: eq(usersTable.id, decoded?.sub?.userId),
-  })
-
-  return user
+    return user
+  } catch (error) {
+    console.error('Error getting user:', error) // Handle the error
+    return null
+  }
 }

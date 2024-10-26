@@ -30,8 +30,6 @@ export default function OAuth() {
 
     const data = await response.json()
 
-    console.log(data)
-
     setAuthToken(data.jwt)
     setUser(data.user)
 

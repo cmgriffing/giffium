@@ -56,8 +56,6 @@ export async function getGithubContributors(owner: string, repo: string): Promis
 }
 
 export async function authFetch(url: string, options?: RequestInit) {
-  const navigate = useNavigate()
-
   const response = await fetch(url, {
     ...options,
     headers: {
@@ -67,7 +65,7 @@ export async function authFetch(url: string, options?: RequestInit) {
   })
 
   if (!response.ok && response.status === 401) {
-    navigate('/logged-out')
+    location.href = '/logged-out'
   }
 
   return response
