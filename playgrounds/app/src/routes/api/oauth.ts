@@ -9,8 +9,6 @@ import { encodeAccessToken } from '~/lib/jwt'
 export async function POST(event: APIEvent) {
   const { code } = await event.request.json()
 
-  console.log('client id', process.env.VITE_GITHUB_CLIENT_ID)
-
   const githubResponse = await fetch('https://github.com/login/oauth/access_token', {
     method: 'POST',
     headers: {
@@ -36,8 +34,6 @@ export async function POST(event: APIEvent) {
   })
 
   const githubUser = await githubUserResponse.json()
-
-  console.log({ githubUser })
 
   let user = await db.query.users.findFirst({
     where: eq(usersTable.githubId, githubUser.id),
