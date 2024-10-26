@@ -1,4 +1,7 @@
+import { A } from '@solidjs/router'
+import { createHighlighter, bundledThemes, bundledLanguages } from 'shiki'
 import { createResource, Show } from 'solid-js'
+import { SnippetPreview } from '~/components/SnippetPreview'
 import { authFetch } from '~/lib/utils'
 import { Snippet } from '~/types'
 
@@ -9,7 +12,16 @@ export default function Snippets() {
       return []
     }
     const data = await response.json()
-    return data
+    return data.snippets || []
+  })
+
+  const [highlighter] = createResource(async () => {
+    const newHighlighter = await createHighlighter({
+      themes: Object.keys(bundledThemes),
+      langs: Object.keys(bundledLanguages),
+    })
+
+    return newHighlighter
   })
 
   return (
@@ -17,10 +29,15 @@ export default function Snippets() {
       <h2 class="text-4xl">Snippets</h2>
       <Show when={snippets.loading}>Loading...</Show>
       <Show when={snippets.error}>Error: {snippets.error.message}</Show>
-      <Show when={Boolean(snippets.latest?.length)}>
-        {snippets.latest?.map(snippet => (
-          <div>{snippet.title}</div>
-        ))}
+      <Show when={Boolean(snippets.latest?.length) && highlighter()}>
+        <div class="flex flex-wrap gap-4 items-center justify-center">
+          {snippets.latest?.map(snippet => (
+            <A href={`/snippets/${snippet.id}`} class="flex flex-col items-center justify-center">
+              <SnippetPreview highlighter={highlighter()!} snippet={snippet} />
+              <h4 class="ellipsis w-32 text-nowrap whitespace-nowrap mt-2">{snippet.title}</h4>
+            </A>
+          ))}
+        </div>
       </Show>
       <Show when={!snippets.loading && !Boolean(snippets.latest?.length)}>
         <p>No snippets found</p>

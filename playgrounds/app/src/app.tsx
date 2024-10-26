@@ -1,6 +1,7 @@
+import { Suspense } from 'solid-js'
 import { Router } from '@solidjs/router'
 import { FileRoutes } from '@solidjs/start/router'
-import { Suspense } from 'solid-js'
+import { Toaster } from 'solid-sonner'
 import Header from '~/components/Header'
 import Footer from './components/Footer'
 import '@fontsource/bungee-inline'
@@ -15,6 +16,7 @@ export default function App() {
           <Header />
           <Suspense>{props.children}</Suspense>
           <Footer />
+          <Toaster />
         </>
       )}
     >

@@ -34,6 +34,19 @@ export async function POST(event: APIEvent) {
     })
   }
 
+  const requestBody = await event.request.json()
+
+  const isValid = snippetValidator.safeParse(requestBody)
+
+  if (!isValid.success) {
+    return new Response(JSON.stringify(isValid.error.flatten()), {
+      status: 400,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+  }
+
   const {
     title,
     codeLeft,
@@ -49,18 +62,7 @@ export async function POST(event: APIEvent) {
     bgColor,
     language,
     theme,
-  } = await event.request.json()
-
-  const isValid = snippetValidator.safeParse({ title, codeLeft, codeRight })
-
-  if (!isValid.success) {
-    return new Response(JSON.stringify(isValid.error.flatten()), {
-      status: 400,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-  }
+  } = requestBody
 
   const newSnippet = {
     id: customNanoid(),
@@ -82,6 +84,8 @@ export async function POST(event: APIEvent) {
     language,
     theme,
   }
+
+  console.log({ newSnippet })
 
   await db.insert(snippetsTable).values(newSnippet)
 

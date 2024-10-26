@@ -14,7 +14,12 @@ import {
 } from '~/components/ui/combobox'
 import { Button } from '~/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { TextField, TextFieldLabel, TextFieldTextArea } from '~/components/ui/text-field'
+import {
+  TextField,
+  TextFieldInput,
+  TextFieldLabel,
+  TextFieldTextArea,
+} from '~/components/ui/text-field'
 import { MagicMoveElement } from 'shiki-magic-move/types'
 import {
   DropdownMenu,
@@ -50,12 +55,17 @@ import { createMemo, createResource, createSignal, onCleanup, Setter, Show } fro
 import { createHighlighter, bundledThemes, bundledLanguages } from 'shiki'
 import { ShikiMagicMove } from 'shiki-magic-move/solid'
 import { AnimationFrameConfig } from '~/types'
+import { authFetch } from '~/lib/utils'
+import { useNavigate } from '@solidjs/router'
+import { authToken } from '~/lib/store'
+import { toast } from 'solid-sonner'
 
 const animationSeconds = 1
 const animationFPS = 10
 const animationFrames = animationSeconds * animationFPS
 
 interface EditorProps {
+  snippetId?: string
   startCode: string
   setStartCode: Setter<string>
   endCode: string
@@ -82,9 +92,12 @@ interface EditorProps {
   setLanguage: Setter<string>
   theme: string
   setTheme: Setter<string>
+  // TODO: If the app grows, this logic should be surfaced to the top level route
+  title: string
 }
 
 export default function Editor(props: EditorProps) {
+  const navigate = useNavigate()
   const [selectedTab, setSelectedTab] = createSignal<'snippets' | 'output'>('snippets')
   const [toggled, setToggled] = createSignal(false)
 
@@ -100,6 +113,8 @@ export default function Editor(props: EditorProps) {
   const [isGenerating, setIsGenerating] = createSignal(false)
   const [gifDataUrl, setGifDataUrl] = createSignal('')
   const [isShowingGifDialog, setIsShowingGifDialog] = createSignal(false)
+  const [title, setTitle] = createSignal(props.title)
+  const [isSaving, setIsSaving] = createSignal(false)
 
   const [highlighter] = createResource(async () => {
     const newHighlighter = await createHighlighter({
@@ -492,6 +507,7 @@ export default function Editor(props: EditorProps) {
             </div>
             <div class="flex flex-row gap-2" id="toolbar-right">
               <Button
+                disabled={isGenerating()}
                 onClick={async () => {
                   setIsGenerating(true)
                   setHiddenCode(props.endCode)
@@ -517,8 +533,9 @@ export default function Editor(props: EditorProps) {
             }}
           >
             <p class="text-center">Preview</p>
-            <div class="flex flex-row items-center justify-center">
+            <div id="snippet-wrapper" class="flex flex-row items-center justify-center">
               <div
+                id="styled-snippet"
                 class="flex flex-row items-center justify-center overflow-hidden"
                 style={{
                   background: props.bgColor,
@@ -606,6 +623,73 @@ export default function Editor(props: EditorProps) {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* TODO: If the app grows, this logic should be surfaced to the top level route */}
+      <Show when={Boolean(authToken())}>
+        <div class="flex flex-row items-end justify-between dark:bg-[#27272a] bg-gray-100 rounded p-2 mt-2">
+          <TextField>
+            <TextFieldInput
+              type="text"
+              class="bg-white text-black"
+              value={title()}
+              placeholder={'Snippet Title'}
+              aria-label="Snippet Title"
+              onInput={e => setTitle(e.currentTarget.value)}
+            />
+          </TextField>
+          <Button
+            disabled={isSaving() || props.startCode === '' || props.endCode === '' || !title()}
+            onClick={async () => {
+              setIsSaving(true)
+              const body = JSON.stringify({
+                title: title(),
+                codeLeft: props.startCode,
+                codeRight: props.endCode,
+                snippetWidth: props.snippetWidth,
+                yPadding: props.yPadding,
+                xPadding: props.xPadding,
+                shadowEnabled: props.shadowEnabled,
+                shadowOffsetY: props.shadowOffsetY,
+                shadowBlur: props.shadowBlur,
+                shadowColor: props.shadowColor,
+                shadowOpacity: props.shadowOpacity,
+                bgColor: props.bgColor,
+                language: props.language,
+                theme: props.theme,
+              })
+
+              let url = '/api/snippets'
+              let method = 'POST'
+
+              if (props.snippetId) {
+                url = `/api/snippets/${props.snippetId}`
+                method = 'PUT'
+              }
+
+              const result = await authFetch(url, {
+                method,
+                headers: {
+                  'Content-Type': 'application/json',
+                  Accept: 'application/json',
+                },
+                body,
+              })
+
+              if (result.ok) {
+                const newSnippet = await result.json()
+                navigate(`/snippets/${newSnippet.id}`)
+              } else {
+                // notify with a toast
+                toast.error('Error creating Snippet')
+              }
+
+              setIsSaving(false)
+            }}
+          >
+            {isSaving() ? 'Saving...' : 'Save'}
+          </Button>
+        </div>
+      </Show>
       <Dialog open={isShowingGifDialog()} onOpenChange={setIsShowingGifDialog} modal>
         <DialogContent>
           <DialogHeader>

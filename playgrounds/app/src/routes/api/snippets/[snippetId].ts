@@ -30,15 +30,12 @@ export async function GET(event: APIEvent) {
     })
   }
 
-  return new Response(
-    JSON.stringify(snippet),
-    {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+  return new Response(JSON.stringify(snippet), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
     },
-  )
+  })
 }
 
 export async function PUT(event: APIEvent) {
@@ -128,5 +125,38 @@ export async function PUT(event: APIEvent) {
     headers: {
       'Content-Type': 'application/json',
     },
+  })
+}
+
+export async function DELETE(event: APIEvent) {
+  const user = await getUser(event)
+  if (!user) {
+    return new Response(null, {
+      status: 401,
+    })
+  }
+
+  const snippetId = event.params.snippetId
+
+  if (!snippetId) {
+    return new Response(null, {
+      status: 404,
+    })
+  }
+
+  const snippet = await db.query.snippets.findFirst({
+    where: eq(snippetsTable.id, snippetId),
+  })
+
+  if (!snippet || snippet?.userId !== user.id) {
+    return new Response(null, {
+      status: 404,
+    })
+  }
+
+  await db.delete(snippetsTable).where(eq(snippetsTable.id, snippetId))
+
+  return new Response(null, {
+    status: 204,
   })
 }

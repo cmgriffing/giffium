@@ -14,7 +14,7 @@ export default function ViewSnippet({ params }: { params: { snippetId: string } 
   })
 
   return (
-    <main class="text-center mx-auto text-gray-700  dark:text-gray-100 p-4 max-w-[480px] flex flex-col justify-center gap-16">
+    <main class="text-center mx-auto text-gray-700  dark:text-gray-100 p-4 flex flex-col justify-center">
       <Show when={snippet()}>
         <Editor
           startCode={snippet()!.codeLeft}
@@ -43,6 +43,7 @@ export default function ViewSnippet({ params }: { params: { snippetId: string } 
           setLanguage={() => {}}
           theme={snippet()!.theme}
           setTheme={() => {}}
+          title={snippet()!.title}
         />
       </Show>
     </main>
