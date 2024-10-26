@@ -15,7 +15,9 @@ import {
 import { user } from '~/lib/store'
 import { TbCode, TbDoorExit } from 'solid-icons/tb'
 import { linkStyles } from '~/lib/styles'
-import ModalComponent from './ui/modal'
+// import ModalComponent from './ui/modal'
+import ModalComponent1 from './modal'
+import { Dialog } from '@kobalte/core/dialog'
 
 export default function Header() {
   const [isDarkMode, toggleDarkMode] = createThemeSwitcher()
@@ -54,12 +56,14 @@ export default function Header() {
         <div class="flex flex-row items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <button
-                class="flex items-center justify-center cursor-pointer w-10 h-10 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-600 dark:hover:bg-neutral-600/80 rounded transition"
-                aria-label="Open help options"
-              >
-                <FaRegularCircleQuestion />
-              </button>
+              <Dialog>
+                <Dialog.Trigger
+                  class="dialog__trigger flex items-center justify-center cursor-pointer w-10 h-10 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-600 dark:hover:bg-neutral-600/80 rounded transition"
+                  aria-label="Open help options"
+                >
+                  <FaRegularCircleQuestion />
+                </Dialog.Trigger>
+              </Dialog>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem class="cursor-pointer" onClick={() => handleOpenModal('how-work')}>
@@ -133,7 +137,7 @@ export default function Header() {
         </p>
       </div>
 
-      <ModalComponent
+      <ModalComponent1
         isOpen={isModalOpen()}
         onClose={handleCloseModal}
         modalType={activeModal()}
