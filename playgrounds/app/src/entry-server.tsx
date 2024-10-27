@@ -20,6 +20,12 @@ export default createHandler(() => (
             src="https://plausible.io/js/script.outbound-links.js"
           ></script>
           {assets}
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Comic+Neue&family=Fira+Code&family=IBM+Plex+Mono&family=Inconsolata&family=JetBrains+Mono&family=Roboto+Mono&family=Source+Code+Pro&display=swap"
+            rel="stylesheet"
+          />
         </head>
         <body class="font-body">
           <div id="app">{children}</div>

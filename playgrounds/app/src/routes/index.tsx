@@ -63,6 +63,12 @@ export default function Home() {
   const [snippetWidth, setSnippetWidth] = makePersisted(createSignal(450), {
     name: 'snippetWidth',
   })
+  const [fontSize, setFontSize] = makePersisted(createSignal(16), {
+    name: 'fontSize',
+  })
+  const [fontFamily, setFontFamily] = makePersisted(createSignal('Fira Code'), {
+    name: 'fontFamily',
+  })
 
   return (
     <main class="mx-auto text-gray-700 dark:text-gray-100 p-4">
@@ -92,6 +98,10 @@ export default function Home() {
         setShadowOpacity={setShadowOpacity}
         bgColor={bgColor()}
         setBgColor={setBgColor}
+        fontSize={fontSize()}
+        setFontSize={setFontSize}
+        fontFamily={fontFamily()}
+        setFontFamily={setFontFamily}
         language={language()}
         setLanguage={setLanguage}
         theme={theme()}

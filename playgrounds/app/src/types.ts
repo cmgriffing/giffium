@@ -25,6 +25,8 @@ export interface Snippet {
   bgColor: string
   language: string
   theme: string
+  fontSize: number
+  fontFamily: string
 }
 
 export interface AnimationFrameLayout {
