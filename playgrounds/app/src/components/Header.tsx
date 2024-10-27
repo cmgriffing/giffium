@@ -2,7 +2,6 @@ import { A } from '@solidjs/router'
 import { Button } from './ui/button'
 import { OcMarkgithub2 } from 'solid-icons/oc'
 import { FaSolidSun, FaSolidMoon, FaRegularCircleQuestion } from 'solid-icons/fa'
-import { AiFillCloseCircle } from 'solid-icons/ai'
 import { createThemeSwitcher } from '~/components/theme-switcher'
 import { authToken } from '~/lib/store'
 import { Show, createSignal } from 'solid-js'
@@ -15,9 +14,7 @@ import {
 import { user } from '~/lib/store'
 import { TbCode, TbDoorExit } from 'solid-icons/tb'
 import { linkStyles } from '~/lib/styles'
-// import ModalComponent from './ui/modal'
-import ModalComponent1 from './modal'
-import { Dialog } from '@kobalte/core/dialog'
+import ModalComponent from './modal'
 
 export default function Header() {
   const [isDarkMode, toggleDarkMode] = createThemeSwitcher()
@@ -56,14 +53,12 @@ export default function Header() {
         <div class="flex flex-row items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <Dialog>
-                <Dialog.Trigger
-                  class="dialog__trigger flex items-center justify-center cursor-pointer w-10 h-10 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-600 dark:hover:bg-neutral-600/80 rounded transition"
-                  aria-label="Open help options"
-                >
-                  <FaRegularCircleQuestion />
-                </Dialog.Trigger>
-              </Dialog>
+              <button
+                class="flex items-center justify-center cursor-pointer w-10 h-10 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-600 dark:hover:bg-neutral-600/80 rounded transition"
+                aria-label="Open help options"
+              >
+                <FaRegularCircleQuestion />
+              </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem class="cursor-pointer" onClick={() => handleOpenModal('how-work')}>
@@ -137,7 +132,7 @@ export default function Header() {
         </p>
       </div>
 
-      <ModalComponent1
+      <ModalComponent
         isOpen={isModalOpen()}
         onClose={handleCloseModal}
         modalType={activeModal()}
