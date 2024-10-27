@@ -417,7 +417,7 @@ export default function Editor(props: EditorProps) {
                             <Checkbox
                               id="shadow-checkbox"
                               checked={props.shadowEnabled}
-                              onChange={props.setShadowEnabled}
+                              //onChange={props.setShadowEnabled}
                             />
                           </DropdownMenuItem>
 
