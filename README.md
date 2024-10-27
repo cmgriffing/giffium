@@ -25,37 +25,9 @@ This project leans heavily on these libraries:
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Solid UI](https://www.solid-ui.com/)
 
-## Getting Started
-
-To get started with the project, first install [pnpm](https://pnpm.io) and install dependencies with `pnpm i`.
-
-## Project Commands
-
-List of cli commands available from a project root.
-
-To use the commands, first install [pnpm](https://pnpm.io) and install dependencies with `pnpm i`.
-
-```bash
-pnpm run dev
-# Builds all packages in watch mode, and starts all playgrounds
-# turbo run dev --parallel
-
-pnpm run build
-# Builds all the packages in the monorepo
-# turbo run build --filter=!./playgrounds/*
-
-pnpm run format
-# Formats the repository with prettier
-# prettier -w \"packages/**/*.{js,ts,json,css,tsx,jsx,md}\" \"playgrounds/**/*.{js,ts,json,css,tsx,jsx,md}\"
-
-pnpm run update-deps
-# Updates all dependencies in the repository
-# pnpm up -Lri
-```
-
 ## Contributing
 
-Giffium is a monorepo managed by [turborepo](https://turborepo.org). The project also requires the use of [pnpm](https://pnpm.io) to manage dependencies.
+Giffium is a monorepo managed by [turborepo](https://turborepo.org). The project also requires the use of [pnpm](https://pnpm.io) to manage dependencies and [Node.js](https://nodejs.org) version v22.10.0
 
 ### Getting Started
 
@@ -90,6 +62,12 @@ This will start all the playground in watch mode.
 ### SolidJS
 
 The project is built using [SolidJS](https://www.solidjs.com/). If you are new to SolidJS, we recommend checking out their [documentation](https://www.solidjs.com/docs) and [tutorials](https://www.solidjs.com/tutorial).
+
+### Suggested VSCode Extensions
+
+- Tailwinds
+- Headwinds
+- Prettier
 
 ## License
 
