@@ -39,6 +39,10 @@ export default function ViewSnippet({ params }: { params: { snippetId: string } 
           setShadowOpacity={() => {}}
           bgColor={snippet()!.bgColor}
           setBgColor={() => {}}
+          fontSize={snippet()!.fontSize}
+          setFontSize={() => {}}
+          fontFamily={snippet()!.fontFamily}
+          setFontFamily={() => {}}
           language={snippet()!.language}
           setLanguage={() => {}}
           theme={snippet()!.theme}

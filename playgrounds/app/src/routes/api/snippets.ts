@@ -85,8 +85,6 @@ export async function POST(event: APIEvent) {
     theme,
   }
 
-  console.log({ newSnippet })
-
   await db.insert(snippetsTable).values(newSnippet)
 
   return new Response(JSON.stringify(newSnippet), {

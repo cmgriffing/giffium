@@ -21,4 +21,6 @@ export const snippetValidator = z.object({
   bgColor: z.string().min(1).max(30),
   language: z.string().min(1).max(64),
   theme: z.string().min(1).max(64),
+  fontSize: z.number().min(1).max(64),
+  fontFamily: z.string().min(1).max(64),
 })
