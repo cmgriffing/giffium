@@ -1,7 +1,11 @@
 import 'dotenv/config'
 import jwt from 'jsonwebtoken'
 
-const TOKEN_SIGNING_KEY = process.env.TOKEN_SIGNING_KEY!.replace(/"/g, '')
+const TOKEN_SIGNING_KEY = process.env.TOKEN_SIGNING_KEY!.replace(/"/g, '').replace(
+  /\\n/g,
+  `
+`,
+)
 
 export function decodeToken(token: string) {
   return jwt.verify(token, TOKEN_SIGNING_KEY, {
