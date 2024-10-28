@@ -70,6 +70,19 @@ export default function Home() {
     name: 'fontFamily',
   })
 
+  const [bgType, setBgType] = makePersisted(createSignal<'solid' | 'linearGradient'>('solid'), {
+    name: 'bgType',
+  })
+  const [bgGradientColorStart, setBgGradientColorStart] = makePersisted(createSignal('#a3d0ff'), {
+    name: 'bgGradientColorStart',
+  })
+  const [bgGradientColorEnd, setBgGradientColorEnd] = makePersisted(createSignal('#a3d0ff'), {
+    name: 'bgGradientColorEnd',
+	})
+	const [bgGradientDirection, setBgGradientDirection] = makePersisted(createSignal(45), {
+		name: 'bgGradientDirection',
+	})
+
   return (
     <main class="mx-auto text-gray-700 dark:text-gray-100 p-4">
       <p class="mb-16 text-center font-bold text-lg">
@@ -98,6 +111,14 @@ export default function Home() {
         setShadowOpacity={setShadowOpacity}
         bgColor={bgColor()}
         setBgColor={setBgColor}
+        bgType={bgType()}
+        setBgType={setBgType}
+        bgGradientColorStart={bgGradientColorStart()}
+        setBgGradientColorStart={setBgGradientColorStart}
+        bgGradientColorEnd={bgGradientColorEnd()}
+        setBgGradientColorEnd={setBgGradientColorEnd}
+        bgGradientDirection={bgGradientDirection()}
+        setBgGradientDirection={setBgGradientDirection}
         fontSize={fontSize()}
         setFontSize={setFontSize}
         fontFamily={fontFamily()}

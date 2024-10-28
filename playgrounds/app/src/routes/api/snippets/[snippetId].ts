@@ -85,6 +85,10 @@ export async function PUT(event: APIEvent) {
     bgColor,
     language,
     theme,
+    bgType,
+    bgGradientColorStart,
+    bgGradientColorEnd,
+    bgGradientDirection,
   } = await event.request.json()
 
   const isValid = snippetValidator.safeParse({ title, codeLeft, codeRight })
@@ -117,6 +121,10 @@ export async function PUT(event: APIEvent) {
       bgColor,
       language,
       theme,
+      bgType,
+      bgGradientColorStart,
+      bgGradientColorEnd,
+      bgGradientDirection,
     })
     .where(eq(snippetsTable.id, snippetId))
 

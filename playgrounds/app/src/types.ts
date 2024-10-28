@@ -22,6 +22,10 @@ export interface Snippet {
   shadowBlur: number
   shadowColor: string
   shadowOpacity: number
+  bgType: 'solid' | 'linearGradient'
+  bgGradientColorStart: string
+  bgGradientColorEnd: string
+  bgGradientDirection: number
   bgColor: string
   language: string
   theme: string
@@ -47,6 +51,10 @@ export interface AnimationFrameStyling {
   fontFamily: string
   snippetBackgroundColor: string
   backgroundColor: string
+  backgroundType: string
+  backgroundGradientColorStart: string
+  backgroundGradientColorEnd: string
+  backgroundGradientDirection: number
 }
 
 export interface AnimationFrameConfig {

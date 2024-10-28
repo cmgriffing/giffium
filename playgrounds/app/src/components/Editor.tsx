@@ -96,8 +96,16 @@ interface EditorProps {
   setShadowColor: Setter<string>
   shadowOpacity: number
   setShadowOpacity: Setter<number>
+  bgType: 'solid' | 'linearGradient'
+  setBgType: Setter<'solid' | 'linearGradient'>
   bgColor: string
   setBgColor: Setter<string>
+  bgGradientColorStart: string
+  setBgGradientColorStart: Setter<string>
+  bgGradientColorEnd: string
+  setBgGradientColorEnd: Setter<string>
+  bgGradientDirection: number
+  setBgGradientDirection: Setter<number>
   fontSize: number
   setFontSize: Setter<number>
   fontFamily: string
@@ -234,6 +242,10 @@ export default function Editor(props: EditorProps) {
               fontFamily,
               snippetBackgroundColor: backgroundColor,
               backgroundColor: props.bgColor,
+              backgroundType: props.bgType,
+              backgroundGradientColorStart: props.bgGradientColorStart,
+              backgroundGradientColorEnd: props.bgGradientColorEnd,
+              backgroundGradientDirection: props.bgGradientDirection,
             },
           },
         )
@@ -354,21 +366,98 @@ export default function Editor(props: EditorProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuPortal>
                   <DropdownMenuContent class="w-[160px]">
-                    <DropdownMenuItem
-                      class="flex flex-row items-center justify-between"
-                      closeOnSelect={false}
-                    >
-                      <Label for="bg-color-input" class="font-normal">
-                        BG Color
-                      </Label>
-                      <input
-                        id="bg-color-input"
-                        class="h-6 w-6 rounded"
-                        type="color"
-                        value={props.bgColor}
-                        onInput={e => props.setBgColor(e.target.value)}
-                      />
-                    </DropdownMenuItem>
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger>Background</DropdownMenuSubTrigger>
+                      <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                          <DropdownMenuItem
+                            class="flex flex-row items-center justify-between"
+                            closeOnSelect={false}
+                          >
+                            <Label for="bg-color-input" class="font-normal">
+                              Solid
+                            </Label>
+                            <input
+                              id="bg-color-input"
+                              class="h-6 w-6 rounded"
+                              type="color"
+                              value={props.bgColor}
+                              onInput={e => {
+                                props.setBgType('solid')
+                                props.setBgColor(e.target.value)
+                              }}
+                            />
+                          </DropdownMenuItem>
+                          <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>Linear Gradient</DropdownMenuSubTrigger>
+                            <DropdownMenuPortal>
+                              <DropdownMenuSubContent>
+                                <DropdownMenuItem closeOnSelect={false}>
+                                  <Slider
+                                    value={[props.bgGradientDirection]}
+                                    minValue={0}
+                                    maxValue={359}
+                                    onChange={e => {
+                                      console.log({ props })
+                                      props.setBgType('linearGradient')
+                                      props.setBgGradientDirection(e[0])
+                                    }}
+                                  >
+                                    <div class="flex w-full justify-between mb-2">
+                                      <SliderLabel>Direction (deg)</SliderLabel>
+                                      <SliderValueLabel />
+                                    </div>
+                                    <SliderTrack>
+                                      <SliderFill />
+                                      <SliderThumb />
+                                    </SliderTrack>
+                                  </Slider>
+                                </DropdownMenuItem>
+
+                                <DropdownMenuItem
+                                  class="flex flex-row items-center justify-between"
+                                  closeOnSelect={false}
+                                >
+                                  <Label for="bg-color-input" class="font-normal">
+                                    Color Start
+                                  </Label>
+                                  <input
+                                    id="bg-color-input"
+                                    class="h-6 w-6 rounded"
+                                    type="color"
+                                    value={props.bgGradientColorStart}
+                                    onInput={e => {
+                                      props.setBgType('linearGradient')
+                                      props.setBgGradientColorStart(e.target.value)
+                                    }}
+                                  />
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  class="flex flex-row items-center justify-between"
+                                  closeOnSelect={false}
+                                >
+                                  <Label for="bg-color-input" class="font-normal">
+                                    Color End
+                                  </Label>
+                                  <input
+                                    id="bg-color-input"
+                                    class="h-6 w-6 rounded"
+                                    type="color"
+                                    value={props.bgGradientColorEnd}
+                                    onInput={e => {
+                                      props.setBgType('linearGradient')
+                                      props.setBgGradientColorEnd(e.target.value)
+                                      console.log({ props })
+                                    }}
+                                  />
+                                </DropdownMenuItem>
+                              </DropdownMenuSubContent>
+                            </DropdownMenuPortal>
+                          </DropdownMenuSub>
+                        </DropdownMenuSubContent>
+                      </DropdownMenuPortal>
+                    </DropdownMenuSub>
+
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger>Layout</DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
@@ -428,10 +517,7 @@ export default function Editor(props: EditorProps) {
                             }}
                           >
                             <Label for="shadow-checkbox">Show Shadow</Label>
-                            <Checkbox
-                              id="shadow-checkbox"
-                              checked={props.shadowEnabled}
-                            />
+                            <Checkbox id="shadow-checkbox" checked={props.shadowEnabled} />
                           </DropdownMenuItem>
 
                           <DropdownMenuItem
@@ -603,7 +689,13 @@ export default function Editor(props: EditorProps) {
                 id="styled-snippet"
                 class="flex flex-row items-center justify-center overflow-hidden"
                 style={{
-                  background: props.bgColor,
+                  ...(props.bgType === 'linearGradient'
+                    ? {
+                        background: `linear-gradient(${props.bgGradientDirection}deg, ${props.bgGradientColorStart}, ${props.bgGradientColorEnd})`,
+                      }
+                    : {
+                        background: props.bgColor,
+                      }),
                   padding: `${props.yPadding}px ${props.xPadding}px`,
                 }}
               >
@@ -721,6 +813,10 @@ export default function Editor(props: EditorProps) {
                 shadowColor: props.shadowColor,
                 shadowOpacity: props.shadowOpacity,
                 bgColor: props.bgColor,
+                bgType: props.bgType,
+                bgGradientColorStart: props.bgGradientColorStart,
+                bgGradientColorEnd: props.bgGradientColorEnd,
+                bgGradientDirection: props.bgGradientDirection,
                 language: props.language,
                 theme: props.theme,
               })
@@ -844,14 +940,48 @@ async function createAnimationFrame(
 ) {
   const { yPadding, xPadding } = config.layout
   const { shadowEnabled, shadowOffsetY, shadowBlur, shadowColor, shadowOpacity } = config.shadow
-  const { fontSize, fontFamily, backgroundColor, snippetBackgroundColor } = config.styling
+  const {
+    fontSize,
+    fontFamily,
+    backgroundColor,
+    snippetBackgroundColor,
+    backgroundType,
+    backgroundGradientColorStart,
+    backgroundGradientColorEnd,
+    backgroundGradientDirection,
+  } = config.styling
 
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d', { alpha: false })
   canvas.width = width + xPadding * 2
   canvas.height = height + yPadding * 2
-  ctx!.fillStyle = backgroundColor
-  ctx?.fillRect(0, 0, canvas.width, canvas.height)
+
+  if (backgroundType === 'linearGradient') {
+    // Convert angle to match CSS gradient angle (0deg = to top, 90deg = to right)
+    const cssAngle = (backgroundGradientDirection + 90) % 360
+    const angle = cssAngle * (Math.PI / 180)
+    // canvas use points x1,y1,x2,y2 instead of degree of angle like in css
+    // calculate the points based on the angle
+    const w = canvas.width
+    const h = canvas.height
+    const diagonal = Math.sqrt(w * w + h * h)
+
+    const x1 = w / 2 + (Math.cos(angle) * diagonal) / 2
+    const y1 = h / 2 + (Math.sin(angle) * diagonal) / 2
+    const x2 = w / 2 - (Math.cos(angle) * diagonal) / 2
+    const y2 = h / 2 - (Math.sin(angle) * diagonal) / 2
+
+    const grad = ctx!.createLinearGradient(x1, y1, x2, y2)
+
+    grad.addColorStop(0, backgroundGradientColorStart)
+    grad.addColorStop(1, backgroundGradientColorEnd)
+
+    ctx!.fillStyle = grad
+    ctx?.fillRect(0, 0, canvas.width, canvas.height)
+  } else {
+    ctx!.fillStyle = backgroundColor
+    ctx?.fillRect(0, 0, canvas.width, canvas.height)
+  }
 
   ctx!.fillStyle = snippetBackgroundColor
   if (shadowEnabled) {

@@ -61,6 +61,10 @@ export async function POST(event: APIEvent) {
     shadowOpacity,
     bgColor,
     language,
+    bgType,
+    bgGradientColorStart,
+    bgGradientColorEnd,
+    bgGradientDirection,
     theme,
   } = requestBody
 
@@ -81,6 +85,10 @@ export async function POST(event: APIEvent) {
     shadowColor,
     shadowOpacity,
     bgColor,
+    bgType,
+    bgGradientColorStart,
+    bgGradientColorEnd,
+    bgGradientDirection,
     language,
     theme,
   }
