@@ -24,6 +24,8 @@ import { MagicMoveElement } from 'shiki-magic-move/types'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuGroupLabel,
   DropdownMenuItem,
   DropdownMenuPortal,
   DropdownMenuSeparator,
@@ -56,7 +58,7 @@ import { createMemo, createResource, createSignal, onCleanup, Setter, Show } fro
 import { createHighlighter, bundledThemes, bundledLanguages } from 'shiki'
 import { ShikiMagicMove } from 'shiki-magic-move/solid'
 import { AnimationFrameConfig } from '~/types'
-import { authFetch, cn } from '~/lib/utils'
+import { authFetch } from '~/lib/utils'
 import { useNavigate } from '@solidjs/router'
 import { authToken } from '~/lib/store'
 import { toast } from 'solid-sonner'
@@ -370,25 +372,30 @@ export default function Editor(props: EditorProps) {
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger>Background</DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
-                        <DropdownMenuSubContent>
-                          <DropdownMenuItem
-                            class="flex flex-row items-center justify-start gap-2"
-                            closeOnSelect={false}
-                            onSelect={() => props.setBgType('solid')}
-                          >
-                            <TbCheck size={16} class={cn(props.bgType === 'solid' ? 'visible' : 'invisible')} />
-                            <span>Solid</span>
-
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            class="flex flex-row items-center justify-start gap-2"
-                            closeOnSelect={false}
-                            onSelect={() => props.setBgType('linearGradient')}
-                          >
-                            <TbCheck size={16} class={cn(props.bgType === 'linearGradient' ? 'visible' : 'invisible')} />
-                            <span>Linear Gradient</span>
-
-                          </DropdownMenuItem>
+                        <DropdownMenuSubContent class="w-[180px]">
+                          <DropdownMenuGroup>
+                            <DropdownMenuGroupLabel class="text-xs">Type</DropdownMenuGroupLabel>
+                            <DropdownMenuItem
+                              class="flex flex-row items-center justify-between"
+                              closeOnSelect={false}
+                              onSelect={() => props.setBgType('solid')}
+                            >
+                              <span>Solid</span>
+                              <Show when={props.bgType === 'solid'}>
+                                <TbCheck size={16} />
+                              </Show>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              class="flex flex-row items-center justify-between"
+                              closeOnSelect={false}
+                              onSelect={() => props.setBgType('linearGradient')}
+                            >
+                              <span>Linear Gradient</span>
+                              <Show when={props.bgType === 'linearGradient'}>
+                                <TbCheck size={16} />
+                              </Show>
+                            </DropdownMenuItem>
+                          </DropdownMenuGroup>
                           <DropdownMenuSeparator />
                           <DropdownMenuSub>
                             <DropdownMenuSubTrigger>Options</DropdownMenuSubTrigger>
@@ -396,27 +403,6 @@ export default function Editor(props: EditorProps) {
                               <DropdownMenuSubContent>
                                 {props.bgType === 'linearGradient' && (
                                   <>
-                                    <DropdownMenuItem closeOnSelect={false}>
-                                      <Slider
-                                        value={[props.bgGradientDirection]}
-                                        minValue={0}
-                                        maxValue={359}
-                                        onChange={e => {
-                                          props.setBgType('linearGradient')
-                                          props.setBgGradientDirection(e[0])
-                                        }}
-                                      >
-                                        <div class="flex w-full justify-between mb-2">
-                                          <SliderLabel>Direction (deg)</SliderLabel>
-                                          <SliderValueLabel />
-                                        </div>
-                                        <SliderTrack>
-                                          <SliderFill />
-                                          <SliderThumb />
-                                        </SliderTrack>
-                                      </Slider>
-                                    </DropdownMenuItem>
-
                                     <DropdownMenuItem
                                       class="flex flex-row items-center justify-between"
                                       closeOnSelect={false}
@@ -452,6 +438,29 @@ export default function Editor(props: EditorProps) {
                                           props.setBgGradientColorEnd(e.target.value)
                                         }}
                                       />
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem closeOnSelect={false}>
+                                      <Slider
+                                        value={[props.bgGradientDirection]}
+                                        minValue={0}
+                                        maxValue={359}
+                                        onChange={e => {
+                                          props.setBgType('linearGradient')
+                                          props.setBgGradientDirection(e[0])
+                                        }}
+                                      >
+                                        <div class="flex justify-start w-full">
+                                          <SliderLabel>Direction</SliderLabel>
+                                        </div>
+                                        <SliderTrack class="my-2">
+                                          <SliderFill />
+                                          <SliderThumb />
+                                        </SliderTrack>
+                                        <div class="flex justify-start items-center gap-1 w-full">
+                                          <SliderValueLabel />
+                                          <span class="text-xs">deg</span>
+                                        </div>
+                                      </Slider>
                                     </DropdownMenuItem>
                                   </>
                                 )}
