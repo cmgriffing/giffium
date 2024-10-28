@@ -41,8 +41,8 @@ import {
   SliderValueLabel,
 } from '~/components/ui/slider'
 import clsx from 'clsx'
-import { TbSettings } from 'solid-icons/tb'
-import { Checkbox, SimplerCheckbox } from '~/components/ui/checkbox'
+import { TbCheck, TbSettings } from 'solid-icons/tb'
+import { SimplerCheckbox } from '~/components/ui/checkbox'
 import { Label } from '~/components/ui/label'
 import {
   Dialog,
@@ -64,6 +64,16 @@ import { toast } from 'solid-sonner'
 const animationSeconds = 1
 const animationFPS = 10
 const animationFrames = animationSeconds * animationFPS
+
+const supportedFontFamilies: { name: string }[] = [
+  { name: 'Comic Neue' },
+  { name: 'Fira Code' },
+  { name: 'IBM Plex Mono' },
+  { name: 'Inconsolata' },
+  { name: 'JetBrains Mono' },
+  { name: 'Roboto Mono' },
+  { name: 'Source Code Pro' },
+]
 
 interface EditorProps {
   snippetId?: string
@@ -89,12 +99,16 @@ interface EditorProps {
   setShadowOpacity: Setter<number>
   bgColor: string
   setBgColor: Setter<string>
+  fontSize: number
+  setFontSize: Setter<number>
+  fontFamily: string
+  setFontFamily: Setter<string>
   language: string
   setLanguage: Setter<string>
   theme: string
   setTheme: Setter<string>
   // TODO: If the app grows, this logic should be surfaced to the top level route
-  title: string
+  title?: string
 }
 
 export default function Editor(props: EditorProps) {
@@ -496,6 +510,58 @@ export default function Editor(props: EditorProps) {
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>
                     </DropdownMenuSub>
+
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger>Font</DropdownMenuSubTrigger>
+                      <DropdownMenuPortal>
+                        <DropdownMenuSubContent class="w-[200px]">
+                          <DropdownMenuItem
+                            class="flex flex-row items-center justify-between"
+                            closeOnSelect={false}
+                          >
+                            <Slider
+                              value={[props.fontSize]}
+                              minValue={1}
+                              maxValue={64}
+                              onChange={e => {
+                                props.setFontSize(e[0])
+                              }}
+                            >
+                              <div class="flex w-full justify-between mb-2">
+                                <SliderLabel>Size</SliderLabel>
+                                <SliderValueLabel />
+                              </div>
+                              <SliderTrack>
+                                <SliderFill />
+                                <SliderThumb />
+                              </SliderTrack>
+                            </Slider>
+                          </DropdownMenuItem>
+
+                          <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>Family</DropdownMenuSubTrigger>
+                            <DropdownMenuPortal>
+                              <DropdownMenuSubContent class="w-[200px]">
+                                {supportedFontFamilies.map(fontFamily => (
+                                  <DropdownMenuItem
+                                    class="flex flex-row items-center justify-between"
+                                    style={{
+                                      'font-family': fontFamily.name,
+                                    }}
+                                    onSelect={() => props.setFontFamily(fontFamily.name)}
+                                  >
+                                    {fontFamily.name}
+                                    <Show when={fontFamily.name === props.fontFamily}>
+                                      <TbCheck size={20} />
+                                    </Show>
+                                  </DropdownMenuItem>
+                                ))}
+                              </DropdownMenuSubContent>
+                            </DropdownMenuPortal>
+                          </DropdownMenuSub>
+                        </DropdownMenuSubContent>
+                      </DropdownMenuPortal>
+                    </DropdownMenuSub>
                   </DropdownMenuContent>
                 </DropdownMenuPortal>
               </DropdownMenu>
@@ -551,6 +617,8 @@ export default function Editor(props: EditorProps) {
                                   props.shadowColor
                                 }${(props.shadowOpacity * 255).toString(16)}`
                               : 'none',
+                            'font-family': props.fontFamily,
+                            'font-size': `${props.fontSize}px`,
                           }}
                         >
                           <ShikiMagicMove
@@ -796,7 +864,7 @@ async function createAnimationFrame(
   ctx!.shadowColor = 'transparent'
 
   const xModifier = xPadding
-  const yModifier = yPadding + snippetPadding
+  const yModifier = yPadding + parseInt(fontSize)
 
   const elementPromises = elements.map(async el => {
     const x = interpolate(
@@ -827,7 +895,7 @@ async function createAnimationFrame(
     ctx!.font = `${fontSize} ${fontFamily}`
     ctx!.fillStyle = color
     ctx!.globalAlpha = opacity
-    ctx!.fillText(htmlDecode(el.el.innerHTML), x, y)
+    ctx!.fillText(htmlDecode(el.el.innerHTML), x, y, width - x + xPadding / 2)
   })
   await Promise.all(elementPromises)
 
