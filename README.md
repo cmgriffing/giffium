@@ -65,9 +65,9 @@ The project is built using [SolidJS](https://www.solidjs.com/). If you are new t
 
 ### Suggested VSCode Extensions
 
-- Tailwinds
-- Headwinds
-- Prettier
+- [Tailwind CSS IntelliSense](https://tailwindcss.com/)
+- [Headwind](https://marketplace.visualstudio.com/items?itemName=heybourn.headwind)
+- [Prettier - Code formatter](https://prettier.io/)
 
 ## License
 
