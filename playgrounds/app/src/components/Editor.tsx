@@ -26,6 +26,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuPortal,
+  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -55,7 +56,7 @@ import { createMemo, createResource, createSignal, onCleanup, Setter, Show } fro
 import { createHighlighter, bundledThemes, bundledLanguages } from 'shiki'
 import { ShikiMagicMove } from 'shiki-magic-move/solid'
 import { AnimationFrameConfig } from '~/types'
-import { authFetch } from '~/lib/utils'
+import { authFetch, cn } from '~/lib/utils'
 import { useNavigate } from '@solidjs/router'
 import { authToken } from '~/lib/store'
 import { toast } from 'solid-sonner'
@@ -371,86 +372,111 @@ export default function Editor(props: EditorProps) {
                       <DropdownMenuPortal>
                         <DropdownMenuSubContent>
                           <DropdownMenuItem
-                            class="flex flex-row items-center justify-between"
+                            class="flex flex-row items-center justify-start gap-2"
                             closeOnSelect={false}
+                            onSelect={() => props.setBgType('solid')}
                           >
-                            <Label for="bg-color-input" class="font-normal">
-                              Solid
-                            </Label>
-                            <input
-                              id="bg-color-input"
-                              class="h-6 w-6 rounded"
-                              type="color"
-                              value={props.bgColor}
-                              onInput={e => {
-                                props.setBgType('solid')
-                                props.setBgColor(e.target.value)
-                              }}
-                            />
+                            <TbCheck size={16} class={cn(props.bgType === 'solid' ? 'visible' : 'invisible')} />
+                            <span>Solid</span>
+
                           </DropdownMenuItem>
+                          <DropdownMenuItem
+                            class="flex flex-row items-center justify-start gap-2"
+                            closeOnSelect={false}
+                            onSelect={() => props.setBgType('linearGradient')}
+                          >
+                            <TbCheck size={16} class={cn(props.bgType === 'linearGradient' ? 'visible' : 'invisible')} />
+                            <span>Linear Gradient</span>
+
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
                           <DropdownMenuSub>
-                            <DropdownMenuSubTrigger>Linear Gradient</DropdownMenuSubTrigger>
+                            <DropdownMenuSubTrigger>Options</DropdownMenuSubTrigger>
                             <DropdownMenuPortal>
                               <DropdownMenuSubContent>
-                                <DropdownMenuItem closeOnSelect={false}>
-                                  <Slider
-                                    value={[props.bgGradientDirection]}
-                                    minValue={0}
-                                    maxValue={359}
-                                    onChange={e => {
-                                      console.log({ props })
-                                      props.setBgType('linearGradient')
-                                      props.setBgGradientDirection(e[0])
-                                    }}
-                                  >
-                                    <div class="flex w-full justify-between mb-2">
-                                      <SliderLabel>Direction (deg)</SliderLabel>
-                                      <SliderValueLabel />
-                                    </div>
-                                    <SliderTrack>
-                                      <SliderFill />
-                                      <SliderThumb />
-                                    </SliderTrack>
-                                  </Slider>
-                                </DropdownMenuItem>
+                                {props.bgType === 'linearGradient' && (
+                                  <>
+                                    <DropdownMenuItem closeOnSelect={false}>
+                                      <Slider
+                                        value={[props.bgGradientDirection]}
+                                        minValue={0}
+                                        maxValue={359}
+                                        onChange={e => {
+                                          console.log({ props })
+                                          props.setBgType('linearGradient')
+                                          props.setBgGradientDirection(e[0])
+                                        }}
+                                      >
+                                        <div class="flex w-full justify-between mb-2">
+                                          <SliderLabel>Direction (deg)</SliderLabel>
+                                          <SliderValueLabel />
+                                        </div>
+                                        <SliderTrack>
+                                          <SliderFill />
+                                          <SliderThumb />
+                                        </SliderTrack>
+                                      </Slider>
+                                    </DropdownMenuItem>
 
-                                <DropdownMenuItem
-                                  class="flex flex-row items-center justify-between"
-                                  closeOnSelect={false}
-                                >
-                                  <Label for="bg-color-input" class="font-normal">
-                                    Color Start
-                                  </Label>
-                                  <input
-                                    id="bg-color-input"
-                                    class="h-6 w-6 rounded"
-                                    type="color"
-                                    value={props.bgGradientColorStart}
-                                    onInput={e => {
-                                      props.setBgType('linearGradient')
-                                      props.setBgGradientColorStart(e.target.value)
-                                    }}
-                                  />
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  class="flex flex-row items-center justify-between"
-                                  closeOnSelect={false}
-                                >
-                                  <Label for="bg-color-input" class="font-normal">
-                                    Color End
-                                  </Label>
-                                  <input
-                                    id="bg-color-input"
-                                    class="h-6 w-6 rounded"
-                                    type="color"
-                                    value={props.bgGradientColorEnd}
-                                    onInput={e => {
-                                      props.setBgType('linearGradient')
-                                      props.setBgGradientColorEnd(e.target.value)
-                                      console.log({ props })
-                                    }}
-                                  />
-                                </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      class="flex flex-row items-center justify-between"
+                                      closeOnSelect={false}
+                                    >
+                                      <Label for="bg-color-input-grad-start" class="font-normal">
+                                        Color Start
+                                      </Label>
+                                      <input
+                                        id="bg-color-input-grad-start"
+                                        class="h-6 w-6 rounded"
+                                        type="color"
+                                        value={props.bgGradientColorStart}
+                                        onInput={e => {
+                                          props.setBgType('linearGradient')
+                                          props.setBgGradientColorStart(e.target.value)
+                                        }}
+                                      />
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      class="flex flex-row items-center justify-between"
+                                      closeOnSelect={false}
+                                    >
+                                      <Label for="bg-color-input-grad-end" class="font-normal">
+                                        Color End
+                                      </Label>
+                                      <input
+                                        id="bg-color-input-grad-end"
+                                        class="h-6 w-6 rounded"
+                                        type="color"
+                                        value={props.bgGradientColorEnd}
+                                        onInput={e => {
+                                          props.setBgType('linearGradient')
+                                          props.setBgGradientColorEnd(e.target.value)
+                                          console.log({ props })
+                                        }}
+                                      />
+                                    </DropdownMenuItem>
+                                  </>
+                                )}
+                                {props.bgType === 'solid' && (
+                                  <DropdownMenuItem
+                                    class="flex flex-row items-center justify-between"
+                                    closeOnSelect={false}
+                                  >
+                                    <Label for="bg-color-input" class="font-normal">
+                                      Solid
+                                    </Label>
+                                    <input
+                                      id="bg-color-input"
+                                      class="h-6 w-6 rounded"
+                                      type="color"
+                                      value={props.bgColor}
+                                      onInput={e => {
+                                        props.setBgType('solid')
+                                        props.setBgColor(e.target.value)
+                                      }}
+                                    />
+                                  </DropdownMenuItem>
+                                )}
                               </DropdownMenuSubContent>
                             </DropdownMenuPortal>
                           </DropdownMenuSub>
