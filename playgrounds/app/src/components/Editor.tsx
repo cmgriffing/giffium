@@ -402,7 +402,6 @@ export default function Editor(props: EditorProps) {
                                         minValue={0}
                                         maxValue={359}
                                         onChange={e => {
-                                          console.log({ props })
                                           props.setBgType('linearGradient')
                                           props.setBgGradientDirection(e[0])
                                         }}
@@ -451,7 +450,6 @@ export default function Editor(props: EditorProps) {
                                         onInput={e => {
                                           props.setBgType('linearGradient')
                                           props.setBgGradientColorEnd(e.target.value)
-                                          console.log({ props })
                                         }}
                                       />
                                     </DropdownMenuItem>
