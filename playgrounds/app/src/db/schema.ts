@@ -31,6 +31,8 @@ export const snippetsTable = sqliteTable('snippets_table', {
   bgColor: text().notNull().default('#ffffff'),
   language: text().notNull().default('tsx'),
   theme: text().notNull().default('nord'),
+  fontSize: int().notNull().default(16),
+  fontFamily: text().notNull().default('Fira Code'),
 })
 
 export const schema = {

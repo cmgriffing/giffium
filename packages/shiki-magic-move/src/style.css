@@ -1,6 +1,8 @@
 .shiki-magic-move-container {
   position: relative;
   white-space: pre;
+  font-family: inherit !important;
+  font-size: inherit !important;
 }
 
 .shiki-magic-move-line-number {
@@ -11,6 +13,8 @@
 .shiki-magic-move-item {
   display: inline-block;
   transition: color var(--smm-duration, 0.5s) var(--smm-easing, 'ease');
+  font-family: inherit !important;
+  font-size: inherit !important;
 }
 
 .shiki-magic-move-move {
