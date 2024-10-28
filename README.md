@@ -11,7 +11,7 @@ Giffium is a tool to generate a socially shareable gif from a diff of two snippe
 
 ## Inspiration
 
-Giffium was inspired by [Shiki Magic Move](https://github.com/rhysd/Shiki-Magic-Move) and [Carbon](https://carbon.now.sh/)/[Ray.so](https://ray.so/).
+Giffium was inspired by [Shiki Magic Move](https://github.com/shikijs/shiki-magic-move) and [Carbon](https://carbon.now.sh/)/[Ray.so](https://ray.so/).
 
 It was created as part of the [SolidJS Hackathon](https://hack.solidjs.com/)
 
@@ -20,7 +20,7 @@ It was created as part of the [SolidJS Hackathon](https://hack.solidjs.com/)
 This project leans heavily on these libraries:
 
 - [Shiki](https://shiki.matsu.io/)
-- [Shiki Magic Move](https://github.com/rhysd/Shiki-Magic-Move)
+- [Shiki Magic Move](https://github.com/shikijs/shiki-magic-move)
 - [SolidJS](https://www.solidjs.com/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Solid UI](https://www.solid-ui.com/)
