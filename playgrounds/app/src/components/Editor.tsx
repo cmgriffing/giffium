@@ -960,8 +960,6 @@ function htmlDecode(str: string) {
   return txt.value
 }
 
-const snippetPadding = 16
-
 async function createAnimationFrame(
   elements: MagicMoveElement[],
   frame: number,
@@ -983,7 +981,7 @@ async function createAnimationFrame(
   } = config.styling
 
   const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d', { alpha: false })
+  const ctx = canvas.getContext('2d', { alpha: false })!
   canvas.width = width + xPadding * 2
   canvas.height = height + yPadding * 2
 
@@ -1002,31 +1000,31 @@ async function createAnimationFrame(
     const x2 = w / 2 - (Math.cos(angle) * diagonal) / 2
     const y2 = h / 2 - (Math.sin(angle) * diagonal) / 2
 
-    const grad = ctx!.createLinearGradient(x1, y1, x2, y2)
+    const grad = ctx.createLinearGradient(x1, y1, x2, y2)
 
     grad.addColorStop(0, backgroundGradientColorStart)
     grad.addColorStop(1, backgroundGradientColorEnd)
 
-    ctx!.fillStyle = grad
-    ctx?.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.fillStyle = grad
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
   } else {
-    ctx!.fillStyle = backgroundColor
-    ctx?.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.fillStyle = backgroundColor
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
   }
 
-  ctx!.fillStyle = snippetBackgroundColor
+  ctx.fillStyle = snippetBackgroundColor
   if (shadowEnabled) {
-    ctx!.shadowColor = `${shadowColor}${(shadowOpacity * 255).toString(16)}`
-    ctx!.shadowBlur = shadowBlur
-    ctx!.shadowOffsetX = 0
-    ctx!.shadowOffsetY = shadowOffsetY
+    ctx.shadowColor = `${shadowColor}${(shadowOpacity * 255).toString(16)}`
+    ctx.shadowBlur = shadowBlur
+    ctx.shadowOffsetX = 0
+    ctx.shadowOffsetY = shadowOffsetY
   }
 
-  ctx!.beginPath()
-  ctx!.roundRect(xPadding, yPadding, width, height, 4)
-  ctx!.fill()
+  ctx.beginPath()
+  ctx.roundRect(xPadding, yPadding, width, height, 4)
+  ctx.fill()
 
-  ctx!.shadowColor = 'transparent'
+  ctx.shadowColor = 'transparent'
 
   const xModifier = xPadding
   const yModifier = yPadding + parseInt(fontSize)
@@ -1057,12 +1055,12 @@ async function createAnimationFrame(
       [el.color.start || 'rgba(0,0,0,0)', el.color.end || 'rgba(0,0,0,0)'],
     )
 
-    ctx!.font = `${fontSize} ${fontFamily}`
-    ctx!.fillStyle = color
-    ctx!.globalAlpha = opacity
-    ctx!.fillText(htmlDecode(el.el.innerHTML), x, y, width - x + xPadding / 2)
+    ctx.font = `${fontSize} ${fontFamily}`
+    ctx.fillStyle = color
+    ctx.globalAlpha = opacity
+    ctx.fillText(htmlDecode(el.el.innerHTML), x, y, width - x + xPadding / 2)
   })
   await Promise.all(elementPromises)
 
-  return ctx!.getImageData(0, 0, canvas.width, canvas.height)
+  return ctx.getImageData(0, 0, canvas.width, canvas.height)
 }
