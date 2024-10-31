@@ -23,6 +23,7 @@ import {
 import { MagicMoveElement } from 'shiki-magic-move/types'
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuGroupLabel,
@@ -44,7 +45,7 @@ import {
 } from '~/components/ui/slider'
 import clsx from 'clsx'
 import { TbCheck, TbSettings } from 'solid-icons/tb'
-import { Checkbox } from '~/components/ui/checkbox'
+import { SimplerCheckbox } from '~/components/ui/checkbox'
 import { Label } from '~/components/ui/label'
 import {
   Dialog,
@@ -323,9 +324,7 @@ export default function Editor(props: EditorProps) {
                 placeholder="Search a theme..."
                 itemComponent={props => (
                   <ComboboxItem item={props.item}>
-                    <ComboboxItemLabel class="dark:text-black">
-                      {props.item.rawValue}
-                    </ComboboxItemLabel>
+                    <ComboboxItemLabel>{props.item.rawValue}</ComboboxItemLabel>
                     <ComboboxItemIndicator />
                   </ComboboxItem>
                 )}
@@ -372,8 +371,7 @@ export default function Editor(props: EditorProps) {
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger>Background</DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
-                        <DropdownMenuSubContent class='w-[200px]'>
-
+                        <DropdownMenuSubContent class="w-[200px]">
                           <DropdownMenuSub>
                             <DropdownMenuSubTrigger>Type</DropdownMenuSubTrigger>
                             <DropdownMenuPortal>
@@ -548,7 +546,7 @@ export default function Editor(props: EditorProps) {
                             }}
                           >
                             <Label for="shadow-checkbox">Show Shadow</Label>
-                            <Checkbox id="shadow-checkbox" checked={props.shadowEnabled} />
+                            <SimplerCheckbox id="shadow-checkbox" checked={props.shadowEnabled} />
                           </DropdownMenuItem>
 
                           <DropdownMenuItem

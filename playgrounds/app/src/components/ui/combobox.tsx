@@ -21,7 +21,7 @@ const ComboboxItem = <T extends ValidComponent = 'li'>(
   return (
     <ComboboxPrimitive.Item
       class={cn(
-        'relative flex cursor-default select-none items-center justify-between rounded-sm px-2 py-1.5 text-sm outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:opacity-50',
+        'relative flex cursor-default select-none items-center justify-between rounded-sm px-2 py-1.5 text-sm outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[disabled]:opacity-50',
         local.class,
       )}
       {...others}
@@ -49,7 +49,7 @@ const ComboboxItemIndicator = <T extends ValidComponent = 'div'>(
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class="size-4 dark:text-black"
+          class="size-4"
         >
           <path d="M5 12l5 5l10 -10" />
         </svg>
@@ -157,7 +157,7 @@ const ComboboxContent = <T extends ValidComponent = 'div'>(
     <ComboboxPrimitive.Portal>
       <ComboboxPrimitive.Content
         class={cn(
-          'relative z-50 min-w-32 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-80',
+          'relative z-50 min-w-32 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-80 bg-white text-black',
           local.class,
         )}
         {...others}
