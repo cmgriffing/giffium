@@ -78,10 +78,10 @@ export default function Home() {
   })
   const [bgGradientColorEnd, setBgGradientColorEnd] = makePersisted(createSignal('#a3d0ff'), {
     name: 'bgGradientColorEnd',
-	})
-	const [bgGradientDirection, setBgGradientDirection] = makePersisted(createSignal(45), {
-		name: 'bgGradientDirection',
-	})
+  })
+  const [bgGradientDirection, setBgGradientDirection] = makePersisted(createSignal(45), {
+    name: 'bgGradientDirection',
+  })
 
   return (
     <main class="mx-auto text-gray-700 dark:text-gray-100 p-4">
