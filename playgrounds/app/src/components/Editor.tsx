@@ -25,8 +25,11 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuGroupLabel,
   DropdownMenuItem,
   DropdownMenuPortal,
+  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -97,8 +100,16 @@ interface EditorProps {
   setShadowColor: Setter<string>
   shadowOpacity: number
   setShadowOpacity: Setter<number>
+  bgType: 'solid' | 'linearGradient'
+  setBgType: Setter<'solid' | 'linearGradient'>
   bgColor: string
   setBgColor: Setter<string>
+  bgGradientColorStart: string
+  setBgGradientColorStart: Setter<string>
+  bgGradientColorEnd: string
+  setBgGradientColorEnd: Setter<string>
+  bgGradientDirection: number
+  setBgGradientDirection: Setter<number>
   fontSize: number
   setFontSize: Setter<number>
   fontFamily: string
@@ -235,6 +246,10 @@ export default function Editor(props: EditorProps) {
               fontFamily,
               snippetBackgroundColor: backgroundColor,
               backgroundColor: props.bgColor,
+              backgroundType: props.bgType,
+              backgroundGradientColorStart: props.bgGradientColorStart,
+              backgroundGradientColorEnd: props.bgGradientColorEnd,
+              backgroundGradientDirection: props.bgGradientDirection,
             },
           },
         )
@@ -352,22 +367,126 @@ export default function Editor(props: EditorProps) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuPortal>
-                  <DropdownMenuContent class="w-[160px]">
-                    <DropdownMenuItem
-                      class="flex flex-row items-center justify-between"
-                      closeOnSelect={false}
-                    >
-                      <Label for="bg-color-input" class="font-normal">
-                        BG Color
-                      </Label>
-                      <input
-                        id="bg-color-input"
-                        class="h-6 w-6 rounded"
-                        type="color"
-                        value={props.bgColor}
-                        onInput={e => props.setBgColor(e.target.value)}
-                      />
-                    </DropdownMenuItem>
+                  <DropdownMenuContent>
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger>Background</DropdownMenuSubTrigger>
+                      <DropdownMenuPortal>
+                        <DropdownMenuSubContent class="w-[200px]">
+                          <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>Type</DropdownMenuSubTrigger>
+                            <DropdownMenuPortal>
+                              <DropdownMenuSubContent class="w-[200px]">
+                                <DropdownMenuItem
+                                  class="flex flex-row items-center justify-between"
+                                  closeOnSelect={false}
+                                  onSelect={() => props.setBgType('solid')}
+                                >
+                                  <span>Solid</span>
+                                  <Show when={props.bgType === 'solid'}>
+                                    <TbCheck size={16} />
+                                  </Show>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  class="flex flex-row items-center justify-between"
+                                  closeOnSelect={false}
+                                  onSelect={() => props.setBgType('linearGradient')}
+                                >
+                                  <span>Linear Gradient</span>
+                                  <Show when={props.bgType === 'linearGradient'}>
+                                    <TbCheck size={16} />
+                                  </Show>
+                                </DropdownMenuItem>
+                              </DropdownMenuSubContent>
+                            </DropdownMenuPortal>
+                          </DropdownMenuSub>
+
+                          {props.bgType === 'linearGradient' && (
+                            <>
+                              <DropdownMenuItem
+                                class="flex flex-row items-center justify-between"
+                                closeOnSelect={false}
+                              >
+                                <Label for="bg-color-input-grad-start" class="font-normal">
+                                  Color Start
+                                </Label>
+                                <input
+                                  id="bg-color-input-grad-start"
+                                  class="h-6 w-6 rounded"
+                                  type="color"
+                                  value={props.bgGradientColorStart}
+                                  onInput={e => {
+                                    props.setBgType('linearGradient')
+                                    props.setBgGradientColorStart(e.target.value)
+                                  }}
+                                />
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                class="flex flex-row items-center justify-between"
+                                closeOnSelect={false}
+                              >
+                                <Label for="bg-color-input-grad-end" class="font-normal">
+                                  Color End
+                                </Label>
+                                <input
+                                  id="bg-color-input-grad-end"
+                                  class="h-6 w-6 rounded"
+                                  type="color"
+                                  value={props.bgGradientColorEnd}
+                                  onInput={e => {
+                                    props.setBgType('linearGradient')
+                                    props.setBgGradientColorEnd(e.target.value)
+                                  }}
+                                />
+                              </DropdownMenuItem>
+                              <DropdownMenuItem closeOnSelect={false}>
+                                <Slider
+                                  value={[props.bgGradientDirection]}
+                                  minValue={0}
+                                  maxValue={359}
+                                  onChange={e => {
+                                    props.setBgType('linearGradient')
+                                    props.setBgGradientDirection(e[0])
+                                  }}
+                                >
+                                  <div class="flex justify-start w-full">
+                                    <SliderLabel>Direction</SliderLabel>
+                                  </div>
+                                  <SliderTrack class="my-2">
+                                    <SliderFill />
+                                    <SliderThumb />
+                                  </SliderTrack>
+                                  <div class="flex justify-start items-center gap-1 w-full">
+                                    <SliderValueLabel />
+                                    <span class="text-xs">deg</span>
+                                  </div>
+                                </Slider>
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                          {props.bgType === 'solid' && (
+                            <DropdownMenuItem
+                              class="flex flex-row items-center justify-between"
+                              closeOnSelect={false}
+                            >
+                              <Label for="bg-color-input" class="font-normal">
+                                Solid
+                              </Label>
+                              <input
+                                id="bg-color-input"
+                                class="h-6 w-6 rounded"
+                                type="color"
+                                value={props.bgColor}
+                                onInput={e => {
+                                  props.setBgType('solid')
+                                  props.setBgColor(e.target.value)
+                                }}
+                              />
+                            </DropdownMenuItem>
+                          )}
+                        </DropdownMenuSubContent>
+                      </DropdownMenuPortal>
+                    </DropdownMenuSub>
+
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger>Layout</DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
@@ -599,7 +718,13 @@ export default function Editor(props: EditorProps) {
                 id="styled-snippet"
                 class="flex flex-row items-center justify-center overflow-hidden"
                 style={{
-                  background: props.bgColor,
+                  ...(props.bgType === 'linearGradient'
+                    ? {
+                        background: `linear-gradient(${props.bgGradientDirection}deg, ${props.bgGradientColorStart}, ${props.bgGradientColorEnd})`,
+                      }
+                    : {
+                        background: props.bgColor,
+                      }),
                   padding: `${props.yPadding}px ${props.xPadding}px`,
                 }}
               >
@@ -717,6 +842,10 @@ export default function Editor(props: EditorProps) {
                 shadowColor: props.shadowColor,
                 shadowOpacity: props.shadowOpacity,
                 bgColor: props.bgColor,
+                bgType: props.bgType,
+                bgGradientColorStart: props.bgGradientColorStart,
+                bgGradientColorEnd: props.bgGradientColorEnd,
+                bgGradientDirection: props.bgGradientDirection,
                 language: props.language,
                 theme: props.theme,
               })
@@ -829,8 +958,6 @@ function htmlDecode(str: string) {
   return txt.value
 }
 
-const snippetPadding = 16
-
 async function createAnimationFrame(
   elements: MagicMoveElement[],
   frame: number,
@@ -840,28 +967,62 @@ async function createAnimationFrame(
 ) {
   const { yPadding, xPadding } = config.layout
   const { shadowEnabled, shadowOffsetY, shadowBlur, shadowColor, shadowOpacity } = config.shadow
-  const { fontSize, fontFamily, backgroundColor, snippetBackgroundColor } = config.styling
+  const {
+    fontSize,
+    fontFamily,
+    backgroundColor,
+    snippetBackgroundColor,
+    backgroundType,
+    backgroundGradientColorStart,
+    backgroundGradientColorEnd,
+    backgroundGradientDirection,
+  } = config.styling
 
   const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d', { alpha: false })
+  const ctx = canvas.getContext('2d', { alpha: false })!
   canvas.width = width + xPadding * 2
   canvas.height = height + yPadding * 2
-  ctx!.fillStyle = backgroundColor
-  ctx?.fillRect(0, 0, canvas.width, canvas.height)
 
-  ctx!.fillStyle = snippetBackgroundColor
-  if (shadowEnabled) {
-    ctx!.shadowColor = `${shadowColor}${(shadowOpacity * 255).toString(16)}`
-    ctx!.shadowBlur = shadowBlur
-    ctx!.shadowOffsetX = 0
-    ctx!.shadowOffsetY = shadowOffsetY
+  if (backgroundType === 'linearGradient') {
+    // Convert angle to match CSS gradient angle (0deg = to top, 90deg = to right)
+    const cssAngle = (backgroundGradientDirection + 90) % 360
+    const angle = cssAngle * (Math.PI / 180)
+    // canvas use points x1,y1,x2,y2 instead of degree of angle like in css
+    // calculate the points based on the angle
+    const w = canvas.width
+    const h = canvas.height
+    const diagonal = Math.sqrt(w * w + h * h)
+
+    const x1 = w / 2 + (Math.cos(angle) * diagonal) / 2
+    const y1 = h / 2 + (Math.sin(angle) * diagonal) / 2
+    const x2 = w / 2 - (Math.cos(angle) * diagonal) / 2
+    const y2 = h / 2 - (Math.sin(angle) * diagonal) / 2
+
+    const grad = ctx.createLinearGradient(x1, y1, x2, y2)
+
+    grad.addColorStop(0, backgroundGradientColorStart)
+    grad.addColorStop(1, backgroundGradientColorEnd)
+
+    ctx.fillStyle = grad
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+  } else {
+    ctx.fillStyle = backgroundColor
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
   }
 
-  ctx!.beginPath()
-  ctx!.roundRect(xPadding, yPadding, width, height, 4)
-  ctx!.fill()
+  ctx.fillStyle = snippetBackgroundColor
+  if (shadowEnabled) {
+    ctx.shadowColor = `${shadowColor}${(shadowOpacity * 255).toString(16)}`
+    ctx.shadowBlur = shadowBlur
+    ctx.shadowOffsetX = 0
+    ctx.shadowOffsetY = shadowOffsetY
+  }
 
-  ctx!.shadowColor = 'transparent'
+  ctx.beginPath()
+  ctx.roundRect(xPadding, yPadding, width, height, 4)
+  ctx.fill()
+
+  ctx.shadowColor = 'transparent'
 
   const xModifier = xPadding
   const yModifier = yPadding + parseInt(fontSize)
@@ -892,12 +1053,12 @@ async function createAnimationFrame(
       [el.color.start || 'rgba(0,0,0,0)', el.color.end || 'rgba(0,0,0,0)'],
     )
 
-    ctx!.font = `${fontSize} ${fontFamily}`
-    ctx!.fillStyle = color
-    ctx!.globalAlpha = opacity
-    ctx!.fillText(htmlDecode(el.el.innerHTML), x, y, width - x + xPadding / 2)
+    ctx.font = `${fontSize} ${fontFamily}`
+    ctx.fillStyle = color
+    ctx.globalAlpha = opacity
+    ctx.fillText(htmlDecode(el.el.innerHTML), x, y, width - x + xPadding / 2)
   })
   await Promise.all(elementPromises)
 
-  return ctx!.getImageData(0, 0, canvas.width, canvas.height)
+  return ctx.getImageData(0, 0, canvas.width, canvas.height)
 }

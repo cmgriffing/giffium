@@ -141,10 +141,13 @@
 }
 
 
-/* Full App Height and Letting Footer in the End */
+/* 
+  Full App Height and Letting Footer in the End
+  Max Width to the Main Container for Larger Screen Sizes
+*/
 #app {
-  @apply min-h-screen flex flex-col ;
+  @apply min-h-screen flex flex-col;
 }
 #app main { 
-  @apply w-full flex-1; 
+  @apply w-full flex-1 max-w-screen-2xl mx-auto; 
 }

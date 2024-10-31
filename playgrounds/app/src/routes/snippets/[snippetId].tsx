@@ -39,6 +39,14 @@ export default function ViewSnippet({ params }: { params: { snippetId: string } 
           setShadowOpacity={() => {}}
           bgColor={snippet()!.bgColor}
           setBgColor={() => {}}
+          bgType={snippet()!.bgType}
+          setBgType={() => {}}
+          bgGradientColorStart={snippet()!.bgGradientColorStart}
+          setBgGradientColorStart={() => {}}
+          bgGradientColorEnd={snippet()!.bgGradientColorEnd}
+          setBgGradientColorEnd={() => {}}
+          bgGradientDirection={snippet()!.bgGradientDirection}
+          setBgGradientDirection={() => {}}
           fontSize={snippet()!.fontSize}
           setFontSize={() => {}}
           fontFamily={snippet()!.fontFamily}
