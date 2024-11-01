@@ -14,7 +14,8 @@ export interface KeyedToken extends ThemedToken {
   htmlClass?: string
 }
 
-export interface KeyedTokensInfo extends Pick<TokensResult, 'bg' | 'fg' | 'rootStyle' | 'themeName'> {
+export interface KeyedTokensInfo
+  extends Pick<TokensResult, 'bg' | 'fg' | 'rootStyle' | 'themeName'> {
   code: string
   hash: string
   tokens: KeyedToken[]
@@ -92,7 +93,10 @@ export interface MagicMoveRenderOptions {
    *
    * @default () => {}
    */
-  onAnimationStart?: (elements: MagicMoveElement[], container: { height: number, width: number }) => void
+  onAnimationStart?: (
+    elements: MagicMoveElement[],
+    container: { height: number; width: number },
+  ) => void
 }
 
 export interface MagicMoveDifferOptions {
@@ -111,7 +115,7 @@ export interface MagicMoveDifferOptions {
   /**
    * Algorithm to use to cleanup the diff
    */
-  diffCleanup?: ((diffs: Diff[]) => Diff[] | void)
+  diffCleanup?: (diffs: Diff[]) => Diff[] | void
   /**
    * Enhance the matching algorithm to match tokens that has same content
    */

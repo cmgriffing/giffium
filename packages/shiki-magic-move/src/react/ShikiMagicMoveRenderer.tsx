@@ -17,25 +17,22 @@ export interface ShikiMagicMoveRendererProps {
 /**
  * A wrapper component to `MagicMoveRenderer`
  */
-export function ShikiMagicMoveRenderer(
-  {
-    animate = true,
-    tokens,
-    previous,
-    options,
-    onStart,
-    onEnd,
-    className,
-    style,
-  }: ShikiMagicMoveRendererProps,
-) {
+export function ShikiMagicMoveRenderer({
+  animate = true,
+  tokens,
+  previous,
+  options,
+  onStart,
+  onEnd,
+  className,
+  style,
+}: ShikiMagicMoveRendererProps) {
   const container = React.useRef<HTMLPreElement>(null)
   const renderer = React.useRef<Renderer>()
   const [isMounted, setIsMounted] = React.useState(false)
 
   React.useEffect(() => {
-    if (!container.current)
-      return
+    if (!container.current) return
     // Remove previous content
     container.current.innerHTML = ''
     setIsMounted(true)
@@ -44,18 +41,15 @@ export function ShikiMagicMoveRenderer(
 
   React.useEffect(() => {
     async function render() {
-      if (!renderer.current)
-        return
+      if (!renderer.current) return
       Object.assign(renderer.current.options, options)
       if (animate) {
-        if (previous)
-          renderer.current.replace(previous)
+        if (previous) renderer.current.replace(previous)
 
         onStart?.()
         await renderer.current.render(tokens)
         onEnd?.()
-      }
-      else {
+      } else {
         renderer.current.replace(tokens)
       }
     }
@@ -73,30 +67,28 @@ export function ShikiMagicMoveRenderer(
     >
       {
         // Render initial tokens for SSR
-
         // FIXME: Remove this element
         // Uncaught DOMException: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
       }
       <div>
         {isMounted
           ? undefined
-          : tokens.tokens.map((token) => {
-            if (token.content === '\n')
-              return <br key={token.key} />
+          : tokens.tokens.map(token => {
+              if (token.content === '\n') return <br key={token.key} />
 
-            return (
-              <span
-                style={{
-                  ...normalizeCSSProperties(token.htmlStyle),
-                  color: token.color,
-                }}
-                className={['shiki-magic-move-item', token.htmlClass].filter(Boolean).join(' ')}
-                key={token.key}
-              >
-                {token.content}
-              </span>
-            )
-          })}
+              return (
+                <span
+                  style={{
+                    ...normalizeCSSProperties(token.htmlStyle),
+                    color: token.color,
+                  }}
+                  className={['shiki-magic-move-item', token.htmlClass].filter(Boolean).join(' ')}
+                  key={token.key}
+                >
+                  {token.content}
+                </span>
+              )
+            })}
       </div>
     </pre>
   )

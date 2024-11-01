@@ -242,9 +242,9 @@ it('diff3 enhanceMatching', async () => {
     enhanceMatching: true,
   }).to
 
-  expect(printDiff(tokens2WithoutEnhance, originKeys2))
-    .not
-    .toEqual(printDiff(tokens2WithEnhance, originKeys2))
+  expect(printDiff(tokens2WithoutEnhance, originKeys2)).not.toEqual(
+    printDiff(tokens2WithEnhance, originKeys2),
+  )
 
   expect(printDiff(tokens2WithEnhance, originKeys2)).toMatchInlineSnapshot(`
     "
@@ -328,7 +328,7 @@ function printDiff(info: KeyedTokensInfo, keys: string[]) {
 }
 
 function normalizeKeys(info: KeyedTokensInfo, name: string) {
-  info.tokens.forEach((t) => {
+  info.tokens.forEach(t => {
     t.key = t.key.replace(info.hash, name)
   })
 }

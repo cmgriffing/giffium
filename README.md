@@ -87,6 +87,10 @@ pnpm run dev
 
 This will start all the playground in watch mode.
 
+
+> [!NOTE]
+> When code is pushed to any branch, we automatically run a prettier auto-format action that may create a new commit if the code is not properly formatted. To avoid having to pull these auto-format commits, please run `pnpm run format` locally before pushing your changes to the remote branch.
+
 ### SolidJS
 
 The project is built using [SolidJS](https://www.solidjs.com/). If you are new to SolidJS, we recommend checking out their [documentation](https://www.solidjs.com/docs) and [tutorials](https://www.solidjs.com/tutorial).

@@ -16,13 +16,14 @@ export function createMagicMoveMachine(
   let previous = EMPTY
   let current = EMPTY
 
-  function commit(code: string, override?: MagicMoveDifferOptions): { current: KeyedTokensInfo, previous: KeyedTokensInfo } {
+  function commit(
+    code: string,
+    override?: MagicMoveDifferOptions,
+  ): { current: KeyedTokensInfo; previous: KeyedTokensInfo } {
     previous = current
-    const mergedOptions = override
-      ? { ...options, ...override }
-      : options
-    const newTokens = codeToKeyedTokens(code, mergedOptions.lineNumbers);
-    ({ from: previous, to: current } = syncTokenKeys(previous, newTokens, mergedOptions))
+    const mergedOptions = override ? { ...options, ...override } : options
+    const newTokens = codeToKeyedTokens(code, mergedOptions.lineNumbers)
+    ;({ from: previous, to: current } = syncTokenKeys(previous, newTokens, mergedOptions))
     return {
       current,
       previous,
@@ -44,10 +45,7 @@ export function createMagicMoveMachine(
   }
 }
 
-export function codeToKeyedTokens<
-  BundledLangKeys extends string,
-  BundledThemeKeys extends string,
->(
+export function codeToKeyedTokens<BundledLangKeys extends string, BundledThemeKeys extends string>(
   highlighter: HighlighterGeneric<BundledLangKeys, BundledThemeKeys>,
   code: string,
   options: ArgumentsType<HighlighterGeneric<BundledLangKeys, BundledThemeKeys>['codeToTokens']>[1],
@@ -84,10 +82,8 @@ export function toKeyedTokens(
     .flatMap((line, lineIdx): ThemedToken[] => {
       firstOffset = line[0]?.offset || lastOffset
       const lastEl = line[line.length - 1]
-      if (!lastEl)
-        lastOffset += 1
-      else
-        lastOffset = lastEl.offset + lastEl.content.length
+      if (!lastEl) lastOffset += 1
+      else lastOffset = lastEl.offset + lastEl.content.length
       const tokens = [
         ...line,
         {
@@ -120,23 +116,22 @@ export function toKeyedTokens(
 }
 
 function splitWhitespaceTokens(tokens: ThemedToken[][]) {
-  return tokens.map((line) => {
-    return line.flatMap((token) => {
-      if (token.content.match(/^\s+$/))
-        return token
+  return tokens.map(line => {
+    return line.flatMap(token => {
+      if (token.content.match(/^\s+$/)) return token
       // eslint-disable-next-line regexp/no-super-linear-backtracking
       const match = token.content.match(/^(\s*)(.*?)(\s*)$/)
-      if (!match)
-        return token
+      if (!match) return token
       const [, leading, content, trailing] = match
-      if (!leading && !trailing)
-        return token
+      if (!leading && !trailing) return token
 
-      const expanded = [{
-        ...token,
-        offset: token.offset + leading.length,
-        content,
-      }]
+      const expanded = [
+        {
+          ...token,
+          offset: token.offset + leading.length,
+          content,
+        },
+      ]
       if (leading) {
         expanded.unshift({
           content: leading,
@@ -159,10 +154,7 @@ function splitWhitespaceTokens(tokens: ThemedToken[][]) {
  *
  * The offsets are relative to the token, and should be sorted.
  */
-function splitToken(
-  token: KeyedToken,
-  offsets: number[],
-): KeyedToken[] {
+function splitToken(token: KeyedToken, offsets: number[]): KeyedToken[] {
   let lastOffset = 0
   const key = token.key
   let index = 0
@@ -204,20 +196,19 @@ function splitToken(
  * Split 2D tokens array by given breakpoints.
  */
 function splitTokens(tokens: KeyedToken[], breakpoints: number[] | Set<number>): KeyedToken[] {
-  const sorted = Array.from(breakpoints instanceof Set ? breakpoints : new Set(breakpoints))
-    .sort((a, b) => a - b)
+  const sorted = Array.from(breakpoints instanceof Set ? breakpoints : new Set(breakpoints)).sort(
+    (a, b) => a - b,
+  )
 
-  if (!sorted.length)
-    return tokens
+  if (!sorted.length) return tokens
 
-  return tokens.flatMap((token) => {
+  return tokens.flatMap(token => {
     const breakpointsInToken = sorted
       .filter(i => token.offset < i && i < token.offset + token.content.length)
       .map(i => i - token.offset)
       .sort((a, b) => a - b)
 
-    if (!breakpointsInToken.length)
-      return token
+    if (!breakpointsInToken.length) return token
 
     return splitToken(token, breakpointsInToken)
   })
@@ -231,49 +222,52 @@ export function syncTokenKeys(
   from: KeyedTokensInfo,
   to: KeyedTokensInfo,
   options: MagicMoveDifferOptions = {},
-): { from: KeyedTokensInfo, to: KeyedTokensInfo } {
-  const {
-    splitTokens: shouldSplitTokens = false,
-    enhanceMatching = true,
-  } = options
+): { from: KeyedTokensInfo; to: KeyedTokensInfo } {
+  const { splitTokens: shouldSplitTokens = false, enhanceMatching = true } = options
 
   // Run the diff and generate matches parts
   // In the matched parts, we override the keys with the same key so that the transition group can know they are the same element
   const matches = findTextMatches(from.code, to.code, options)
   const tokensFrom = shouldSplitTokens
-    ? splitTokens(from.tokens, matches.flatMap(m => m.from))
+    ? splitTokens(
+        from.tokens,
+        matches.flatMap(m => m.from),
+      )
     : from.tokens
   const tokensTo = shouldSplitTokens
-    ? splitTokens(to.tokens, matches.flatMap(m => m.to))
+    ? splitTokens(
+        to.tokens,
+        matches.flatMap(m => m.to),
+      )
     : to.tokens
 
   const matchedKeys = new Set<string>()
 
-  matches.forEach((match) => {
-    const tokensF = tokensFrom.filter(t => t.offset >= match.from[0] && t.offset + t.content.length <= match.from[1])
-    const tokensT = tokensTo.filter(t => t.offset >= match.to[0] && t.offset + t.content.length <= match.to[1])
+  matches.forEach(match => {
+    const tokensF = tokensFrom.filter(
+      t => t.offset >= match.from[0] && t.offset + t.content.length <= match.from[1],
+    )
+    const tokensT = tokensTo.filter(
+      t => t.offset >= match.to[0] && t.offset + t.content.length <= match.to[1],
+    )
 
     let idxF = 0
     let idxT = 0
     while (idxF < tokensF.length && idxT < tokensT.length) {
-      if (!tokensF[idxF] || !tokensT[idxT])
-        break
+      if (!tokensF[idxF] || !tokensT[idxT]) break
       if (tokensF[idxF].content === tokensT[idxT].content) {
         // assign the key from the first set to the second set
         tokensT[idxT].key = tokensF[idxF].key
         matchedKeys.add(tokensF[idxF].key)
         idxF++
         idxT++
-      }
-      else if (tokensF[idxF + 1]?.content === tokensT[idxT].content) {
+      } else if (tokensF[idxF + 1]?.content === tokensT[idxT].content) {
         // console.log('Token missing match', tokensF[idxF], undefined)
         idxF++
-      }
-      else if (tokensF[idxF].content === tokensT[idxT + 1]?.content) {
+      } else if (tokensF[idxF].content === tokensT[idxT + 1]?.content) {
         // console.log('Token missing match', undefined, tokensT[idxT])
         idxT++
-      }
-      else {
+      } else {
         // console.log('Token missing match', tokensF[idxF], tokensT[idxT])
         idxF++
         idxT++
@@ -283,10 +277,8 @@ export function syncTokenKeys(
 
   if (enhanceMatching) {
     for (const token of tokensFrom) {
-      if (matchedKeys.has(token.key))
-        continue
-      if (token.content.length < 3 || !token.content.match(/^[\w-]+$/))
-        continue
+      if (matchedKeys.has(token.key)) continue
+      if (token.content.length < 3 || !token.content.match(/^[\w-]+$/)) continue
       const matched = tokensTo.find(t => t.content === token.content && !matchedKeys.has(t.key))
       if (matched) {
         matched.key = token.key
@@ -327,17 +319,14 @@ export function findTextMatches(
       })
       aContent += text
       bContent += text
-    }
-    else if (op === -1) {
+    } else if (op === -1) {
       aContent += text
-    }
-    else if (op === 1) {
+    } else if (op === 1) {
       bContent += text
     }
   }
 
-  if (aContent !== a || bContent !== b)
-    throw new Error('Content mismatch')
+  if (aContent !== a || bContent !== b) throw new Error('Content mismatch')
 
   return matched
 }

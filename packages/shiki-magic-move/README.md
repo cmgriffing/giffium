@@ -62,9 +62,7 @@ function animate() {
     :code="code"
     :options="{ duration: 800, stagger: 0.3, lineNumbers: true }"
   />
-  <button @click="animate">
-    Animate
-  </button>
+  <button @click="animate">Animate</button>
 </template>
 ```
 
@@ -162,17 +160,14 @@ import { ShikiMagicMovePrecompiled } from 'shiki-magic-move/vue'
 import { ref } from 'vue'
 
 const step = ref(1)
-const compiledSteps = [/* Compiled token steps */]
+const compiledSteps = [
+  /* Compiled token steps */
+]
 </script>
 
 <template>
-  <ShikiMagicMovePrecompiled
-    :steps="compiledSteps"
-    :step="step"
-  />
-  <button @click="step++">
-    Next
-  </button>
+  <ShikiMagicMovePrecompiled :steps="compiledSteps" :step="step" />
+  <button @click="step++">Next</button>
 </template>
 ```
 
@@ -187,19 +182,17 @@ const shiki = await getHighlighter({
   langs: ['javascript', 'typescript'],
 })
 
-const codeSteps = [
-  `const hello = 'world'`,
-  `let hi = 'hello'`,
-]
+const codeSteps = [`const hello = 'world'`, `let hi = 'hello'`]
 
 const machine = createMagicMoveMachine(
-  code => codeToKeyedTokens(shiki, code, {
-    lang: 'ts',
-    theme: 'nord',
-  }),
+  code =>
+    codeToKeyedTokens(shiki, code, {
+      lang: 'ts',
+      theme: 'nord',
+    }),
   {
     // options
-  }
+  },
 )
 
 const compiledSteps = codeSteps.map(code => machine.commit(code).current)

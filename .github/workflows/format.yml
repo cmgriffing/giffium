@@ -2,28 +2,27 @@ name: Format
 
 on:
   push:
-    branches: [main]
+    branches:
+      - '**'  # Any branch
 
 jobs:
   format:
     runs-on: ubuntu-latest
+    # Add permissions to allow commits
+    permissions:
+      contents: write
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2.2.4
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
-          node-version: 18
+          # Make sure the actual branch is checked out when running on pull requests
+          ref: ${{ github.head_ref }}
+          # This is important to fetch the changes to the previous commit
+          fetch-depth: 0
 
-      - name: Install dependencies
-        run: pnpm install --ignore-scripts
-
-      - name: Format
-        run: pnpm run format
-
-      - name: Add, Commit and Push
-        uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Prettier Action
+        uses: creyD/prettier_action@v4.3
         with:
-          commit_message: 'Format'
+          prettier_options: '--config ./.prettierrc --ignore-path .gitignore -w "packages/**/*.{js,ts,json,css,tsx,jsx,md}" "playgrounds/**/*.{js,ts,json,css,tsx,jsx,md}"'
+          commit_message: "style: auto-format with action"

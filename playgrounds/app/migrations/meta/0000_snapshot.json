@@ -123,30 +123,22 @@
       "indexes": {
         "users_table_email_unique": {
           "name": "users_table_email_unique",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": true
         },
         "users_table_githubId_unique": {
           "name": "users_table_githubId_unique",
-          "columns": [
-            "githubId"
-          ],
+          "columns": ["githubId"],
           "isUnique": true
         },
         "users_table_githubUsername_unique": {
           "name": "users_table_githubUsername_unique",
-          "columns": [
-            "githubUsername"
-          ],
+          "columns": ["githubUsername"],
           "isUnique": true
         },
         "users_table_githubAvatarUrl_unique": {
           "name": "users_table_githubAvatarUrl_unique",
-          "columns": [
-            "githubAvatarUrl"
-          ],
+          "columns": ["githubAvatarUrl"],
           "isUnique": true
         }
       },
