@@ -89,7 +89,7 @@ This will start all the playground in watch mode.
 
 
 > [!NOTE]
-> Once a pull request is submitted, we run a prettier auto-format action and create a new commit if it's not formatted properly. Be sure to pull the latest changes after submitting a pull request or run `pnpm run format` to format your changes locally before submitting a new pull request.
+> When code is pushed to any branch, we automatically run a prettier auto-format action that may create a new commit if the code is not properly formatted. To avoid having to pull these auto-format commits, please run `pnpm run format` locally before pushing your changes to the remote branch.
 
 ### SolidJS
 
