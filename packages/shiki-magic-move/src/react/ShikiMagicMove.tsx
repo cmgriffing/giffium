@@ -18,38 +18,36 @@ export interface ShikiMagicMoveProps {
 
 export function ShikiMagicMove(props: ShikiMagicMoveProps) {
   const codeToTokens = React.useRef<(code: string, lineNumbers?: boolean) => KeyedTokensInfo>()
-  codeToTokens.current = (code, lineNumbers) => codeToKeyedTokens(
-    props.highlighter,
-    code,
-    {
-      lang: props.lang,
-      theme: props.theme,
-    },
-    lineNumbers,
-  )
+  codeToTokens.current = (code, lineNumbers) =>
+    codeToKeyedTokens(
+      props.highlighter,
+      code,
+      {
+        lang: props.lang,
+        theme: props.theme,
+      },
+      lineNumbers,
+    )
 
   const machine = React.useRef<ReturnType<typeof createMagicMoveMachine>>()
-  machine.current = machine.current || createMagicMoveMachine(
-    (code, lineNumbers) => codeToTokens.current!(code, lineNumbers),
-  )
+  machine.current =
+    machine.current ||
+    createMagicMoveMachine((code, lineNumbers) => codeToTokens.current!(code, lineNumbers))
 
   const lineNumbers = props.options?.lineNumbers ?? false
 
-  const result = React.useMemo(
-    () => {
-      if (
-        props.code === machine.current!.current.code
-        && props.theme === machine.current!.current.themeName
-        && props.lang === machine.current!.current.lang
-        && lineNumbers === machine.current!.current.lineNumbers
-      ) {
-        return machine.current!
-      }
+  const result = React.useMemo(() => {
+    if (
+      props.code === machine.current!.current.code &&
+      props.theme === machine.current!.current.themeName &&
+      props.lang === machine.current!.current.lang &&
+      lineNumbers === machine.current!.current.lineNumbers
+    ) {
+      return machine.current!
+    }
 
-      return machine.current!.commit(props.code, props.options)
-    },
-    [props.code, props.options, props.theme, props.lang, lineNumbers],
-  )
+    return machine.current!.commit(props.code, props.options)
+  }, [props.code, props.options, props.theme, props.lang, lineNumbers])
 
   return (
     <ShikiMagicMoveRenderer

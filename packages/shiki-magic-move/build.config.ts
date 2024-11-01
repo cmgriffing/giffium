@@ -34,9 +34,31 @@ export default defineBuildConfig({
   },
   hooks: {
     'rollup:options': async (config, options) => {
-      options.plugins.unshift(babel({ babelHelpers: 'bundled', include: ['src/**'], exclude: ['src/solid/**', 'src/react/**'], presets: ['@babel/preset-typescript'], extensions: ['.ts', '.js'] }))
-      options.plugins.unshift(babel({ babelHelpers: 'bundled', include: ['src/solid/**'], presets: ['@babel/preset-typescript', 'solid'], extensions: ['.ts', '.tsx', '.js', '.jsx'] }))
-      options.plugins.unshift(babel({ babelHelpers: 'bundled', include: ['src/react/**'], presets: ['@babel/preset-typescript', '@babel/preset-react'], extensions: ['.ts', '.tsx', '.js', '.jsx'] }))
+      options.plugins.unshift(
+        babel({
+          babelHelpers: 'bundled',
+          include: ['src/**'],
+          exclude: ['src/solid/**', 'src/react/**'],
+          presets: ['@babel/preset-typescript'],
+          extensions: ['.ts', '.js'],
+        }),
+      )
+      options.plugins.unshift(
+        babel({
+          babelHelpers: 'bundled',
+          include: ['src/solid/**'],
+          presets: ['@babel/preset-typescript', 'solid'],
+          extensions: ['.ts', '.tsx', '.js', '.jsx'],
+        }),
+      )
+      options.plugins.unshift(
+        babel({
+          babelHelpers: 'bundled',
+          include: ['src/react/**'],
+          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+          extensions: ['.ts', '.tsx', '.js', '.jsx'],
+        }),
+      )
     },
     'mkdist:done': async () => {
       await fs.writeFile('dist/svelte.mjs', 'export * from "./svelte/index.mjs"\n', 'utf-8')

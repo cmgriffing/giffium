@@ -1,11 +1,7 @@
 /** @jsxImportSource solid-js */
 
 import { createMemo, createSignal } from 'solid-js'
-import type {
-  KeyedTokensInfo,
-  MagicMoveDifferOptions,
-  MagicMoveRenderOptions,
-} from '../types'
+import type { KeyedTokensInfo, MagicMoveDifferOptions, MagicMoveRenderOptions } from '../types'
 import { syncTokenKeys, toKeyedTokens } from '../core'
 import { ShikiMagicMoveRenderer } from './ShikiMagicMoveRenderer'
 

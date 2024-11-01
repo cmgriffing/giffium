@@ -25,10 +25,7 @@ export const ShikiMagicMoveRenderer = /* #__PURE__ */ defineComponent({
       type: Object as PropType<MagicMoveRenderOptions>,
     },
   },
-  emits: [
-    'end',
-    'start',
-  ],
+  emits: ['end', 'start'],
   setup(props, { emit }) {
     const container = ref<HTMLElement>()
 
@@ -42,19 +39,17 @@ export const ShikiMagicMoveRenderer = /* #__PURE__ */ defineComponent({
 
       watch(
         () => props.tokens,
-        async (tokens) => {
+        async tokens => {
           Object.assign(renderer.options, props.options)
           if (props.animate) {
-            if (props.previous)
-              renderer.replace(props.previous)
+            if (props.previous) renderer.replace(props.previous)
             await nextTick()
             const process = renderer.render(tokens)
             await nextTick()
             emit('start')
             await process
             emit('end')
-          }
-          else {
+          } else {
             renderer.replace(tokens)
           }
         },
@@ -62,25 +57,25 @@ export const ShikiMagicMoveRenderer = /* #__PURE__ */ defineComponent({
       )
     })
 
-    return () => h(
-      'pre',
-      { ref: container, class: 'shiki-magic-move-container' },
-      // Render initial tokens for SSR
-      isMounted
-        ? undefined
-        : renderList(props.tokens.tokens, (token) => {
-          if (token.content === '\n')
-            return h('br', { key: token.key })
-          return h(
-            'span',
-            {
-              style: [{ color: token.color }, token.htmlStyle],
-              class: ['shiki-magic-move-item', token.htmlClass],
-              key: token.key,
-            },
-            token.content,
-          )
-        }),
-    )
+    return () =>
+      h(
+        'pre',
+        { ref: container, class: 'shiki-magic-move-container' },
+        // Render initial tokens for SSR
+        isMounted
+          ? undefined
+          : renderList(props.tokens.tokens, token => {
+              if (token.content === '\n') return h('br', { key: token.key })
+              return h(
+                'span',
+                {
+                  style: [{ color: token.color }, token.htmlStyle],
+                  class: ['shiki-magic-move-item', token.htmlClass],
+                  key: token.key,
+                },
+                token.content,
+              )
+            }),
+      )
   },
 })

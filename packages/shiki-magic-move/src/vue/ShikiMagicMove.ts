@@ -29,32 +29,31 @@ export const ShikiMagicMove = /* #__PURE__ */ defineComponent({
       default: () => ({}),
     },
   },
-  emits: [
-    'start',
-    'end',
-  ],
+  emits: ['start', 'end'],
   setup(props, { emit }) {
     const machine = createMagicMoveMachine(
-      code => codeToKeyedTokens(
-        props.highlighter,
-        code,
-        {
-          lang: props.lang,
-          theme: props.theme,
-        },
-        props.options.lineNumbers,
-      ),
+      code =>
+        codeToKeyedTokens(
+          props.highlighter,
+          code,
+          {
+            lang: props.lang,
+            theme: props.theme,
+          },
+          props.options.lineNumbers,
+        ),
       props.options,
     )
 
     const result = computed(() => machine.commit(props.code))
 
-    return () => h(ShikiMagicMoveRenderer, {
-      tokens: result.value.current,
-      options: props.options,
-      previous: result.value.previous,
-      onStart: () => emit('start'),
-      onEnd: () => emit('end'),
-    })
+    return () =>
+      h(ShikiMagicMoveRenderer, {
+        tokens: result.value.current,
+        options: props.options,
+        previous: result.value.previous,
+        onStart: () => emit('start'),
+        onEnd: () => emit('end'),
+      })
   },
 })

@@ -30,9 +30,7 @@ export function ShikiMagicMove(props: ShikiMagicMoveProps) {
       lineNumbers,
     )
 
-  const machine = createMagicMoveMachine((code, lineNumbers) =>
-    codeToTokens(code, lineNumbers),
-  )
+  const machine = createMagicMoveMachine((code, lineNumbers) => codeToTokens(code, lineNumbers))
 
   const result = createMemo(() => {
     const lineNumbers = props.options?.lineNumbers ?? false

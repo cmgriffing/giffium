@@ -18,24 +18,18 @@ const EMPTY = /* @__PURE__ */ toKeyedTokens('', [])
  * Component to render a compiled magic move step,
  * Where the tokens can be generated on build time.
  */
-export function ShikiMagicMovePrecompiled(
-  {
-    steps,
-    step = 0,
-    animate = true,
-    options,
-    onStart,
-    onEnd,
-  }: ShikiMagicMovePrecompiledProps,
-) {
+export function ShikiMagicMovePrecompiled({
+  steps,
+  step = 0,
+  animate = true,
+  options,
+  onStart,
+  onEnd,
+}: ShikiMagicMovePrecompiledProps) {
   const [previous, setPrevious] = React.useState(EMPTY)
 
   const result = React.useMemo(() => {
-    const res = syncTokenKeys(
-      previous,
-      steps[Math.min(step, steps.length - 1)],
-      options,
-    )
+    const res = syncTokenKeys(previous, steps[Math.min(step, steps.length - 1)], options)
     setPrevious(res.to)
     return res
   }, [previous, steps, step, options])

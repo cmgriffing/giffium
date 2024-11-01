@@ -28,10 +28,7 @@ export const ShikiMagicMovePrecompiled = /* #__PURE__ */ defineComponent({
       default: () => ({}),
     },
   },
-  emits: [
-    'start',
-    'end',
-  ],
+  emits: ['start', 'end'],
   setup(props, { emit }) {
     const EMPTY = toKeyedTokens('', [])
 
@@ -46,13 +43,14 @@ export const ShikiMagicMovePrecompiled = /* #__PURE__ */ defineComponent({
       return res
     })
 
-    return () => h(ShikiMagicMoveRenderer, {
-      tokens: result.value.to,
-      previous: result.value.from,
-      options: props.options,
-      animate: props.animate,
-      onStart: () => emit('start'),
-      onEnd: () => emit('end'),
-    })
+    return () =>
+      h(ShikiMagicMoveRenderer, {
+        tokens: result.value.to,
+        previous: result.value.from,
+        options: props.options,
+        animate: props.animate,
+        onStart: () => emit('start'),
+        onEnd: () => emit('end'),
+      })
   },
 })
