@@ -12,7 +12,7 @@
     "build": "turbo run build --filter=./packages/*",
     "test": "turbo run test --filter=./packages/*",
     "typecheck": "turbo run typecheck --filter=./packages/*",
-    "build-test": "turbo run build test typecheck --filter=./packages/*",
+    "build-test": "turbo run build test --filter=./packages/*",
     "format": "prettier --ignore-path .gitignore -w \"packages/**/*.{js,ts,json,css,tsx,jsx,md}\" \"playgrounds/**/*.{js,ts,json,css,tsx,jsx,md}\"",
     "changeset": "changeset",
     "version-packages": "changeset version && pnpm i",
