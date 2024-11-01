@@ -2,7 +2,8 @@ name: Format
 
 on:
   push:
-    branches: ['*']
+    branches:
+      - '**'  # Any branch
 
 jobs:
   format:
