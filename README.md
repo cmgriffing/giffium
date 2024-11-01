@@ -87,6 +87,10 @@ pnpm run dev
 
 This will start all the playground in watch mode.
 
+
+> [!NOTE]
+> Once a pull request is submitted, we run a prettier auto-format action and create a new commit if it's not formatted properly. Be sure to pull the latest changes after submitting a pull request or run `pnpm run format` to format your changes locally before submitting a new pull request.
+
 ### SolidJS
 
 The project is built using [SolidJS](https://www.solidjs.com/). If you are new to SolidJS, we recommend checking out their [documentation](https://www.solidjs.com/docs) and [tutorials](https://www.solidjs.com/tutorial).
