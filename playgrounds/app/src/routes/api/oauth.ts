@@ -40,15 +40,18 @@ export async function POST(event: APIEvent) {
   })
 
   if (!user) {
-    await db.insert(usersTable).values({
+    const createdAt = Date.now()
+    const newUser = {
       id: customNanoid(),
       email: githubUser.email,
       githubId: githubUser.id,
       githubUsername: githubUser.login,
       githubAvatarUrl: githubUser.avatar_url,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    })
+      createdAt,
+      updatedAt: createdAt,
+    }
+    await db.insert(usersTable).values(newUser)
+    user = newUser
   }
 
   return new Response(
