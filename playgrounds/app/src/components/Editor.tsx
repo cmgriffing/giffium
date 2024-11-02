@@ -229,7 +229,6 @@ export default function Editor(props: EditorProps) {
           maxContainerDimensions()?.height || 100,
           {
             layout: {
-              width: props.snippetWidth,
               yPadding: props.yPadding,
               xPadding: props.xPadding,
             },

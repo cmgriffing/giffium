@@ -34,7 +34,6 @@ export interface Snippet {
 }
 
 export interface AnimationFrameLayout {
-  width: number
   yPadding: number
   xPadding: number
 }
