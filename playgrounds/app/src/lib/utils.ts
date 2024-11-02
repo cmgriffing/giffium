@@ -1,7 +1,6 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { authToken } from './store'
-import { useNavigate } from '@solidjs/router'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

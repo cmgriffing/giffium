@@ -76,7 +76,7 @@ export default function Home() {
   const [bgGradientColorStart, setBgGradientColorStart] = makePersisted(createSignal('#a3d0ff'), {
     name: 'bgGradientColorStart',
   })
-  const [bgGradientColorEnd, setBgGradientColorEnd] = makePersisted(createSignal('#a3d0ff'), {
+  const [bgGradientColorEnd, setBgGradientColorEnd] = makePersisted(createSignal('#fbc737'), {
     name: 'bgGradientColorEnd',
   })
   const [bgGradientDirection, setBgGradientDirection] = makePersisted(createSignal(45), {
@@ -84,10 +84,10 @@ export default function Home() {
   })
 
   return (
-    <main class="mx-auto text-gray-700 dark:text-gray-100 p-4">
-      <p class="mb-16 text-center font-bold text-lg">
+    <main class="mx-auto text-gray-700 dark:text-gray-100 px-4 min-h-full">
+      {/* <p class="mb-16 text-center font-bold text-lg">
         Create and share beautiful gifs of your source code diffs.
-      </p>
+      </p> */}
       <Editor
         startCode={startCode()}
         setStartCode={setStartCode}

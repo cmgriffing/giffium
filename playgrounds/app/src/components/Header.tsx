@@ -24,7 +24,38 @@ export default function Header() {
 
   return (
     <header class="flex flex-col">
-      <nav class="flex flex-row gap-2 justify-end p-4">
+      <nav class="flex flex-row gap-2 justify-between p-4">
+        <div class="flex flex-row items-center gap-8">
+          <div class="flex flex-col items-center justify-center">
+            <a href="/">
+              <h1 class="text-3xl font-title text-sky-500">Giffium</h1>
+            </a>
+            <p class="text-left mt-[-10px]">
+              by{' '}
+              <a href="https://cmgriffing.com" rel="dofollow" target="_blank" class={linkStyles}>
+                cmgriffing
+              </a>
+            </p>
+          </div>
+
+          <ul class="flex flex-row gap-4">
+            <li class="">
+              <A href="/about" class={linkStyles}>
+                About
+              </A>
+            </li>
+            <li class="">
+              <a
+                href="https://github.com/cmgriffing/giffium"
+                target="_blank"
+                rel="noreferrer"
+                class={linkStyles}
+              >
+                Source
+              </a>
+            </li>
+          </ul>
+        </div>
         <div class="flex flex-row items-center gap-2">
           <button
             onClick={handleToggle}
@@ -77,17 +108,6 @@ export default function Header() {
           </Show>
         </div>
       </nav>
-      <div class="flex flex-col items-center justify-center p-4">
-        <a href="/">
-          <h1 class="text-6xl font-title text-sky-500">Giffium</h1>
-        </a>
-        <p class="text-left mt-[-10px]">
-          by{' '}
-          <a href="https://cmgriffing.com" rel="dofollow" target="_blank" class={linkStyles}>
-            cmgriffing
-          </a>
-        </p>
-      </div>
     </header>
   )
 }
