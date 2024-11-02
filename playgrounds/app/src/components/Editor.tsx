@@ -229,6 +229,7 @@ export default function Editor(props: EditorProps) {
           maxContainerDimensions()?.height || 100,
           {
             layout: {
+              width: props.snippetWidth,
               yPadding: props.yPadding,
               xPadding: props.xPadding,
             },
@@ -434,6 +435,27 @@ export default function Editor(props: EditorProps) {
               <AccordionTrigger>Layout</AccordionTrigger>
               <AccordionContent>
                 <div class="flex flex-col gap-4">
+                  <Slider
+                    value={[props.snippetWidth]}
+                    minValue={0}
+                    maxValue={1500}
+                    onChange={e => {
+                      props.setSnippetWidth(e[0])
+                    }}
+                  >
+                    <div class="flex w-full justify-between mb-2">
+                      <SliderLabel>Width</SliderLabel>
+                      <div class="flex flex-row">
+                        <SliderValueLabel />
+                        <span class="text-xs">px</span>
+                      </div>
+                    </div>
+                    <SliderTrack>
+                      <SliderFill />
+                      <SliderThumb />
+                    </SliderTrack>
+                  </Slider>
+
                   <Slider
                     value={[props.yPadding]}
                     minValue={0}
