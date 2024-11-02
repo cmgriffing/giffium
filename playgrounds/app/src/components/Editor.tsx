@@ -872,6 +872,8 @@ export default function Editor(props: EditorProps) {
                     bgGradientColorStart: props.bgGradientColorStart,
                     bgGradientColorEnd: props.bgGradientColorEnd,
                     bgGradientDirection: props.bgGradientDirection,
+                    fontFamily: props.fontFamily,
+                    fontSize: props.fontSize,
                     language: props.language,
                     theme: props.theme,
                   })
