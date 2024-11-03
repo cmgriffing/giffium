@@ -1,0 +1,75 @@
+<style>
+.select {
+	position: relative;
+	background-color: rgba(173, 214, 255, 0.5);
+}
+
+.select::before {
+	position: absolute;
+	left: -1px;
+	animation: blink 1s infinite;
+	background-color: #0969da;
+	width: 1px;
+	height: 1lh;
+	content: "";
+}
+
+.select::after {
+	position: absolute;
+	animation: blink 1s infinite;
+	background-color: #0969da;
+	width: 1px;
+	height: 1lh;
+	content: "";
+}
+
+@keyframes blink {
+	0% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+</style>
+<main id="main"></main>
+<script>
+var exports = {};
+</script>
+<script src="./__snapshots__/tab.test.ts.snap"></script>
+<script>
+for (const [case_name, content] of Object.entries(exports)) {
+	const div = document.createElement("div");
+	const { config, input, output } = eval("(" + content + ")");
+
+	const mode = config.insertSpaces ? "spaces" : "tabs";
+
+	div.innerHTML = `
+	<header>
+		<h2>${case_name}</h2>
+		<h3>config</h3>
+		<p>${mode} ${config.tabSize}</p>
+	</header>
+	<h3>input</h3>
+	${outputCode(input, config)}
+	<h3>output</h3>
+	${outputCode(output, config)}
+`;
+	main.append(div);
+}
+
+function outputCode(state, config) {
+	const { value, selectionStart, selectionEnd } = state;
+	const content = value.join("\n");
+	const [start, mid, end] = [
+		content.slice(0, selectionStart),
+		content.slice(selectionStart, selectionEnd),
+		content.slice(selectionEnd),
+	];
+
+	return `<pre style="tab-size:${config.tabSize}"><code>${start}<span class="select">${mid}</span>${end}</code></pre>`;
+}
+</script>

@@ -51,6 +51,7 @@ import { toast } from 'solid-sonner'
 import { Separator } from './ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
+import CodeBlock from './ui/shiki-code-block'
 
 const animationSeconds = 1
 const animationFPS = 10
@@ -686,23 +687,24 @@ export default function Editor(props: EditorProps) {
               </div>
 
               <div class="dark:bg-[#27272a] bg-gray-100 p-2 rounded-b flex flex-row flex-wrap md:flex-nowrap gap-2">
-                <TextField
-                  class="w-full md:w-1/2"
-                  value={props.startCode}
-                  onChange={props.setStartCode}
-                >
-                  <TextFieldLabel>Start Code</TextFieldLabel>
-                  <TextFieldTextArea class="h-[400px]" placeholder="Type your message here." />
-                </TextField>
-
-                <TextField
-                  class="w-full md:w-1/2"
-                  value={props.endCode}
-                  onChange={props.setEndCode}
-                >
-                  <TextFieldLabel>End Code</TextFieldLabel>
-                  <TextFieldTextArea class="h-[400px]" placeholder="Type your message here." />
-                </TextField>
+                <div class="flex flex-col w-full md:w-1/2 gap-1">
+                  <p class="w-full text-sm">Start Code</p>
+                  <CodeBlock
+                    code={props.startCode}
+                    lang={props.language}
+                    theme={props.theme}
+                    onChange={props.setStartCode}
+                  />
+                </div>
+                <div class="flex flex-col w-full md:w-1/2 gap-1">
+                  <p class="w-full text-sm">End Code</p>
+                  <CodeBlock
+                    code={props.endCode}
+                    lang={props.language}
+                    theme={props.theme}
+                    onChange={props.setEndCode}
+                  />
+                </div>
               </div>
             </TabsContent>
             <TabsContent value="output">

@@ -1,0 +1,745 @@
+// Bun Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Editor Commands - ShiftCommand basic usage 1`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 0,
+    "selectionStart": 0,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 4,
+    "selectionStart": 4,
+    "value": [
+      "    My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - ShiftCommand basic usage 2`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 2,
+    "selectionStart": 2,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 4,
+    "selectionStart": 4,
+    "value": [
+      "My   First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - ShiftCommand basic usage 3`] = `
+{
+  "config": {
+    "insertSpaces": false,
+    "tabSize": 2,
+  },
+  "input": {
+    "selectionEnd": 33,
+    "selectionStart": 33,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 34,
+    "selectionStart": 34,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "  	  Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - ShiftCommand single line 1`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 13,
+    "selectionStart": 0,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 17,
+    "selectionStart": 0,
+    "value": [
+      "    My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - ShiftCommand single line 2`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 14,
+    "selectionStart": 0,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 18,
+    "selectionStart": 0,
+    "value": [
+      "    My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - ShiftCommand single line 3`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 31,
+    "selectionStart": 14,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 41,
+    "selectionStart": 14,
+    "value": [
+      "My First Line",
+      "            My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - ShiftCommand multiple lines 1`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 14,
+    "selectionStart": 3,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 18,
+    "selectionStart": 7,
+    "value": [
+      "    My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - ShiftCommand multiple lines 2`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 18,
+    "selectionStart": 9,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 32,
+    "selectionStart": 13,
+    "value": [
+      "    My First Line",
+      "            My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - ShiftCommand multiple lines 3`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 31,
+    "selectionStart": 9,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 45,
+    "selectionStart": 13,
+    "value": [
+      "    My First Line",
+      "            My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - ShiftCommand multiple lines 4`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 15,
+    "selectionStart": 3,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 19,
+    "selectionStart": 7,
+    "value": [
+      "    My First Line",
+      "            My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - ShiftCommand multiple lines 5`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 33,
+    "selectionStart": 15,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 43,
+    "selectionStart": 15,
+    "value": [
+      "My First Line",
+      "            My Second Line",
+      "        Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - ShiftCommand multiple lines 6`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 50,
+    "selectionStart": 0,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 72,
+    "selectionStart": 0,
+    "value": [
+      "    My First Line",
+      "            My Second Line",
+      "        Third Line",
+      "",
+      "    123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - UnShiftCommand basic usage 1`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 0,
+    "selectionStart": 0,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 0,
+    "selectionStart": 0,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - UnShiftCommand basic usage 2`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 2,
+    "selectionStart": 2,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 2,
+    "selectionStart": 2,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - UnShiftCommand basic usage 3`] = `
+{
+  "config": {
+    "insertSpaces": false,
+    "tabSize": 2,
+  },
+  "input": {
+    "selectionEnd": 33,
+    "selectionStart": 33,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 32,
+    "selectionStart": 32,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "	Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - UnShiftCommand single line 1`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 13,
+    "selectionStart": 0,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 13,
+    "selectionStart": 0,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - UnShiftCommand single line 2`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 14,
+    "selectionStart": 0,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 14,
+    "selectionStart": 0,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - UnShiftCommand single line 3`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 31,
+    "selectionStart": 14,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 33,
+    "selectionStart": 14,
+    "value": [
+      "My First Line",
+      "    My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - UnShiftCommand multiple lines 1`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 14,
+    "selectionStart": 3,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 14,
+    "selectionStart": 3,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - UnShiftCommand multiple lines 2`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 18,
+    "selectionStart": 9,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 20,
+    "selectionStart": 9,
+    "value": [
+      "My First Line",
+      "    My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - UnShiftCommand multiple lines 3`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 31,
+    "selectionStart": 9,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 33,
+    "selectionStart": 9,
+    "value": [
+      "My First Line",
+      "    My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - UnShiftCommand multiple lines 4`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 15,
+    "selectionStart": 3,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 15,
+    "selectionStart": 3,
+    "value": [
+      "My First Line",
+      "    My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - UnShiftCommand multiple lines 5`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 33,
+    "selectionStart": 15,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 33,
+    "selectionStart": 15,
+    "value": [
+      "My First Line",
+      "    My Second Line",
+      "Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
+
+exports[`Editor Commands - UnShiftCommand multiple lines 6`] = `
+{
+  "config": {
+    "insertSpaces": true,
+    "tabSize": 4,
+  },
+  "input": {
+    "selectionEnd": 50,
+    "selectionStart": 0,
+    "value": [
+      "My First Line",
+      "		My Second Line",
+      "    Third Line",
+      "",
+      "123",
+    ],
+  },
+  "output": {
+    "selectionEnd": 48,
+    "selectionStart": 0,
+    "value": [
+      "My First Line",
+      "    My Second Line",
+      "Third Line",
+      "",
+      "123",
+    ],
+  },
+}
+`;
