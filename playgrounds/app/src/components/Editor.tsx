@@ -14,10 +14,7 @@ import {
 } from '~/components/ui/combobox'
 import { Button } from '~/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import {
-  TextField,
-  TextFieldInput,
-} from '~/components/ui/text-field'
+import { TextField, TextFieldInput } from '~/components/ui/text-field'
 import { MagicMoveElement } from 'shiki-magic-move/types'
 import {
   Slider,
