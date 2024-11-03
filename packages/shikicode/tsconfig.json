@@ -1,16 +1,16 @@
 {
-	"compilerOptions": {
-		"strict": true,
-		"skipLibCheck": true,
-		"target": "esnext",
-		"module": "esnext",
-		"moduleResolution": "bundler",
-		"forceConsistentCasingInFileNames": true,
-		"rootDir": "./src",
-		"outDir": "./lib",
-		"sourceMap": true,
-		"declaration": true,
-		"declarationMap": true
-	},
-	"include": ["src"]
+  "compilerOptions": {
+    "strict": true,
+    "skipLibCheck": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "forceConsistentCasingInFileNames": true,
+    "rootDir": "./src",
+    "outDir": "./lib",
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true
+  },
+  "include": ["src"]
 }

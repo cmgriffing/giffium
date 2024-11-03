@@ -1,42 +1,46 @@
 {
-	"name": "shikicode",
-	"version": "0.0.0",
-	"description": "lightweight code editor powered by shiki",
-	"main": "lib/index.js",
-	"type": "module",
-	"scripts": {
-		"start": "tsc --watch",
-		"build": "tsc",
-		"prepack": "tsc",
-		"fix:fmt": "dprint fmt",
-		"check:fmt": "dprint check",
-		"check:lint": "oxlint src -D correctness -D pedantic"
-	},
-	"keywords": ["shiki", "code", "editor"],
-	"author": "magic-akari <akari.ccino@gmail.com>",
-	"license": "MIT",
-	"bugs": "https://github.com/magic-akari/shikicode/issues",
-	"homepage": "https://github.com/magic-akari/shikicode#readme",
-	"devDependencies": {
-		"@types/jest": "^29.5.13",
-		"dprint": "^0.47.2",
-		"oxlint": "^0.9.10",
-		"shiki": "^1.22.0",
-		"typescript": "^5.6.3"
-	},
-	"peerDependencies": {
-		"shiki": "^1.2.0"
-	},
-	"exports": {
-		".": {
-			"types": "./lib/index.d.ts",
-			"default": "./lib/index.js"
-		},
-		"./plugins": {
-			"types": "./lib/plugins/index.d.ts",
-			"default": "./lib/plugins/index.js"
-		},
-		"./package.json": "./package.json"
-	},
-	"packageManager": "pnpm@9.5.0+sha512.140036830124618d624a2187b50d04289d5a087f326c9edfc0ccd733d76c4f52c3a313d4fc148794a2a9d81553016004e6742e8cf850670268a7387fc220c903"
+  "name": "shikicode",
+  "version": "0.0.0",
+  "description": "lightweight code editor powered by shiki",
+  "main": "lib/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "tsc --watch",
+    "build": "tsc",
+    "prepack": "tsc",
+    "fix:fmt": "dprint fmt",
+    "check:fmt": "dprint check",
+    "check:lint": "oxlint src -D correctness -D pedantic"
+  },
+  "keywords": [
+    "shiki",
+    "code",
+    "editor"
+  ],
+  "author": "magic-akari <akari.ccino@gmail.com>",
+  "license": "MIT",
+  "bugs": "https://github.com/magic-akari/shikicode/issues",
+  "homepage": "https://github.com/magic-akari/shikicode#readme",
+  "devDependencies": {
+    "@types/jest": "^29.5.13",
+    "dprint": "^0.47.2",
+    "oxlint": "^0.9.10",
+    "shiki": "^1.22.0",
+    "typescript": "^5.6.3"
+  },
+  "peerDependencies": {
+    "shiki": "^1.2.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./plugins": {
+      "types": "./lib/plugins/index.d.ts",
+      "default": "./lib/plugins/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "packageManager": "pnpm@9.5.0+sha512.140036830124618d624a2187b50d04289d5a087f326c9edfc0ccd733d76c4f52c3a313d4fc148794a2a9d81553016004e6742e8cf850670268a7387fc220c903"
 }

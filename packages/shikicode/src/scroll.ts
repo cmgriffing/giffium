@@ -1,11 +1,11 @@
 export function hookScroll(input: HTMLElement, output: HTMLElement) {
-	const onScroll = () => {
-		output.scrollTo(input.scrollLeft, input.scrollTop);
-	};
+  const onScroll = () => {
+    output.scrollTo(input.scrollLeft, input.scrollTop)
+  }
 
-	input.addEventListener("scroll", onScroll);
+  input.addEventListener('scroll', onScroll)
 
-	return () => {
-		input.removeEventListener("scroll", onScroll);
-	};
+  return () => {
+    input.removeEventListener('scroll', onScroll)
+  }
 }

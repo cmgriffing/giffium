@@ -23,18 +23,14 @@ const CodeBlock = (props: CodeBlockProps) => {
   onMount(async () => {
     const highlighter = await createHighlighter({
       langs: [lang()],
-      themes: [theme()]
+      themes: [theme()],
     })
     editor = shikiCode()
-      .withPlugins(
-        hookClosingPairs(),
-        hookTab,
-        autoload
-      )
+      .withPlugins(hookClosingPairs(), hookTab, autoload)
       .create(containerRef!, highlighter, {
         value: source(), // Initial code value
         language: lang(),
-        theme: theme()
+        theme: theme(),
       })
 
     editor.input.addEventListener('input', (e: Event) => {
@@ -54,7 +50,7 @@ const CodeBlock = (props: CodeBlockProps) => {
     if (editor) {
       editor.updateOptions({
         theme: newTheme,
-        language: newLang
+        language: newLang,
       })
     }
   })
@@ -62,7 +58,7 @@ const CodeBlock = (props: CodeBlockProps) => {
   return (
     <div
       ref={containerRef}
-      class={cn("relative min-h-[400px] w-full h-full rounded overflow-hidden", props.class)}
+      class={cn('relative min-h-[400px] w-full h-full rounded overflow-hidden', props.class)}
     />
   )
 }

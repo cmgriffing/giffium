@@ -62,52 +62,52 @@ const style = `.shikicode.input, .shikicode.output {
 .shikicode.input.line-numbers {
 	padding-left: 5em;
 }
-`;
+`
 
 function noop() {}
 
 export function injectStyle(doc: Document) {
-	const hash = `shikicode-${djb2(style).toString(36)}`;
-	if (doc.getElementById(hash)) return noop;
-	const element = doc.createElement("style");
-	element.id = hash;
-	element.append(doc.createTextNode(""));
-	doc.head.append(element);
+  const hash = `shikicode-${djb2(style).toString(36)}`
+  if (doc.getElementById(hash)) return noop
+  const element = doc.createElement('style')
+  element.id = hash
+  element.append(doc.createTextNode(''))
+  doc.head.append(element)
 
-	try {
-		const sheet = getSheet(element, doc);
-		sheet.insertRule(style);
-	} catch (e) {
-		element.append(doc.createTextNode(style));
-	}
-	return () => {
-		element.remove();
-	};
+  try {
+    const sheet = getSheet(element, doc)
+    sheet.insertRule(style)
+  } catch (e) {
+    element.append(doc.createTextNode(style))
+  }
+  return () => {
+    element.remove()
+  }
 }
 
 function djb2(s: string, hash = 5381) {
-	let i = s.length;
+  let i = s.length
 
-	while (i) {
-		hash = (hash * 33) ^ s.charCodeAt(--i);
-	}
+  while (i) {
+    hash = (hash * 33) ^ s.charCodeAt(--i)
+  }
 
-	return hash;
+  return hash
 }
 
 function getSheet(tag: HTMLStyleElement, doc: Document): CSSStyleSheet {
-	if (tag.sheet) {
-		return tag.sheet;
-	}
+  if (tag.sheet) {
+    return tag.sheet
+  }
 
-	// Avoid Firefox quirk where the style element might not have a sheet property
-	const { styleSheets } = doc;
-	for (let i = 0, l = styleSheets.length; i < l; i++) {
-		const sheet = styleSheets[i];
-		if (sheet.ownerNode === tag) {
-			return sheet;
-		}
-	}
+  // Avoid Firefox quirk where the style element might not have a sheet property
+  const { styleSheets } = doc
+  for (let i = 0, l = styleSheets.length; i < l; i++) {
+    const sheet = styleSheets[i]
+    if (sheet.ownerNode === tag) {
+      return sheet
+    }
+  }
 
-	throw new Error("Could not find CSSStyleSheet object");
+  throw new Error('Could not find CSSStyleSheet object')
 }
