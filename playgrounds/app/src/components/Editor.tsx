@@ -17,8 +17,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import {
   TextField,
   TextFieldInput,
-  TextFieldLabel,
-  TextFieldTextArea,
 } from '~/components/ui/text-field'
 import { MagicMoveElement } from 'shiki-magic-move/types'
 import {
@@ -51,7 +49,7 @@ import { toast } from 'solid-sonner'
 import { Separator } from './ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
-import CodeBlock from './ui/shiki-code-block'
+import ShikiCodeBlock from './ui/shiki-code-block'
 
 const animationSeconds = 1
 const animationFPS = 10
@@ -689,19 +687,21 @@ export default function Editor(props: EditorProps) {
               <div class="dark:bg-[#27272a] bg-gray-100 p-2 rounded-b flex flex-row flex-wrap md:flex-nowrap gap-2">
                 <div class="flex flex-col w-full md:w-1/2 gap-1">
                   <p class="w-full text-sm">Start Code</p>
-                  <CodeBlock
+                  <ShikiCodeBlock
                     code={props.startCode}
                     lang={props.language}
                     theme={props.theme}
+                    class="min-h-[400px]"
                     onChange={props.setStartCode}
                   />
                 </div>
                 <div class="flex flex-col w-full md:w-1/2 gap-1">
                   <p class="w-full text-sm">End Code</p>
-                  <CodeBlock
+                  <ShikiCodeBlock
                     code={props.endCode}
                     lang={props.language}
                     theme={props.theme}
+                    class="min-h-[400px]"
                     onChange={props.setEndCode}
                   />
                 </div>

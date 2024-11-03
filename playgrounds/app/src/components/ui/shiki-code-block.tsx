@@ -1,10 +1,11 @@
 import { createSignal, onMount, createEffect } from 'solid-js'
 import { createHighlighter } from 'shiki'
-import { autoload, hookClosingPairs, hookTab } from 'shikicode/plugins'
+import { autoload, hookClosingPairs, hookTab, ShikiCode } from 'shikicode/plugins'
 import { shikiCode } from 'shikicode'
+
 import { cn } from '~/lib/utils'
 
-interface CodeBlockProps {
+interface ShikiCodeBlockProps {
   code: string
   lang: string
   theme: string
@@ -12,13 +13,13 @@ interface CodeBlockProps {
   onChange?: (value: string) => void
 }
 
-const CodeBlock = (props: CodeBlockProps) => {
+const ShikiCodeBlock = (props: ShikiCodeBlockProps) => {
   const [source, setSource] = createSignal(props.code)
   const [theme, setTheme] = createSignal(props.theme)
   const [lang, setLang] = createSignal(props.lang)
 
   let containerRef: HTMLDivElement | undefined
-  let editor: any
+  let editor: ShikiCode
 
   onMount(async () => {
     const highlighter = await createHighlighter({
@@ -58,9 +59,9 @@ const CodeBlock = (props: CodeBlockProps) => {
   return (
     <div
       ref={containerRef}
-      class={cn('relative min-h-[400px] w-full h-full rounded overflow-hidden', props.class)}
+      class={cn('relative min-h-[100px] w-full h-full rounded overflow-hidden', props.class)}
     />
   )
 }
 
-export default CodeBlock
+export default ShikiCodeBlock
