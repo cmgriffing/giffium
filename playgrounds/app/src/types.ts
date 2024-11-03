@@ -6,14 +6,10 @@ export interface User {
   githubAvatarUrl: string
 }
 
-export interface Snippet {
-  id: string
-  userId: string
-  title: string
+export interface SnippetSettings {
+  title?: string
   codeLeft: string
   codeRight: string
-  createdAt: number
-  updatedAt: number
   snippetWidth: number
   yPadding: number
   xPadding: number
@@ -31,6 +27,13 @@ export interface Snippet {
   theme: string
   fontSize: number
   fontFamily: string
+}
+
+export interface Snippet extends SnippetSettings {
+  id: string
+  userId: string
+  createdAt: number
+  updatedAt: number
 }
 
 export interface AnimationFrameLayout {
