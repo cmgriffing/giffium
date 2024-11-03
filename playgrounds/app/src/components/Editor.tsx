@@ -53,7 +53,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
 
 const animationSeconds = 1
-const animationFPS = 10
+const animationFPS = 30
 const animationFrames = animationSeconds * animationFPS
 
 const supportedFontFamilies: { name: string }[] = [
@@ -208,7 +208,7 @@ export default function Editor(props: EditorProps) {
         middleFrames.push(i)
       }
 
-      const pauseFrameLength = 15
+      const pauseFrameLength = 60
       const firstFrames = new Array(pauseFrameLength).fill(0)
       const lastFrames = new Array(pauseFrameLength).fill(animationFrames)
 
@@ -260,7 +260,7 @@ export default function Editor(props: EditorProps) {
         format: 'blob',
         width: canvasFrames[0].width,
         height: canvasFrames[0].height,
-        frames: canvasFrames,
+        frames: canvasFrames.map(el => ({ data: el.data.buffer, delay: (animationSeconds * 1000) / animationFPS}))
       })
 
       const dataUrl = await blobToDataURL(blob)
