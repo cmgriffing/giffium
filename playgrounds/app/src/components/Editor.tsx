@@ -260,7 +260,10 @@ export default function Editor(props: EditorProps) {
         format: 'blob',
         width: canvasFrames[0].width,
         height: canvasFrames[0].height,
-        frames: canvasFrames.map(el => ({ data: el.data.buffer, delay: (animationSeconds * 1000) / animationFPS}))
+        frames: canvasFrames.map(el => ({
+          data: el.data.buffer,
+          delay: (animationSeconds * 1000) / animationFPS,
+        })),
       })
 
       const dataUrl = await blobToDataURL(blob)
