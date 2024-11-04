@@ -10,18 +10,20 @@ export default function ViewSnippet({ params }: { params: { snippetId: string } 
     if (!response.ok) {
       return undefined
     }
+
     const data = await response.json()
     return data
   })
 
   const [snippetSettings, setSnippetSettings] = createStore<SnippetSettings>({ ...snippet()! })
 
-  createEffect(() => {
-    console.log('snippet in effect', snippet())
+  createEffect(value => {
+    // console.log('snippet in effect', snippet())
     const updatedSnippetSettings = snippet()
-    if (updatedSnippetSettings) {
+    if (value !== updatedSnippetSettings && updatedSnippetSettings) {
       setSnippetSettings(updatedSnippetSettings)
     }
+    return updatedSnippetSettings
   })
 
   return (

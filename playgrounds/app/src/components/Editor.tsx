@@ -696,7 +696,11 @@ export default function Editor(props: EditorProps) {
                   onChange={newCodeLeft => props.setSnippetSettings('codeLeft', newCodeLeft)}
                 >
                   <TextFieldLabel>Start Code</TextFieldLabel>
-                  <TextFieldTextArea class="h-[400px]" placeholder="Type your message here." />
+                  <TextFieldTextArea
+                    value={props.snippetSettings.codeLeft}
+                    class="h-[400px]"
+                    placeholder="Type your message here."
+                  />
                 </TextField>
 
                 <TextField
@@ -705,7 +709,11 @@ export default function Editor(props: EditorProps) {
                   onChange={newEndCode => props.setSnippetSettings('codeRight', newEndCode)}
                 >
                   <TextFieldLabel>End Code</TextFieldLabel>
-                  <TextFieldTextArea class="h-[400px]" placeholder="Type your message here." />
+                  <TextFieldTextArea
+                    value={props.snippetSettings.codeRight}
+                    class="h-[400px]"
+                    placeholder="Type your message here."
+                  />
                 </TextField>
               </div>
             </TabsContent>

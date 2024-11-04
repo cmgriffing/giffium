@@ -56,9 +56,6 @@ export default function Home() {
 
   return (
     <main class="mx-auto text-gray-700 dark:text-gray-100 px-4 min-h-full">
-      {/* <p class="mb-16 text-center font-bold text-lg">
-        Create and share beautiful gifs of your source code diffs.
-      </p> */}
       <Editor snippetSettings={snippetSettings} setSnippetSettings={setSnippetSettings} />
     </main>
   )
