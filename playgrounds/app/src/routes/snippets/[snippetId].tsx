@@ -27,7 +27,7 @@ export default function ViewSnippet({ params }: { params: { snippetId: string } 
   })
 
   return (
-    <main class="mx-auto text-gray-700  dark:text-gray-100 px-4 flex flex-col justify-center">
+    <main class="mx-auto text-gray-700  dark:text-gray-100 px-4 flex flex-col justify-center w-full flex-1 max-w-screen-2xl">
       <Show when={snippet()}>
         <Editor
           snippetId={params.snippetId}
