@@ -137,18 +137,20 @@ export default function Header() {
           <DialogHeader>
             <DialogTitle>Welcome to Giffium</DialogTitle>
             <DialogDescription>
-              <p class="mb-8 text-center font-bold text-lg text-white">
+              <p class="mb-8 text-center font-bold text-lg dark:text-white">
                 Create and share beautiful gifs of your source code diffs.
               </p>
-              <p class="text-white">Get started by following these steps.</p>
-              <ol class="list-disc list-inside pl-8 text-white">
+              <p class="dark:text-white">Get started by following these steps.</p>
+              <ol class="list-disc list-inside pl-8 dark:text-white">
                 <li>Enter your start and end code snippets.</li>
                 <li>Select the theme and language.</li>
                 <li>Click the Next button to preview your snippet animation.</li>
                 <li>Click the Generate button to generate a gif.</li>
               </ol>
 
-              <p class="text-white mt-8">You can also log in with GitHub to save your snippets.</p>
+              <p class="dark:text-white mt-8">
+                You can also log in with GitHub to save your snippets.
+              </p>
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
