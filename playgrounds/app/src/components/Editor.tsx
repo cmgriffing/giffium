@@ -725,16 +725,16 @@ export default function Editor(props: EditorProps) {
                     onClick={async () => {
                       setIsGenerating(true)
                       setHiddenCode(props.snippetSettings.codeRight)
+                      setIsShowingGifDialog(true)
                       setTimeout(async () => {
                         const dataUrl = await generateGifDataUrl()()
                         setGifDataUrl(dataUrl)
                         setIsGenerating(false)
-                        setIsShowingGifDialog(true)
                         setHiddenCode(props.snippetSettings.codeLeft)
-                      }, 1000)
+                      }, 100)
                     }}
                   >
-                    {isGenerating() ? 'Generating...' : 'Generate'}
+                    Generate
                   </Button>
                 </div>
               </div>
@@ -929,32 +929,35 @@ export default function Editor(props: EditorProps) {
       </div>
       <Dialog open={isShowingGifDialog()} onOpenChange={setIsShowingGifDialog} modal>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              <div class="flex flex-row items-center justify-between gap-2">
-                <h3>Result</h3>
-              </div>
-            </DialogTitle>
-            <DialogDescription>
+          <Show when={isGenerating()}>
+            <div class="flex flex-col items-center justify-center gap-2 my-12">
+              <span class="text-xl">Generating...</span>
+              <span class="text-sm">On slower devices, this could take up to 30 seconds.</span>
+            </div>
+          </Show>
+          <Show when={!isGenerating()}>
+            <img src={gifDataUrl()} alt="Generated gif" class="mt-10" />
+            <p class="">
               Copying the image via right click will only copy the current frame. Please download
               the GIF below by using the Download button or right clicking and using "Save Image
               as...".
-            </DialogDescription>
-          </DialogHeader>
-          <img src={gifDataUrl()} alt="Generated gif" />
+            </p>
+          </Show>
           <DialogFooter>
-            <Button
-              onClick={async () => {
-                const blob = dataURItoBlob(gifDataUrl())
-                const filename = 'giffium.gif'
-                const link = document.createElement('a')
-                link.href = URL.createObjectURL(blob)
-                link.download = filename
-                link.click()
-              }}
-            >
-              Download
-            </Button>
+            <Show when={!isGenerating()}>
+              <Button
+                onClick={async () => {
+                  const blob = dataURItoBlob(gifDataUrl())
+                  const filename = 'giffium.gif'
+                  const link = document.createElement('a')
+                  link.href = URL.createObjectURL(blob)
+                  link.download = filename
+                  link.click()
+                }}
+              >
+                Download
+              </Button>
+            </Show>
           </DialogFooter>
         </DialogContent>
       </Dialog>
