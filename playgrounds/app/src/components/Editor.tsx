@@ -54,7 +54,7 @@ import { toast } from 'solid-sonner'
 import { Separator } from './ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
-import ShikiCodeBlock from './ui/shiki-code-block'
+import { ShikiCodeBlock } from './ShikiCodeBlock'
 import { SetStoreFunction } from 'solid-js/store'
 
 const animationSeconds = 1

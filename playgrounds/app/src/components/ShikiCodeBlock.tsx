@@ -13,7 +13,7 @@ interface ShikiCodeBlockProps {
   onChange?: (value: string) => void
 }
 
-const ShikiCodeBlock = (props: ShikiCodeBlockProps) => {
+export function ShikiCodeBlock(props: ShikiCodeBlockProps) {
   const [source, setSource] = createSignal(props.code)
   const [theme, setTheme] = createSignal(props.theme)
   const [lang, setLang] = createSignal(props.lang)
@@ -63,5 +63,3 @@ const ShikiCodeBlock = (props: ShikiCodeBlockProps) => {
     />
   )
 }
-
-export default ShikiCodeBlock

@@ -276,9 +276,6 @@ importers:
       solid-js:
         specifier: ^1.9.1
         version: 1.9.2
-      solid-shiki-textarea:
-        specifier: ^0.1.6
-        version: 0.1.6(@babel/core@7.25.8)(@types/react@18.3.11)(shiki@1.22.0)(solid-js@1.9.2)
       solid-sonner:
         specifier: ^0.2.8
         version: 0.2.8(solid-js@1.9.2)
@@ -1894,11 +1891,6 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@lume/element@0.11.9':
-    resolution: {integrity: sha512-YR4sLA8vCu1bZo5jN4sua2AB66RrDUisMMWOV79KRfLiM8Q3Nxxmb3S1Kocdy56XWz/eZr1scITMiAQNqpN+dg==}
-    peerDependencies:
-      '@types/react': '*'
-
   '@manypkg/find-root@1.1.0':
     resolution: {integrity: sha512-mki5uBvhHzO8kYYix/WRy2WX8S3B5wdVSc9D6KcU5lQNglP2yt58/VfLuAK49glRXChosY8ap2oJ1qgma3GUVA==}
 
@@ -2273,11 +2265,6 @@ packages:
 
   '@solid-primitives/keyed@1.2.2':
     resolution: {integrity: sha512-oBziY40JK4XmJ57XGkFl8j0GtEarSu0hhjdkUQgqL/U0QQE3TZrRo9uhgH7I6VGJKBKG7SAraTPE6S5lVLM1ow==}
-    peerDependencies:
-      solid-js: ^1.6.12
-
-  '@solid-primitives/list@0.0.100':
-    resolution: {integrity: sha512-SZsGouBzUkrZJlJkjVf1rDgRA6FD/+Qar3s7yD1h5uTe1ZIQM89D4RiGxnVjA+KUdfBFQtocT6J76eQ1aIbJxQ==}
     peerDependencies:
       solid-js: ^1.6.12
 
@@ -3120,9 +3107,6 @@ packages:
 
   class-variance-authority@0.7.0:
     resolution: {integrity: sha512-jFI8IQw4hczaL4ALINxqLEXQbWcNjoSkloa4IaufXCJr6QawJyw7tuRysRsrE8w2p/4gGaxKIt/hX3qz/IbD1A==}
-
-  classy-solid@0.3.9:
-    resolution: {integrity: sha512-QVAERy8PtkA2eozU/XCCeLamaokprPlCYS5Q7gK05eeE5/gCmIuiGV1F9SMurLpnVy9w6ZKSnNjxUd69btorzQ==}
 
   clean-regexp@1.0.0:
     resolution: {integrity: sha512-GfisEZEJvzKrmGWkvfhgzcz/BllN1USeqD2V6tg14OAOgaCD2Z/PUEuxnAZ/nPvmaHRG7a8y77p1T/IRQ4D1Hw==}
@@ -4816,12 +4800,6 @@ packages:
   loupe@3.1.2:
     resolution: {integrity: sha512-23I4pFZHmAemUnz8WZXbYRSKYj801VDaNv9ETuMh7IrMc7VuVVSo+Z9iLE3ni30+U48iDWfi30d3twAXBYmnCg==}
 
-  lowclass@7.0.1:
-    resolution: {integrity: sha512-MUCYry/VsWP3jfShf0TUyQ9tnmo6qsNUGnxbRo02GHtnyz1pq12ZlI7ep+H1s+FqpoDgA/TVrGqSScrvYhaWAQ==}
-
-  lowclass@8.0.2:
-    resolution: {integrity: sha512-F/SMc8Kn34lNfjhlMDZYiOqmdtROR8sndSl7I/HJooxBekpgFxBcZL7LFsugc/sSGg0PV+or74+M5Q1/F4dP9g==}
-
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
@@ -6055,13 +6033,6 @@ packages:
     resolution: {integrity: sha512-F3aPsX6hVw9ttm5LYlth8Q15x6MlI/J3Dn+o3EQyRTtTxidepSTwAYdozt01/YA+7ObcciagGEyXIopGZzQtbA==}
     peerDependencies:
       solid-js: ^1.3
-
-  solid-shiki-textarea@0.1.6:
-    resolution: {integrity: sha512-SyXGpQ/zlMy0LDPBcPeMapSI/Oyo1WgYe84MSTcxyOdE5UJB+5eLucyyXRX/riDBUS6WS08sR9h86HL3aX/0hQ==}
-    engines: {node: '>=18', pnpm: '>=9.0.0'}
-    peerDependencies:
-      shiki: ^1.6.2
-      solid-js: ^1.6.0
 
   solid-sonner@0.2.8:
     resolution: {integrity: sha512-EQ2EIznvHHpAmkYh2CTu0AdCgmPJRJWLGFRWygE8j+vMEfvIV2wotHU5qgWzqzVTG1SODGsay2Lwq6ENWx/rPA==}
@@ -8411,16 +8382,6 @@ snapshots:
   '@libsql/win32-x64-msvc@0.4.6':
     optional: true
 
-  '@lume/element@0.11.9(@babel/core@7.25.8)(@types/react@18.3.11)':
-    dependencies:
-      '@types/react': 18.3.11
-      babel-preset-solid: 1.9.2(@babel/core@7.25.8)
-      classy-solid: 0.3.9
-      lowclass: 7.0.1
-      solid-js: 1.9.2
-    transitivePeerDependencies:
-      - '@babel/core'
-
   '@manypkg/find-root@1.1.0':
     dependencies:
       '@babel/runtime': 7.25.7
@@ -8783,10 +8744,6 @@ snapshots:
       solid-js: 1.9.2
 
   '@solid-primitives/keyed@1.2.2(solid-js@1.9.2)':
-    dependencies:
-      solid-js: 1.9.2
-
-  '@solid-primitives/list@0.0.100(solid-js@1.9.2)':
     dependencies:
       solid-js: 1.9.2
 
@@ -9870,11 +9827,6 @@ snapshots:
   class-variance-authority@0.7.0:
     dependencies:
       clsx: 2.0.0
-
-  classy-solid@0.3.9:
-    dependencies:
-      lowclass: 8.0.2
-      solid-js: 1.9.2
 
   clean-regexp@1.0.0:
     dependencies:
@@ -11851,10 +11803,6 @@ snapshots:
 
   loupe@3.1.2: {}
 
-  lowclass@7.0.1: {}
-
-  lowclass@8.0.2: {}
-
   lru-cache@10.4.3: {}
 
   lru-cache@11.0.1: {}
@@ -13276,17 +13224,6 @@ snapshots:
       solid-js: 1.9.2
     transitivePeerDependencies:
       - supports-color
-
-  solid-shiki-textarea@0.1.6(@babel/core@7.25.8)(@types/react@18.3.11)(shiki@1.22.0)(solid-js@1.9.2):
-    dependencies:
-      '@lume/element': 0.11.9(@babel/core@7.25.8)(@types/react@18.3.11)
-      '@solid-primitives/list': 0.0.100(solid-js@1.9.2)
-      clsx: 2.1.1
-      shiki: 1.22.0
-      solid-js: 1.9.2
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@types/react'
 
   solid-sonner@0.2.8(solid-js@1.9.2):
     dependencies:
