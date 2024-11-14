@@ -173,30 +173,12 @@ export default function Editor(props: EditorProps) {
         return fontSize && fontFamily
       })
 
-      const loopedFrames = []
-      const middleFrames = []
-
-      for (let i = 0; i < animationFrames; i++) {
-        middleFrames.push(i)
-      }
-
       const pauseFrameLength = 60
-      const firstFrames = new Array(pauseFrameLength).fill(0)
-      const lastFrames = new Array(pauseFrameLength).fill(animationFrames)
 
-      loopedFrames.push(
-        ...firstFrames,
-        ...middleFrames,
-        ...lastFrames,
-        ...middleFrames.toReversed(),
-      )
-
-      for (let frame = 0; frame < loopedFrames.length; frame++) {
-        const actualFrame = loopedFrames[frame]
-
-        const canvas = await createAnimationFrame(
+      const wrappedCreateAnimationFrame = async (frame: number) => {
+        return createAnimationFrame(
           magicMoveElements(),
-          actualFrame,
+          frame,
           maxContainerDimensions()?.width || 100,
           maxContainerDimensions()?.height || 100,
           {
@@ -223,9 +205,32 @@ export default function Editor(props: EditorProps) {
             },
           },
         )
-
-        canvasFrames.push(canvas)
       }
+
+      const firstFrameCanvas = await wrappedCreateAnimationFrame(0)
+      for (let frame = 0; frame < pauseFrameLength; frame++) {
+        canvasFrames.push(firstFrameCanvas)
+      }
+
+      const middleFrameNumbers = []
+
+      for (let i = 0; i < animationFrames; i++) {
+        middleFrameNumbers.push(i)
+      }
+
+      let middleFrames = []
+      for (let frame = 0; frame < middleFrameNumbers.length; frame++) {
+        const canvas = await wrappedCreateAnimationFrame(middleFrameNumbers[frame])
+        middleFrames.push(canvas)
+      }
+      canvasFrames.push(...middleFrames)
+
+      const lastFrameCanvas = await wrappedCreateAnimationFrame(animationFrames)
+      for (let frame = 0; frame < pauseFrameLength; frame++) {
+        canvasFrames.push(lastFrameCanvas)
+      }
+
+      canvasFrames.push(...middleFrames.toReversed())
 
       const blob = await encode({
         workerUrl,
