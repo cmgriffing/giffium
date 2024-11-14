@@ -14,12 +14,7 @@ import {
 } from '~/components/ui/combobox'
 import { Button } from '~/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import {
-  TextField,
-  TextFieldInput,
-  TextFieldLabel,
-  TextFieldTextArea,
-} from '~/components/ui/text-field'
+import { TextField, TextFieldInput } from '~/components/ui/text-field'
 import { MagicMoveElement } from 'shiki-magic-move/types'
 import {
   Slider,
@@ -59,6 +54,7 @@ import { toast } from 'solid-sonner'
 import { Separator } from './ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
+import { ShikiCodeBlock } from './ShikiCodeBlock'
 import { SetStoreFunction } from 'solid-js/store'
 
 const animationSeconds = 1
@@ -690,31 +686,26 @@ export default function Editor(props: EditorProps) {
               </div>
 
               <div class="dark:bg-[#27272a] bg-gray-100 p-2 rounded-b flex flex-row flex-wrap md:flex-nowrap gap-2">
-                <TextField
-                  class="w-full md:w-1/2"
-                  value={props.snippetSettings.codeLeft}
-                  onChange={newCodeLeft => props.setSnippetSettings('codeLeft', newCodeLeft)}
-                >
-                  <TextFieldLabel>Start Code</TextFieldLabel>
-                  <TextFieldTextArea
-                    value={props.snippetSettings.codeLeft}
-                    class="h-[400px]"
-                    placeholder="Type your message here."
+                <div class="flex flex-col w-full md:w-1/2 gap-1">
+                  <p class="w-full text-sm">Start Code</p>
+                  <ShikiCodeBlock
+                    code={props.snippetSettings.codeLeft}
+                    lang={props.snippetSettings.language}
+                    theme={props.snippetSettings.theme}
+                    class="min-h-[400px]"
+                    onChange={newCodeLeft => props.setSnippetSettings('codeLeft', newCodeLeft)}
                   />
-                </TextField>
-
-                <TextField
-                  class="w-full md:w-1/2"
-                  value={props.snippetSettings.codeRight}
-                  onChange={newEndCode => props.setSnippetSettings('codeRight', newEndCode)}
-                >
-                  <TextFieldLabel>End Code</TextFieldLabel>
-                  <TextFieldTextArea
-                    value={props.snippetSettings.codeRight}
-                    class="h-[400px]"
-                    placeholder="Type your message here."
+                </div>
+                <div class="flex flex-col w-full md:w-1/2 gap-1">
+                  <p class="w-full text-sm">End Code</p>
+                  <ShikiCodeBlock
+                    code={props.snippetSettings.codeRight}
+                    lang={props.snippetSettings.language}
+                    theme={props.snippetSettings.theme}
+                    class="min-h-[400px]"
+                    onChange={newEndCode => props.setSnippetSettings('codeRight', newEndCode)}
                   />
-                </TextField>
+                </div>
               </div>
             </TabsContent>
             <TabsContent value="output">
