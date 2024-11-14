@@ -35,10 +35,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog'
-import { createMemo, createResource, createSignal, onCleanup, Setter, Show } from 'solid-js'
+import {
+  createEffect,
+  createMemo,
+  createResource,
+  createSignal,
+  onCleanup,
+  Setter,
+  Show,
+} from 'solid-js'
 import { createHighlighter, bundledThemes, bundledLanguages } from 'shiki'
 import { ShikiMagicMove } from 'shiki-magic-move/solid'
-import { AnimationFrameConfig } from '~/types'
+import { AnimationFrameConfig, SnippetSettings } from '~/types'
 import { authFetch } from '~/lib/utils'
 import { useNavigate } from '@solidjs/router'
 import { authToken } from '~/lib/store'
@@ -47,9 +55,10 @@ import { Separator } from './ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
 import ShikiCodeBlock from './ui/shiki-code-block'
+import { SetStoreFunction } from 'solid-js/store'
 
 const animationSeconds = 1
-const animationFPS = 10
+const animationFPS = 30
 const animationFrames = animationSeconds * animationFPS
 
 const supportedFontFamilies: { name: string }[] = [
@@ -74,46 +83,8 @@ const bgTypeOptions: SelectOption[] = [
 
 interface EditorProps {
   snippetId?: string
-  startCode: string
-  setStartCode: Setter<string>
-  endCode: string
-  setEndCode: Setter<string>
-  snippetWidth: number
-  setSnippetWidth: Setter<number>
-  yPadding: number
-  setYPadding: Setter<number>
-  xPadding: number
-  setXPadding: Setter<number>
-  shadowEnabled: boolean
-  setShadowEnabled: Setter<boolean>
-  shadowOffsetY: number
-  setShadowOffsetY: Setter<number>
-  shadowBlur: number
-  setShadowBlur: Setter<number>
-  shadowColor: string
-  setShadowColor: Setter<string>
-  shadowOpacity: number
-  setShadowOpacity: Setter<number>
-  bgType: 'solid' | 'linearGradient'
-  setBgType: Setter<'solid' | 'linearGradient'>
-  bgColor: string
-  setBgColor: Setter<string>
-  bgGradientColorStart: string
-  setBgGradientColorStart: Setter<string>
-  bgGradientColorEnd: string
-  setBgGradientColorEnd: Setter<string>
-  bgGradientDirection: number
-  setBgGradientDirection: Setter<number>
-  fontSize: number
-  setFontSize: Setter<number>
-  fontFamily: string
-  setFontFamily: Setter<string>
-  language: string
-  setLanguage: Setter<string>
-  theme: string
-  setTheme: Setter<string>
-  // TODO: If the app grows, this logic should be surfaced to the top level route
-  title?: string
+  snippetSettings: SnippetSettings
+  setSnippetSettings: SetStoreFunction<SnippetSettings>
 }
 
 export default function Editor(props: EditorProps) {
@@ -126,14 +97,14 @@ export default function Editor(props: EditorProps) {
     width: number
     height: number
   }>()
-  const [code, setCode] = createSignal(props.startCode)
-  const [hiddenCode, setHiddenCode] = createSignal(props.startCode)
+  const [code, setCode] = createSignal(props.snippetSettings.codeLeft)
+  const [hiddenCode, setHiddenCode] = createSignal(props.snippetSettings.codeLeft)
   const [isResizing, setIsResizing] = createSignal(false)
   const [isLooping, setIsLooping] = createSignal(true)
   const [isGenerating, setIsGenerating] = createSignal(false)
   const [gifDataUrl, setGifDataUrl] = createSignal('')
   const [isShowingGifDialog, setIsShowingGifDialog] = createSignal(false)
-  const [title, setTitle] = createSignal(props.title)
+  const [title, setTitle] = createSignal(props.snippetSettings.title)
   const [isSaving, setIsSaving] = createSignal(false)
 
   const [highlighter] = createResource(async () => {
@@ -145,18 +116,23 @@ export default function Editor(props: EditorProps) {
     return newHighlighter
   })
 
+  createEffect(() => {
+    setCode(props.snippetSettings.codeLeft)
+    setHiddenCode(props.snippetSettings.codeLeft)
+  })
+
   const intervalId = setInterval(() => {
     if (
       selectedTab() === 'output' &&
-      props.startCode !== '' &&
-      props.endCode !== '' &&
+      props.snippetSettings.codeLeft !== '' &&
+      props.snippetSettings.codeRight !== '' &&
       !isResizing() &&
       isLooping()
     ) {
       if (toggled()) {
-        setCode(props.startCode)
+        setCode(props.snippetSettings.codeLeft)
       } else {
-        setCode(props.endCode)
+        setCode(props.snippetSettings.codeRight)
       }
       setToggled(!toggled())
     }
@@ -169,7 +145,7 @@ export default function Editor(props: EditorProps) {
   document.body.addEventListener('mousemove', e => {
     if (isResizing()) {
       const deltaX = e.movementX
-      props.setSnippetWidth(props.snippetWidth + deltaX)
+      props.setSnippetSettings('snippetWidth', props.snippetSettings.snippetWidth + deltaX)
     }
   })
 
@@ -204,7 +180,7 @@ export default function Editor(props: EditorProps) {
         middleFrames.push(i)
       }
 
-      const pauseFrameLength = 15
+      const pauseFrameLength = 60
       const firstFrames = new Array(pauseFrameLength).fill(0)
       const lastFrames = new Array(pauseFrameLength).fill(animationFrames)
 
@@ -225,25 +201,25 @@ export default function Editor(props: EditorProps) {
           maxContainerDimensions()?.height || 100,
           {
             layout: {
-              yPadding: props.yPadding,
-              xPadding: props.xPadding,
+              yPadding: props.snippetSettings.yPadding,
+              xPadding: props.snippetSettings.xPadding,
             },
             shadow: {
-              shadowEnabled: props.shadowEnabled,
-              shadowOffsetY: props.shadowOffsetY,
-              shadowBlur: props.shadowBlur,
-              shadowColor: props.shadowColor,
-              shadowOpacity: props.shadowOpacity,
+              shadowEnabled: props.snippetSettings.shadowEnabled,
+              shadowOffsetY: props.snippetSettings.shadowOffsetY,
+              shadowBlur: props.snippetSettings.shadowBlur,
+              shadowColor: props.snippetSettings.shadowColor,
+              shadowOpacity: props.snippetSettings.shadowOpacity,
             },
             styling: {
               fontSize,
               fontFamily,
               snippetBackgroundColor: backgroundColor,
-              backgroundColor: props.bgColor,
-              backgroundType: props.bgType,
-              backgroundGradientColorStart: props.bgGradientColorStart,
-              backgroundGradientColorEnd: props.bgGradientColorEnd,
-              backgroundGradientDirection: props.bgGradientDirection,
+              backgroundColor: props.snippetSettings.bgColor,
+              backgroundType: props.snippetSettings.bgType,
+              backgroundGradientColorStart: props.snippetSettings.bgGradientColorStart,
+              backgroundGradientColorEnd: props.snippetSettings.bgGradientColorEnd,
+              backgroundGradientDirection: props.snippetSettings.bgGradientDirection,
             },
           },
         )
@@ -256,7 +232,10 @@ export default function Editor(props: EditorProps) {
         format: 'blob',
         width: canvasFrames[0].width,
         height: canvasFrames[0].height,
-        frames: canvasFrames,
+        frames: canvasFrames.map(el => ({
+          data: el.data.buffer,
+          delay: (animationSeconds * 1000) / animationFPS,
+        })),
       })
 
       const dataUrl = await blobToDataURL(blob)
@@ -273,9 +252,9 @@ export default function Editor(props: EditorProps) {
             <Label for="theme-selector">Theme</Label>
             <Combobox
               id="theme-selector"
-              value={props.theme}
+              value={props.snippetSettings.theme}
               options={Object.keys(bundledThemes)}
-              onChange={props.setTheme}
+              onChange={newTheme => props.setSnippetSettings('theme', newTheme || '')}
               placeholder="Search a theme..."
               itemComponent={props => (
                 <ComboboxItem item={props.item}>
@@ -296,9 +275,9 @@ export default function Editor(props: EditorProps) {
             <Label for="language-selector">Language</Label>
             <Combobox
               id="language-selector"
-              value={props.language}
+              value={props.snippetSettings.language}
               options={Object.keys(bundledLanguages)}
-              onChange={props.setLanguage}
+              onChange={newLanguage => props.setSnippetSettings('language', newLanguage || '')}
               placeholder="Search a Language..."
               itemComponent={props => (
                 <ComboboxItem item={props.item}>
@@ -333,18 +312,28 @@ export default function Editor(props: EditorProps) {
 
                     <Select<SelectOption>
                       id="bg-type"
-                      value={bgTypeOptions.find(option => option.value === props.bgType)}
+                      value={bgTypeOptions.find(
+                        option => option.value === props.snippetSettings.bgType,
+                      )}
                       optionValue="value"
                       optionTextValue="label"
                       onChange={newType =>
-                        newType && props.setBgType(newType.value as 'solid' | 'linearGradient')
+                        newType &&
+                        props.setSnippetSettings(
+                          'bgType',
+                          newType.value as 'solid' | 'linearGradient',
+                        )
                       }
                       options={bgTypeOptions}
                       itemComponent={props => (
                         <SelectItem item={props.item}>{props.item.rawValue.label}</SelectItem>
                       )}
                     >
-                      <SelectTrigger aria-label="BG Type" class="w-full" value={props.bgType}>
+                      <SelectTrigger
+                        aria-label="BG Type"
+                        class="w-full"
+                        value={props.snippetSettings.bgType}
+                      >
                         <SelectValue<{ label: string; value: string }>>
                           {state => state.selectedOption()?.label}
                         </SelectValue>
@@ -353,7 +342,7 @@ export default function Editor(props: EditorProps) {
                     </Select>
                   </div>
 
-                  {props.bgType === 'linearGradient' && (
+                  {props.snippetSettings.bgType === 'linearGradient' && (
                     <>
                       <div class="flex flex-row items-center justify-between">
                         <Label for="bg-color-input-grad-start" class="font-normal">
@@ -363,9 +352,9 @@ export default function Editor(props: EditorProps) {
                           id="bg-color-input-grad-start"
                           class="h-6 w-6 rounded"
                           type="color"
-                          value={props.bgGradientColorStart}
+                          value={props.snippetSettings.bgGradientColorStart}
                           onInput={e => {
-                            props.setBgGradientColorStart(e.target.value)
+                            props.setSnippetSettings('bgGradientColorStart', e.target.value)
                           }}
                         />
                       </div>
@@ -377,18 +366,18 @@ export default function Editor(props: EditorProps) {
                           id="bg-color-input-grad-end"
                           class="h-6 w-6 rounded"
                           type="color"
-                          value={props.bgGradientColorEnd}
+                          value={props.snippetSettings.bgGradientColorEnd}
                           onInput={e => {
-                            props.setBgGradientColorEnd(e.target.value)
+                            props.setSnippetSettings('bgGradientColorEnd', e.target.value)
                           }}
                         />
                       </div>
                       <Slider
-                        value={[props.bgGradientDirection]}
+                        value={[props.snippetSettings.bgGradientDirection]}
                         minValue={0}
                         maxValue={359}
                         onChange={e => {
-                          props.setBgGradientDirection(e[0])
+                          props.setSnippetSettings('bgGradientDirection', e[0])
                         }}
                       >
                         <div class="flex justify-between items-center w-full">
@@ -406,7 +395,7 @@ export default function Editor(props: EditorProps) {
                       </Slider>
                     </>
                   )}
-                  {props.bgType === 'solid' && (
+                  {props.snippetSettings.bgType === 'solid' && (
                     <div class="flex flex-row items-center justify-between">
                       <Label for="bg-color-input" class="font-normal">
                         Background Color
@@ -415,9 +404,9 @@ export default function Editor(props: EditorProps) {
                         id="bg-color-input"
                         class="h-6 w-6 rounded"
                         type="color"
-                        value={props.bgColor}
+                        value={props.snippetSettings.bgColor}
                         onInput={e => {
-                          props.setBgColor(e.target.value)
+                          props.setSnippetSettings('bgColor', e.target.value)
                         }}
                       />
                     </div>
@@ -431,11 +420,11 @@ export default function Editor(props: EditorProps) {
               <AccordionContent>
                 <div class="flex flex-col gap-4">
                   <Slider
-                    value={[props.snippetWidth]}
+                    value={[props.snippetSettings.snippetWidth]}
                     minValue={0}
                     maxValue={1500}
                     onChange={e => {
-                      props.setSnippetWidth(e[0])
+                      props.setSnippetSettings('snippetWidth', e[0])
                     }}
                   >
                     <div class="flex w-full justify-between mb-2">
@@ -452,11 +441,11 @@ export default function Editor(props: EditorProps) {
                   </Slider>
 
                   <Slider
-                    value={[props.yPadding]}
+                    value={[props.snippetSettings.yPadding]}
                     minValue={0}
                     maxValue={200}
                     onChange={e => {
-                      props.setYPadding(e[0])
+                      props.setSnippetSettings('yPadding', e[0])
                     }}
                   >
                     <div class="flex w-full justify-between mb-2">
@@ -473,11 +462,11 @@ export default function Editor(props: EditorProps) {
                   </Slider>
 
                   <Slider
-                    value={[props.xPadding]}
+                    value={[props.snippetSettings.xPadding]}
                     minValue={0}
                     maxValue={200}
                     onChange={e => {
-                      props.setXPadding(e[0])
+                      props.setSnippetSettings('xPadding', e[0])
                     }}
                   >
                     <div class="flex w-full justify-between mb-2">
@@ -503,15 +492,23 @@ export default function Editor(props: EditorProps) {
                   <div class="flex flex-row items-center justify-between">
                     <Label
                       for="shadow-checkbox"
-                      onClick={() => props.setShadowEnabled(!props.shadowEnabled)}
+                      onClick={() =>
+                        props.setSnippetSettings(
+                          'shadowEnabled',
+                          !props.snippetSettings.shadowEnabled,
+                        )
+                      }
                     >
                       Show Shadow
                     </Label>
                     <Checkbox
                       id="shadow-checkbox"
-                      checked={props.shadowEnabled}
+                      checked={props.snippetSettings.shadowEnabled}
                       onChange={() => {
-                        props.setShadowEnabled(!props.shadowEnabled)
+                        props.setSnippetSettings(
+                          'shadowEnabled',
+                          !props.snippetSettings.shadowEnabled,
+                        )
                       }}
                     />
                   </div>
@@ -525,18 +522,18 @@ export default function Editor(props: EditorProps) {
                       id="shadow-color-input"
                       class="h-6 w-6 rounded"
                       type="color"
-                      value={props.shadowColor}
-                      onInput={e => props.setShadowColor(e.target.value)}
+                      value={props.snippetSettings.shadowColor}
+                      onInput={e => props.setSnippetSettings('shadowColor', e.target.value)}
                     />
                   </div>
                   <div class="flex flex-row items-center justify-between">
                     <Slider
-                      value={[props.shadowOpacity]}
+                      value={[props.snippetSettings.shadowOpacity]}
                       step={0.01}
                       minValue={0}
                       maxValue={1}
                       onChange={e => {
-                        props.setShadowOpacity(e[0])
+                        props.setSnippetSettings('shadowOpacity', e[0])
                       }}
                     >
                       <div class="flex w-full justify-between mb-2">
@@ -551,11 +548,11 @@ export default function Editor(props: EditorProps) {
                   </div>
                   <div>
                     <Slider
-                      value={[props.shadowOffsetY]}
+                      value={[props.snippetSettings.shadowOffsetY]}
                       minValue={0}
-                      maxValue={props.yPadding}
+                      maxValue={props.snippetSettings.yPadding}
                       onChange={e => {
-                        props.setShadowOffsetY(e[0])
+                        props.setSnippetSettings('shadowOffsetY', e[0])
                       }}
                     >
                       <div class="flex w-full justify-between mb-2">
@@ -573,11 +570,11 @@ export default function Editor(props: EditorProps) {
                   </div>
                   <div>
                     <Slider
-                      value={[props.shadowBlur]}
+                      value={[props.snippetSettings.shadowBlur]}
                       minValue={0}
                       maxValue={200}
                       onChange={e => {
-                        props.setShadowBlur(e[0])
+                        props.setSnippetSettings('shadowBlur', e[0])
                       }}
                     >
                       <div class="flex w-full justify-between mb-2">
@@ -606,10 +603,14 @@ export default function Editor(props: EditorProps) {
 
                     <Select<{ name: string }>
                       id="font-family"
-                      value={supportedFontFamilies.find(option => option.name === props.fontFamily)}
+                      value={supportedFontFamilies.find(
+                        option => option.name === props.snippetSettings.fontFamily,
+                      )}
                       optionValue="name"
                       optionTextValue="name"
-                      onChange={newFamily => newFamily && props.setFontFamily(newFamily.name)}
+                      onChange={newFamily =>
+                        newFamily && props.setSnippetSettings('fontFamily', newFamily.name)
+                      }
                       options={supportedFontFamilies}
                       itemComponent={props => (
                         <SelectItem item={props.item}>{props.item.rawValue.name}</SelectItem>
@@ -618,7 +619,7 @@ export default function Editor(props: EditorProps) {
                       <SelectTrigger
                         aria-label="Font Family"
                         class="w-full"
-                        value={props.fontFamily}
+                        value={props.snippetSettings.fontFamily}
                       >
                         <SelectValue<{ name: string }>>
                           {state => state.selectedOption()?.name}
@@ -629,11 +630,11 @@ export default function Editor(props: EditorProps) {
                   </div>
 
                   <Slider
-                    value={[props.fontSize]}
+                    value={[props.snippetSettings.fontSize]}
                     minValue={1}
                     maxValue={64}
                     onChange={e => {
-                      props.setFontSize(e[0])
+                      props.setSnippetSettings('fontSize', e[0])
                     }}
                   >
                     <div class="flex w-full justify-between mb-2">
@@ -674,7 +675,10 @@ export default function Editor(props: EditorProps) {
                     onClick={() => {
                       setSelectedTab('output')
                     }}
-                    disabled={props.startCode === '' || props.endCode === ''}
+                    disabled={
+                      props.snippetSettings.codeLeft === '' ||
+                      props.snippetSettings.codeRight === ''
+                    }
                   >
                     Next
                   </Button>
@@ -685,21 +689,21 @@ export default function Editor(props: EditorProps) {
                 <div class="flex flex-col w-full md:w-1/2 gap-1">
                   <p class="w-full text-sm">Start Code</p>
                   <ShikiCodeBlock
-                    code={props.startCode}
-                    lang={props.language}
-                    theme={props.theme}
+                    code={props.snippetSettings.codeLeft}
+                    lang={props.snippetSettings.language}
+                    theme={props.snippetSettings.theme}
                     class="min-h-[400px]"
-                    onChange={props.setStartCode}
+                    onChange={newCodeLeft => props.setSnippetSettings('codeLeft', newCodeLeft)}
                   />
                 </div>
                 <div class="flex flex-col w-full md:w-1/2 gap-1">
                   <p class="w-full text-sm">End Code</p>
                   <ShikiCodeBlock
-                    code={props.endCode}
-                    lang={props.language}
-                    theme={props.theme}
+                    code={props.snippetSettings.codeRight}
+                    lang={props.snippetSettings.language}
+                    theme={props.snippetSettings.theme}
                     class="min-h-[400px]"
-                    onChange={props.setEndCode}
+                    onChange={newEndCode => props.setSnippetSettings('codeRight', newEndCode)}
                   />
                 </div>
               </div>
@@ -715,13 +719,13 @@ export default function Editor(props: EditorProps) {
                     disabled={isGenerating()}
                     onClick={async () => {
                       setIsGenerating(true)
-                      setHiddenCode(props.endCode)
+                      setHiddenCode(props.snippetSettings.codeRight)
                       setTimeout(async () => {
                         const dataUrl = await generateGifDataUrl()()
                         setGifDataUrl(dataUrl)
                         setIsGenerating(false)
                         setIsShowingGifDialog(true)
-                        setHiddenCode(props.startCode)
+                        setHiddenCode(props.snippetSettings.codeLeft)
                       }, 1000)
                     }}
                   >
@@ -743,14 +747,14 @@ export default function Editor(props: EditorProps) {
                     id="styled-snippet"
                     class="flex flex-row items-center justify-center overflow-hidden"
                     style={{
-                      ...(props.bgType === 'linearGradient'
+                      ...(props.snippetSettings.bgType === 'linearGradient'
                         ? {
-                            background: `linear-gradient(${props.bgGradientDirection}deg, ${props.bgGradientColorStart}, ${props.bgGradientColorEnd})`,
+                            background: `linear-gradient(${props.snippetSettings.bgGradientDirection}deg, ${props.snippetSettings.bgGradientColorStart}, ${props.snippetSettings.bgGradientColorEnd})`,
                           }
                         : {
-                            background: props.bgColor,
+                            background: props.snippetSettings.bgColor,
                           }),
-                      padding: `${props.yPadding}px ${props.xPadding}px`,
+                      padding: `${props.snippetSettings.yPadding}px ${props.snippetSettings.xPadding}px`,
                     }}
                   >
                     <div class="flex flex-row items-center justify-center relative margin-auto w-fit">
@@ -760,20 +764,22 @@ export default function Editor(props: EditorProps) {
                             <div
                               class="rounded"
                               style={{
-                                width: `${props.snippetWidth}px`,
+                                width: `${props.snippetSettings.snippetWidth}px`,
                                 'overflow-x': 'hidden',
-                                'box-shadow': props.shadowEnabled
-                                  ? `0 ${props.shadowOffsetY}px ${props.shadowBlur}px ${
-                                      props.shadowColor
-                                    }${(props.shadowOpacity * 255).toString(16)}`
+                                'box-shadow': props.snippetSettings.shadowEnabled
+                                  ? `0 ${props.snippetSettings.shadowOffsetY}px ${
+                                      props.snippetSettings.shadowBlur
+                                    }px ${props.snippetSettings.shadowColor}${(
+                                      props.snippetSettings.shadowOpacity * 255
+                                    ).toString(16)}`
                                   : 'none',
-                                'font-family': props.fontFamily,
-                                'font-size': `${props.fontSize}px`,
+                                'font-family': props.snippetSettings.fontFamily,
+                                'font-size': `${props.snippetSettings.fontSize}px`,
                               }}
                             >
                               <ShikiMagicMove
-                                lang={props.language}
-                                theme={props.theme}
+                                lang={props.snippetSettings.language}
+                                theme={props.snippetSettings.theme}
                                 class="p-4 shadow-xl rounded select-none overflow-hidden"
                                 highlighter={highlighter()}
                                 code={code()}
@@ -788,12 +794,12 @@ export default function Editor(props: EditorProps) {
                                 aria-hidden="true"
                                 class=" absolute top-[-20000px] left-[-20000px]"
                                 style={{
-                                  width: `${props.snippetWidth}px`,
+                                  width: `${props.snippetSettings.snippetWidth}px`,
                                 }}
                               >
                                 <ShikiMagicMove
-                                  lang={props.language}
-                                  theme={props.theme}
+                                  lang={props.snippetSettings.language}
+                                  theme={props.snippetSettings.theme}
                                   class="p-4 shadow-xl rounded select-none overflow-hidden"
                                   highlighter={highlighter()}
                                   code={hiddenCode()}
@@ -851,30 +857,35 @@ export default function Editor(props: EditorProps) {
                 />
               </TextField>
               <Button
-                disabled={isSaving() || props.startCode === '' || props.endCode === '' || !title()}
+                disabled={
+                  isSaving() ||
+                  props.snippetSettings.codeLeft === '' ||
+                  props.snippetSettings.codeRight === '' ||
+                  !title()
+                }
                 onClick={async () => {
                   setIsSaving(true)
                   const body = JSON.stringify({
                     title: title(),
-                    codeLeft: props.startCode,
-                    codeRight: props.endCode,
-                    snippetWidth: props.snippetWidth,
-                    yPadding: props.yPadding,
-                    xPadding: props.xPadding,
-                    shadowEnabled: props.shadowEnabled,
-                    shadowOffsetY: props.shadowOffsetY,
-                    shadowBlur: props.shadowBlur,
-                    shadowColor: props.shadowColor,
-                    shadowOpacity: props.shadowOpacity,
-                    bgColor: props.bgColor,
-                    bgType: props.bgType,
-                    bgGradientColorStart: props.bgGradientColorStart,
-                    bgGradientColorEnd: props.bgGradientColorEnd,
-                    bgGradientDirection: props.bgGradientDirection,
-                    fontFamily: props.fontFamily,
-                    fontSize: props.fontSize,
-                    language: props.language,
-                    theme: props.theme,
+                    codeLeft: props.snippetSettings.codeLeft,
+                    codeRight: props.snippetSettings.codeRight,
+                    snippetWidth: props.snippetSettings.snippetWidth,
+                    yPadding: props.snippetSettings.yPadding,
+                    xPadding: props.snippetSettings.xPadding,
+                    shadowEnabled: props.snippetSettings.shadowEnabled,
+                    shadowOffsetY: props.snippetSettings.shadowOffsetY,
+                    shadowBlur: props.snippetSettings.shadowBlur,
+                    shadowColor: props.snippetSettings.shadowColor,
+                    shadowOpacity: props.snippetSettings.shadowOpacity,
+                    bgColor: props.snippetSettings.bgColor,
+                    bgType: props.snippetSettings.bgType,
+                    bgGradientColorStart: props.snippetSettings.bgGradientColorStart,
+                    bgGradientColorEnd: props.snippetSettings.bgGradientColorEnd,
+                    bgGradientDirection: props.snippetSettings.bgGradientDirection,
+                    fontFamily: props.snippetSettings.fontFamily,
+                    fontSize: props.snippetSettings.fontSize,
+                    language: props.snippetSettings.language,
+                    theme: props.snippetSettings.theme,
                   })
 
                   let url = '/api/snippets'

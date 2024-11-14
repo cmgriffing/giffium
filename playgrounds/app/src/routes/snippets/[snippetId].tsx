@@ -1,7 +1,8 @@
-import { createResource, Show } from 'solid-js'
+import { createEffect, createResource, Show } from 'solid-js'
+import { createStore } from 'solid-js/store'
 import Editor from '~/components/Editor'
 import { authFetch } from '~/lib/utils'
-import { Snippet } from '~/types'
+import { Snippet, SnippetSettings } from '~/types'
 
 export default function ViewSnippet({ params }: { params: { snippetId: string } }) {
   const [snippet] = createResource<Snippet>(async () => {
@@ -9,53 +10,29 @@ export default function ViewSnippet({ params }: { params: { snippetId: string } 
     if (!response.ok) {
       return undefined
     }
+
     const data = await response.json()
     return data
   })
 
+  const [snippetSettings, setSnippetSettings] = createStore<SnippetSettings>({ ...snippet()! })
+
+  createEffect(value => {
+    // console.log('snippet in effect', snippet())
+    const updatedSnippetSettings = snippet()
+    if (value !== updatedSnippetSettings && updatedSnippetSettings) {
+      setSnippetSettings(updatedSnippetSettings)
+    }
+    return updatedSnippetSettings
+  })
+
   return (
-    <main class="text-center mx-auto text-gray-700  dark:text-gray-100 p-4 flex flex-col justify-center">
+    <main class="mx-auto text-gray-700  dark:text-gray-100 px-4 flex flex-col justify-center w-full flex-1 max-w-screen-2xl">
       <Show when={snippet()}>
         <Editor
-          startCode={snippet()!.codeLeft}
-          setStartCode={() => {}}
-          endCode={snippet()!.codeRight}
-          setEndCode={() => {}}
-          snippetWidth={snippet()!.snippetWidth}
-          setSnippetWidth={() => {}}
-          yPadding={snippet()!.yPadding}
-          setYPadding={() => {}}
-          xPadding={snippet()!.xPadding}
-          setXPadding={() => {}}
-          shadowEnabled={snippet()!.shadowEnabled}
-          setShadowEnabled={() => {}}
-          shadowOffsetY={snippet()!.shadowOffsetY}
-          setShadowOffsetY={() => {}}
-          shadowBlur={snippet()!.shadowBlur}
-          setShadowBlur={() => {}}
-          shadowColor={snippet()!.shadowColor}
-          setShadowColor={() => {}}
-          shadowOpacity={snippet()!.shadowOpacity}
-          setShadowOpacity={() => {}}
-          bgColor={snippet()!.bgColor}
-          setBgColor={() => {}}
-          bgType={snippet()!.bgType}
-          setBgType={() => {}}
-          bgGradientColorStart={snippet()!.bgGradientColorStart}
-          setBgGradientColorStart={() => {}}
-          bgGradientColorEnd={snippet()!.bgGradientColorEnd}
-          setBgGradientColorEnd={() => {}}
-          bgGradientDirection={snippet()!.bgGradientDirection}
-          setBgGradientDirection={() => {}}
-          fontSize={snippet()!.fontSize}
-          setFontSize={() => {}}
-          fontFamily={snippet()!.fontFamily}
-          setFontFamily={() => {}}
-          language={snippet()!.language}
-          setLanguage={() => {}}
-          theme={snippet()!.theme}
-          setTheme={() => {}}
-          title={snippet()!.title}
+          snippetId={params.snippetId}
+          snippetSettings={snippetSettings}
+          setSnippetSettings={setSnippetSettings}
         />
       </Show>
     </main>

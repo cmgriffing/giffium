@@ -1,6 +1,8 @@
 import { createSignal } from 'solid-js'
 import { makePersisted } from '@solid-primitives/storage'
 import Editor from '~/components/Editor'
+import { SnippetSettings } from '~/types'
+import { createStore } from 'solid-js/store'
 
 const left = `
 import { render } from "solid-js/web";
@@ -26,108 +28,35 @@ render(() => <Counter />, document.getElementById('app'));
 `
 
 export default function Home() {
-  const [theme, setTheme] = makePersisted(createSignal('nord'), { name: 'theme' })
-  const [language, setLanguage] = makePersisted(createSignal('tsx'), {
-    name: 'language',
-  })
-  const [startCode, setStartCode] = makePersisted(createSignal(left), {
-    name: 'startCode',
-  })
-  const [endCode, setEndCode] = makePersisted(createSignal(right), {
-    name: 'endCode',
-  })
-  const [bgColor, setBgColor] = makePersisted(createSignal('#a3d0ff'), {
-    name: 'bgColor',
-  })
-  const [xPadding, setXPadding] = makePersisted(createSignal(42), {
-    name: 'xPadding',
-  })
-  const [yPadding, setYPadding] = makePersisted(createSignal(42), {
-    name: 'yPadding',
-  })
-  const [shadowEnabled, setShadowEnabled] = makePersisted(createSignal(true), {
-    name: 'shadowEnabled',
-  })
-  const [shadowOffsetY, setShadowOffsetY] = makePersisted(createSignal(10), {
-    name: 'shadowOffsetY',
-  })
-  const [shadowBlur, setShadowBlur] = makePersisted(createSignal(10), {
-    name: 'shadowBlur',
-  })
-  const [shadowColor, setShadowColor] = makePersisted(createSignal('#000000'), {
-    name: 'shadowColor',
-  })
-  const [shadowOpacity, setShadowOpacity] = makePersisted(createSignal(0.6), {
-    name: 'shadowOpacity',
-  })
-  const [snippetWidth, setSnippetWidth] = makePersisted(createSignal(450), {
-    name: 'snippetWidth',
-  })
-  const [fontSize, setFontSize] = makePersisted(createSignal(16), {
-    name: 'fontSize',
-  })
-  const [fontFamily, setFontFamily] = makePersisted(createSignal('Fira Code'), {
-    name: 'fontFamily',
-  })
-
-  const [bgType, setBgType] = makePersisted(createSignal<'solid' | 'linearGradient'>('solid'), {
-    name: 'bgType',
-  })
-  const [bgGradientColorStart, setBgGradientColorStart] = makePersisted(createSignal('#a3d0ff'), {
-    name: 'bgGradientColorStart',
-  })
-  const [bgGradientColorEnd, setBgGradientColorEnd] = makePersisted(createSignal('#fbc737'), {
-    name: 'bgGradientColorEnd',
-  })
-  const [bgGradientDirection, setBgGradientDirection] = makePersisted(createSignal(45), {
-    name: 'bgGradientDirection',
-  })
+  const [snippetSettings, setSnippetSettings] = makePersisted(
+    createStore<SnippetSettings>({
+      title: '',
+      codeLeft: left,
+      codeRight: right,
+      snippetWidth: 450,
+      yPadding: 42,
+      xPadding: 42,
+      shadowEnabled: true,
+      shadowOffsetY: 10,
+      shadowBlur: 10,
+      shadowColor: '#000000',
+      shadowOpacity: 0.6,
+      bgType: 'solid',
+      bgGradientColorStart: '#a3d0ff',
+      bgGradientColorEnd: '#fbc737',
+      bgGradientDirection: 45,
+      bgColor: '#a3d0ff',
+      language: 'tsx',
+      theme: 'nord',
+      fontSize: 16,
+      fontFamily: 'Fira Code',
+    }),
+    { name: 'snippetSettings' },
+  )
 
   return (
-    <main class="mx-auto text-gray-700 dark:text-gray-100 px-4 min-h-full">
-      {/* <p class="mb-16 text-center font-bold text-lg">
-        Create and share beautiful gifs of your source code diffs.
-      </p> */}
-      <Editor
-        startCode={startCode()}
-        setStartCode={setStartCode}
-        endCode={endCode()}
-        setEndCode={setEndCode}
-        snippetWidth={snippetWidth()}
-        setSnippetWidth={setSnippetWidth}
-        yPadding={yPadding()}
-        setYPadding={setYPadding}
-        xPadding={xPadding()}
-        setXPadding={setXPadding}
-        shadowEnabled={shadowEnabled()}
-        setShadowEnabled={setShadowEnabled}
-        shadowOffsetY={shadowOffsetY()}
-        setShadowOffsetY={setShadowOffsetY}
-        shadowBlur={shadowBlur()}
-        setShadowBlur={setShadowBlur}
-        shadowColor={shadowColor()}
-        setShadowColor={setShadowColor}
-        shadowOpacity={shadowOpacity()}
-        setShadowOpacity={setShadowOpacity}
-        bgColor={bgColor()}
-        setBgColor={setBgColor}
-        bgType={bgType()}
-        setBgType={setBgType}
-        bgGradientColorStart={bgGradientColorStart()}
-        setBgGradientColorStart={setBgGradientColorStart}
-        bgGradientColorEnd={bgGradientColorEnd()}
-        setBgGradientColorEnd={setBgGradientColorEnd}
-        bgGradientDirection={bgGradientDirection()}
-        setBgGradientDirection={setBgGradientDirection}
-        fontSize={fontSize()}
-        setFontSize={setFontSize}
-        fontFamily={fontFamily()}
-        setFontFamily={setFontFamily}
-        language={language()}
-        setLanguage={setLanguage}
-        theme={theme()}
-        setTheme={setTheme}
-      />
+    <main class="mx-auto text-gray-700 dark:text-gray-100 px-4 min-h-full w-full flex-1 max-w-screen-2xl">
+      <Editor snippetSettings={snippetSettings} setSnippetSettings={setSnippetSettings} />
     </main>
   )
 }
