@@ -58,12 +58,13 @@ export default function About() {
           ) : (
             contributors?.latest?.map(contributor => (
               <li class="flex flex-col items-center justify-center gap-2">
-                <img
-                  src={contributor.avatarUrl}
-                  alt={contributor.username}
-                  class="w-16 h-16 rounded-full"
-                />
-                <span class={`text-xl ${linkStyles}`}>{contributor.username}</span>
+                <a href={`https://github.com/${contributor.username}`}>
+                  <img
+                    src={contributor.avatarUrl}
+                    alt={contributor.username}
+                    class="w-16 h-16 rounded-full"
+                  />
+                </a>
               </li>
             ))
           )}
