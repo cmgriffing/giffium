@@ -1,6 +1,48 @@
 {
   "name": "giffium-app",
+  "version": "0.0.1",
+  "description": "Giffium is a social sharable diff tool. Use it to generate buttery smooth animated gifs from your source code diffs.  Giffium is built with SolidJS, Drizzle, Turso, and Shiki/Shiki Magic Move.",
   "type": "module",
+  "license": "MIT",
+  "author": "Chris Griffing",
+  "contributors": [
+    {
+      "name": "cmgriffing",
+      "url": "https://github.com/cmgriffing"
+    },
+    {
+      "name": "Salman2301",
+      "url": "https://github.com/Salman2301"
+    },
+    {
+      "name": "xcrap",
+      "url": "https://github.com/xcrap"
+    },
+    {
+      "name": "disdain13",
+      "url": "https://github.com/disdain13"
+    },
+    {
+      "name": "miniscruff",
+      "url": "https://github.com/miniscruff"
+    },
+    {
+      "name": "KushalGaywala",
+      "url": "https://github.com/KushalGaywala"
+    },
+    {
+      "name": "alanhoskins",
+      "url": "https://github.com/alanhoskins"
+    },
+    {
+      "name": "SabAlej",
+      "url": "https://github.com/SabAlej"
+    },
+    {
+      "name": "naourass",
+      "url": "https://github.com/naourass"
+    }
+  ],
   "scripts": {
     "dev": "vinxi dev",
     "build": "vinxi build",
