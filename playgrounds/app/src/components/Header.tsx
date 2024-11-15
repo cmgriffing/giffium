@@ -96,7 +96,7 @@ export default function Header() {
                 class="ml-4"
                 href={`https://github.com/login/oauth/authorize?client_id=${
                   import.meta.env.VITE_GITHUB_CLIENT_ID
-                }&scope=${encodeURIComponent('user:email')}&redirect_uri=${
+                }&scope=${encodeURIComponent('read:user,user:email')}&redirect_uri=${
                   window.location.origin
                 }/oauth`}
               >
