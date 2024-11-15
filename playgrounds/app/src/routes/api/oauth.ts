@@ -24,18 +24,31 @@ export async function POST(event: APIEvent) {
 
   const { access_token } = await githubResponse.json()
 
-  const githubUserResponse = await fetch('https://api.github.com/user', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: `Bearer ${access_token}`,
-    },
-  })
+  const [githubUserResponse, githubEmailsResponse] = await Promise.all([
+    fetch('https://api.github.com/user', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: `Bearer ${access_token}`,
+      },
+    }),
+    fetch('https://api.github.com/user/emails', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: `Bearer ${access_token}`,
+      },
+    }),
+  ])
 
-  const githubUser = await githubUserResponse.json()
+  const [githubUser, githubEmails] = await Promise.all([
+    githubUserResponse.json(),
+    githubEmailsResponse.json(),
+  ])
 
-  console.log({ ...githubUser })
+  const githubEmail = githubEmails.find((email: { primary: boolean }) => email.primary)?.email
 
   let user = await db.query.users.findFirst({
     where: eq(usersTable.githubId, githubUser.id),
@@ -45,7 +58,7 @@ export async function POST(event: APIEvent) {
     const createdAt = Date.now()
     const newUser = {
       id: customNanoid(),
-      email: githubUser.email,
+      email: githubUser.email || githubEmail,
       githubId: githubUser.id,
       githubUsername: githubUser.login,
       githubAvatarUrl: githubUser.avatar_url,
