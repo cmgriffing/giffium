@@ -48,8 +48,6 @@ export async function POST(event: APIEvent) {
     githubEmailsResponse.json(),
   ])
 
-  console.log({ githubEmails })
-
   const githubEmail = githubEmails.find((email: { primary: boolean }) => email.primary)?.email
 
   let user = await db.query.users.findFirst({
