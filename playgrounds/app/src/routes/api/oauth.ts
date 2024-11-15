@@ -35,6 +35,8 @@ export async function POST(event: APIEvent) {
 
   const githubUser = await githubUserResponse.json()
 
+  console.log({ ...githubUser })
+
   let user = await db.query.users.findFirst({
     where: eq(usersTable.githubId, githubUser.id),
   })

@@ -17,7 +17,9 @@ export default function LoggedOut() {
         as="a"
         href={`https://github.com/login/oauth/authorize?client_id=${
           import.meta.env.VITE_GITHUB_CLIENT_ID
-        }&redirect_uri=${window.location.origin}/oauth`}
+        }&scope=${encodeURIComponent('read:user,user:email')}&redirect_uri=${
+          window.location.origin
+        }/oauth`}
       >
         <OcMarkgithub2 size={24} class="mr-4" />
         Login
