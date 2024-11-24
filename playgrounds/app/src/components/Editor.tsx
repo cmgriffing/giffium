@@ -44,6 +44,7 @@ import {
   Setter,
   Show,
 } from 'solid-js'
+import type { HighlighterGeneric } from 'shiki'
 import { createHighlighter, bundledThemes, bundledLanguages } from 'shiki'
 import { ShikiMagicMove } from 'shiki-magic-move/solid'
 import { AnimationFrameConfig, SnippetSettings } from '~/types'
@@ -106,14 +107,15 @@ export default function Editor(props: EditorProps) {
   const [isShowingGifDialog, setIsShowingGifDialog] = createSignal(false)
   const [title, setTitle] = createSignal(props.snippetSettings.title)
   const [isSaving, setIsSaving] = createSignal(false)
+  const [highlighter, setHighlighter] = createSignal<HighlighterGeneric<any, any> | undefined>()
 
-  const [highlighter] = createResource(async () => {
-    const newHighlighter = await createHighlighter({
-      themes: Object.keys(bundledThemes),
-      langs: Object.keys(bundledLanguages),
+  createEffect(() => {
+    createHighlighter({
+      themes: [props.snippetSettings.theme],
+      langs: [props.snippetSettings.language],
+    }).then(newHighlighter => {
+      setHighlighter(newHighlighter)
     })
-
-    return newHighlighter
   })
 
   createEffect(() => {
