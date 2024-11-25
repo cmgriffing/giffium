@@ -55,8 +55,20 @@ import { toast } from 'solid-sonner'
 import { Separator } from './ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu'
 import { ShikiCodeBlock } from './ShikiCodeBlock'
 import { SetStoreFunction } from 'solid-js/store'
+import { FFmpeg } from '@ffmpeg/ffmpeg'
+import { fetchFile, toBlobURL } from '@ffmpeg/util'
+import coreURL from '@ffmpeg/core?url'
+import wasmURL from '@ffmpeg/core/wasm?url'
+import { openDB } from 'idb'
+import { ProgressCircle } from './ui/progress-circle'
 
 const animationSeconds = 1
 const animationFPS = 30
@@ -109,6 +121,13 @@ export default function Editor(props: EditorProps) {
   const [isSaving, setIsSaving] = createSignal(false)
   const [highlighter, setHighlighter] = createSignal<HighlighterGeneric<any, any> | undefined>()
 
+  const [isShowingFfmpegDialog, setIsShowingFfmpegDialog] = createSignal(false)
+  const [ffmpegLoaded, setFfmpegLoaded] = createSignal(false)
+  const [isDownloadingFfmpeg, setIsDownloadingFfmpeg] = createSignal(false)
+  const [isGeneratingVideo, setIsGeneratingVideo] = createSignal(false)
+  const [videoProgress, setVideoProgress] = createSignal(0)
+  const ffmpeg = new FFmpeg()
+
   createEffect(() => {
     createHighlighter({
       themes: [props.snippetSettings.theme],
@@ -129,6 +148,8 @@ export default function Editor(props: EditorProps) {
       props.snippetSettings.codeLeft !== '' &&
       props.snippetSettings.codeRight !== '' &&
       !isResizing() &&
+      !isShowingGifDialog() &&
+      !isShowingFfmpegDialog() &&
       isLooping()
     ) {
       if (toggled()) {
@@ -957,14 +978,128 @@ export default function Editor(props: EditorProps) {
                   link.click()
                 }}
               >
-                Download
+                Download GIF
               </Button>
+
+              <Show
+                when={ffmpegLoaded()}
+                fallback={
+                  <Button
+                    onClick={() => {
+                      setIsShowingFfmpegDialog(true)
+                    }}
+                  >
+                    Enable Video
+                  </Button>
+                }
+              >
+                <Button
+                  disabled={isGeneratingVideo()}
+                  onClick={async () => {
+                    setIsGeneratingVideo(true)
+                    setVideoProgress(0)
+                    await ffmpeg.writeFile('input.gif', dataURItoUInt8Array(gifDataUrl()))
+                    await ffmpeg.exec(['-i', 'input.gif', 'output.mp4'])
+                    const data = await ffmpeg.readFile('output.mp4')
+                    const blob = new Blob([data], { type: 'video/mp4' })
+                    const filename = 'giffium.mp4'
+                    const link = document.createElement('a')
+                    link.href = URL.createObjectURL(blob)
+                    link.download = filename
+                    link.click()
+                    setIsGeneratingVideo(false)
+                  }}
+                >
+                  <Show when={isGeneratingVideo()} fallback="Download MP4">
+                    <span class="flex flex-row gap-1 items-center justify-center">
+                      <span>Generating...</span>
+                      <ProgressCircle
+                        radius={12}
+                        value={videoProgress()}
+                        strokeWidth={4}
+                        color="green"
+                        class="border-green-500"
+                      />
+                    </span>
+                  </Show>
+                </Button>
+              </Show>
             </Show>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isShowingFfmpegDialog()} onOpenChange={setIsShowingFfmpegDialog} modal>
+        <DialogContent>
+          <Show when={!isDownloadingFfmpeg()} fallback={<p>Downloading...</p>}>
+            <p class="">To create video, must download ffmpeg.wasm. It is approximately 30MB.</p>
+          </Show>
+          <DialogFooter>
+            <Button
+              disabled={isDownloadingFfmpeg()}
+              onClick={() => setIsShowingFfmpegDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={isDownloadingFfmpeg()}
+              onClick={async () => {
+                setIsDownloadingFfmpeg(true)
+                const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
+                ffmpeg.on('log', ({ message }) => {
+                  console.log(message)
+                })
+                ffmpeg.on('progress', ({ progress, time }) => {
+                  setVideoProgress(Math.round(progress * 100))
+                })
+                try {
+                  // toBlobURL is used to bypass CORS issue, urls with the same
+                  // domain can be used directly.
+                  await ffmpeg.load({
+                    coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+                    wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+                    // We use the unpkg to reduce bandwidth usage to netlify
+                    // coreURL,
+                    // wasmURL,
+                  })
+                  setFfmpegLoaded(true)
+                } catch (e) {
+                  console.error(e)
+                  setFfmpegLoaded(false)
+                  // TODO: show error
+                }
+                setIsDownloadingFfmpeg(false)
+                setIsShowingFfmpegDialog(false)
+              }}
+            >
+              Download
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
   )
+}
+
+function dataURItoUInt8Array(dataURI: string) {
+  // convert base64 to raw binary data held in a string
+  // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+  var byteString = atob(dataURI.split(',')[1])
+
+  // separate out the mime component
+  var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+  // write the bytes of the string to an ArrayBuffer
+  var ab = new ArrayBuffer(byteString.length)
+
+  // create a view into the buffer
+  var ia = new Uint8Array(ab)
+
+  // set the bytes of the buffer to the correct values
+  for (var i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i)
+  }
+
+  return ia
 }
 
 function dataURItoBlob(dataURI: string) {
@@ -1111,4 +1246,14 @@ async function createAnimationFrame(
   await Promise.all(elementPromises)
 
   return ctx.getImageData(0, 0, canvas.width, canvas.height)
+}
+
+// Not actually necessary since the browser will cache the wasm file
+async function wrappedToBlobURL(url: string, mimeType: string) {
+  const storeName = 'ffmpegCache'
+  const db = await openDB(storeName, 1, {})
+
+  return db.get(storeName, url).catch(() => {
+    return toBlobURL(url, mimeType)
+  })
 }

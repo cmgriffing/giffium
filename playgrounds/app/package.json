@@ -16,6 +16,9 @@
   },
   "dependencies": {
     "@corvu/resizable": "^0.2.3",
+    "@ffmpeg/core": "^0.12.6",
+    "@ffmpeg/ffmpeg": "^0.12.10",
+    "@ffmpeg/util": "^0.12.1",
     "@fontsource/bungee-inline": "^5.1.0",
     "@fontsource/roboto": "^5.1.0",
     "@kobalte/core": "^0.13.7",
@@ -31,6 +34,7 @@
     "diff-match-patch-es": "^0.1.0",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.35.3",
+    "idb": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "modern-gif": "^2.0.3",
     "nanoid": "^5.0.7",
