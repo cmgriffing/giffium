@@ -1031,7 +1031,10 @@ export default function Editor(props: EditorProps) {
       <Dialog open={isShowingFfmpegDialog()} onOpenChange={setIsShowingFfmpegDialog} modal>
         <DialogContent>
           <Show when={!isDownloadingFfmpeg()} fallback={<p>Downloading...</p>}>
-            <p class="">To create video, must download ffmpeg.wasm. It is approximately 30MB.</p>
+            <p class="">
+              To create video, must download ffmpeg.wasm. It's approximately 30MB. If you have
+              downloaded it here before, your browser cache should kick in.
+            </p>
           </Show>
           <DialogFooter>
             <Button
