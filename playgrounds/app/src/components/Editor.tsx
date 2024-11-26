@@ -43,6 +43,7 @@ import {
   onCleanup,
   Setter,
   Show,
+  onMount,
 } from 'solid-js'
 import type { HighlighterGeneric } from 'shiki'
 import { createHighlighter, bundledThemes, bundledLanguages } from 'shiki'
@@ -69,6 +70,9 @@ import coreURL from '@ffmpeg/core?url'
 import wasmURL from '@ffmpeg/core/wasm?url'
 import { openDB } from 'idb'
 import { ProgressCircle } from './ui/progress-circle'
+import { Collapsible, CollapsibleContent } from './ui/collapsible'
+import { FaSolidCaretDown, FaSolidCaretUp } from 'solid-icons/fa'
+import { HiOutlineCog } from 'solid-icons/hi'
 
 const animationSeconds = 1
 const animationFPS = 30
@@ -127,6 +131,13 @@ export default function Editor(props: EditorProps) {
   const [isGeneratingVideo, setIsGeneratingVideo] = createSignal(false)
   const [videoProgress, setVideoProgress] = createSignal(0)
   const ffmpeg = new FFmpeg()
+  const [settingsCollapsed, setSettingsCollapsed] = createSignal(false)
+
+  onMount(() => {
+    if (document.body.clientWidth < 768) {
+      setSettingsCollapsed(true)
+    }
+  })
 
   createEffect(() => {
     createHighlighter({
@@ -274,413 +285,427 @@ export default function Editor(props: EditorProps) {
 
   return (
     <>
-      <div class="flex flex-row min-h-full min-w-full gap-4">
-        <div class="w-[280px] min-w-[280px] h-full bg-gray flex flex-col max-h-[calc(100vh-82px)] overflow-scroll px-4 pb-8">
-          <div class="pb-4">
-            <Label for="theme-selector">Theme</Label>
-            <Combobox
-              id="theme-selector"
-              value={props.snippetSettings.theme}
-              options={Object.keys(bundledThemes)}
-              onChange={newTheme => props.setSnippetSettings('theme', newTheme || '')}
-              placeholder="Search a theme..."
-              itemComponent={props => (
-                <ComboboxItem item={props.item}>
-                  <ComboboxItemLabel>{props.item.rawValue}</ComboboxItemLabel>
-                  <ComboboxItemIndicator />
-                </ComboboxItem>
-              )}
-            >
-              <ComboboxControl aria-label="Theme" class="bg-white">
-                <ComboboxInput />
-                <ComboboxTrigger />
-              </ComboboxControl>
-              <ComboboxContent style={{ 'max-height': '200px', overflow: 'auto' }} />
-            </Combobox>
-          </div>
-
-          <div class="pb-4">
-            <Label for="language-selector">Language</Label>
-            <Combobox
-              id="language-selector"
-              value={props.snippetSettings.language}
-              options={Object.keys(bundledLanguages)}
-              onChange={newLanguage => props.setSnippetSettings('language', newLanguage || '')}
-              placeholder="Search a Language..."
-              itemComponent={props => (
-                <ComboboxItem item={props.item}>
-                  <ComboboxItemLabel>{props.item.rawValue}</ComboboxItemLabel>
-                  <ComboboxItemIndicator />
-                </ComboboxItem>
-              )}
-            >
-              <ComboboxControl aria-label="Language" class="bg-white">
-                <ComboboxInput />
-                <ComboboxTrigger />
-              </ComboboxControl>
-              <ComboboxContent style={{ 'max-height': '200px', overflow: 'auto' }} />
-            </Combobox>
-          </div>
-
-          <Separator />
-
-          <Accordion
-            multiple={true}
-            collapsible
-            defaultValue={['background', 'layout', 'shadow', 'font']}
+      <div class="flex flex-col md:flex-row min-h-full min-w-full md:gap-4">
+        <div class=" w-[calc(100vw-2rem)] md:w-[280px] md:min-w-[280px] h-full bg-gray flex flex-col md:max-h-[calc(100vh-82px)] overflow-scroll md:px-4 md:pb-8">
+          <Button
+            class="md:hidden mb-2 flex gap-2"
+            onClick={() => setSettingsCollapsed(!settingsCollapsed())}
           >
-            <AccordionItem value="background">
-              <AccordionTrigger>Background</AccordionTrigger>
-              <AccordionContent>
-                <div class="flex flex-col gap-4">
-                  <div>
-                    <Label for="bg-type" class="font-normal text-sm">
-                      Type
-                    </Label>
+            <HiOutlineCog size={24} />
+            Settings
+            <Show when={settingsCollapsed()} fallback={<FaSolidCaretUp size={16} />}>
+              <FaSolidCaretDown size={16} />
+            </Show>
+          </Button>
+          <Collapsible open={!settingsCollapsed()}>
+            <CollapsibleContent title="Snippet Settings" class="collapsible__content">
+              <div class="pb-4">
+                <Label for="theme-selector">Theme</Label>
+                <Combobox
+                  id="theme-selector"
+                  value={props.snippetSettings.theme}
+                  options={Object.keys(bundledThemes)}
+                  onChange={newTheme => props.setSnippetSettings('theme', newTheme || '')}
+                  placeholder="Search a theme..."
+                  itemComponent={props => (
+                    <ComboboxItem item={props.item}>
+                      <ComboboxItemLabel>{props.item.rawValue}</ComboboxItemLabel>
+                      <ComboboxItemIndicator />
+                    </ComboboxItem>
+                  )}
+                >
+                  <ComboboxControl aria-label="Theme" class="bg-white">
+                    <ComboboxInput />
+                    <ComboboxTrigger />
+                  </ComboboxControl>
+                  <ComboboxContent style={{ 'max-height': '200px', overflow: 'auto' }} />
+                </Combobox>
+              </div>
 
-                    <Select<SelectOption>
-                      id="bg-type"
-                      value={bgTypeOptions.find(
-                        option => option.value === props.snippetSettings.bgType,
-                      )}
-                      optionValue="value"
-                      optionTextValue="label"
-                      onChange={newType =>
-                        newType &&
-                        props.setSnippetSettings(
-                          'bgType',
-                          newType.value as 'solid' | 'linearGradient',
-                        )
-                      }
-                      options={bgTypeOptions}
-                      itemComponent={props => (
-                        <SelectItem item={props.item}>{props.item.rawValue.label}</SelectItem>
-                      )}
-                    >
-                      <SelectTrigger
-                        aria-label="BG Type"
-                        class="w-full"
-                        value={props.snippetSettings.bgType}
-                      >
-                        <SelectValue<{ label: string; value: string }>>
-                          {state => state.selectedOption()?.label}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent />
-                    </Select>
-                  </div>
+              <div class="pb-4">
+                <Label for="language-selector">Language</Label>
+                <Combobox
+                  id="language-selector"
+                  value={props.snippetSettings.language}
+                  options={Object.keys(bundledLanguages)}
+                  onChange={newLanguage => props.setSnippetSettings('language', newLanguage || '')}
+                  placeholder="Search a Language..."
+                  itemComponent={props => (
+                    <ComboboxItem item={props.item}>
+                      <ComboboxItemLabel>{props.item.rawValue}</ComboboxItemLabel>
+                      <ComboboxItemIndicator />
+                    </ComboboxItem>
+                  )}
+                >
+                  <ComboboxControl aria-label="Language" class="bg-white">
+                    <ComboboxInput />
+                    <ComboboxTrigger />
+                  </ComboboxControl>
+                  <ComboboxContent style={{ 'max-height': '200px', overflow: 'auto' }} />
+                </Combobox>
+              </div>
 
-                  {props.snippetSettings.bgType === 'linearGradient' && (
-                    <>
-                      <div class="flex flex-row items-center justify-between">
-                        <Label for="bg-color-input-grad-start" class="font-normal">
-                          Color Start
+              <Separator />
+
+              <Accordion
+                multiple={true}
+                collapsible
+                defaultValue={['background', 'layout', 'shadow', 'font']}
+              >
+                <AccordionItem value="background">
+                  <AccordionTrigger>Background</AccordionTrigger>
+                  <AccordionContent>
+                    <div class="flex flex-col gap-4">
+                      <div>
+                        <Label for="bg-type" class="font-normal text-sm">
+                          Type
                         </Label>
-                        <input
-                          id="bg-color-input-grad-start"
-                          class="h-6 w-6 rounded"
-                          type="color"
-                          value={props.snippetSettings.bgGradientColorStart}
-                          onInput={e => {
-                            props.setSnippetSettings('bgGradientColorStart', e.target.value)
-                          }}
-                        />
+
+                        <Select<SelectOption>
+                          id="bg-type"
+                          value={bgTypeOptions.find(
+                            option => option.value === props.snippetSettings.bgType,
+                          )}
+                          optionValue="value"
+                          optionTextValue="label"
+                          onChange={newType =>
+                            newType &&
+                            props.setSnippetSettings(
+                              'bgType',
+                              newType.value as 'solid' | 'linearGradient',
+                            )
+                          }
+                          options={bgTypeOptions}
+                          itemComponent={props => (
+                            <SelectItem item={props.item}>{props.item.rawValue.label}</SelectItem>
+                          )}
+                        >
+                          <SelectTrigger
+                            aria-label="BG Type"
+                            class="w-full"
+                            value={props.snippetSettings.bgType}
+                          >
+                            <SelectValue<{ label: string; value: string }>>
+                              {state => state.selectedOption()?.label}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent />
+                        </Select>
                       </div>
-                      <div class="flex flex-row items-center justify-between">
-                        <Label for="bg-color-input-grad-end" class="font-normal">
-                          Color End
-                        </Label>
-                        <input
-                          id="bg-color-input-grad-end"
-                          class="h-6 w-6 rounded"
-                          type="color"
-                          value={props.snippetSettings.bgGradientColorEnd}
-                          onInput={e => {
-                            props.setSnippetSettings('bgGradientColorEnd', e.target.value)
-                          }}
-                        />
-                      </div>
+
+                      {props.snippetSettings.bgType === 'linearGradient' && (
+                        <>
+                          <div class="flex flex-row items-center justify-between">
+                            <Label for="bg-color-input-grad-start" class="font-normal">
+                              Color Start
+                            </Label>
+                            <input
+                              id="bg-color-input-grad-start"
+                              class="h-6 w-6 rounded"
+                              type="color"
+                              value={props.snippetSettings.bgGradientColorStart}
+                              onInput={e => {
+                                props.setSnippetSettings('bgGradientColorStart', e.target.value)
+                              }}
+                            />
+                          </div>
+                          <div class="flex flex-row items-center justify-between">
+                            <Label for="bg-color-input-grad-end" class="font-normal">
+                              Color End
+                            </Label>
+                            <input
+                              id="bg-color-input-grad-end"
+                              class="h-6 w-6 rounded"
+                              type="color"
+                              value={props.snippetSettings.bgGradientColorEnd}
+                              onInput={e => {
+                                props.setSnippetSettings('bgGradientColorEnd', e.target.value)
+                              }}
+                            />
+                          </div>
+                          <Slider
+                            value={[props.snippetSettings.bgGradientDirection]}
+                            minValue={0}
+                            maxValue={359}
+                            onChange={e => {
+                              props.setSnippetSettings('bgGradientDirection', e[0])
+                            }}
+                          >
+                            <div class="flex justify-between items-center w-full">
+                              <SliderLabel>Direction</SliderLabel>
+
+                              <div class="flex flex-row">
+                                <SliderValueLabel />
+                                <span class="text-xs">deg</span>
+                              </div>
+                            </div>
+                            <SliderTrack class="my-2">
+                              <SliderFill />
+                              <SliderThumb />
+                            </SliderTrack>
+                          </Slider>
+                        </>
+                      )}
+                      {props.snippetSettings.bgType === 'solid' && (
+                        <div class="flex flex-row items-center justify-between">
+                          <Label for="bg-color-input" class="font-normal">
+                            Background Color
+                          </Label>
+                          <input
+                            id="bg-color-input"
+                            class="h-6 w-6 rounded"
+                            type="color"
+                            value={props.snippetSettings.bgColor}
+                            onInput={e => {
+                              props.setSnippetSettings('bgColor', e.target.value)
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="layout">
+                  <AccordionTrigger>Layout</AccordionTrigger>
+                  <AccordionContent>
+                    <div class="flex flex-col gap-4">
                       <Slider
-                        value={[props.snippetSettings.bgGradientDirection]}
+                        value={[props.snippetSettings.snippetWidth]}
                         minValue={0}
-                        maxValue={359}
+                        maxValue={1500}
                         onChange={e => {
-                          props.setSnippetSettings('bgGradientDirection', e[0])
+                          props.setSnippetSettings('snippetWidth', e[0])
                         }}
                       >
-                        <div class="flex justify-between items-center w-full">
-                          <SliderLabel>Direction</SliderLabel>
-
+                        <div class="flex w-full justify-between mb-2">
+                          <SliderLabel>Width</SliderLabel>
                           <div class="flex flex-row">
                             <SliderValueLabel />
-                            <span class="text-xs">deg</span>
+                            <span class="text-xs">px</span>
                           </div>
                         </div>
-                        <SliderTrack class="my-2">
+                        <SliderTrack>
                           <SliderFill />
                           <SliderThumb />
                         </SliderTrack>
                       </Slider>
-                    </>
-                  )}
-                  {props.snippetSettings.bgType === 'solid' && (
-                    <div class="flex flex-row items-center justify-between">
-                      <Label for="bg-color-input" class="font-normal">
-                        Background Color
-                      </Label>
-                      <input
-                        id="bg-color-input"
-                        class="h-6 w-6 rounded"
-                        type="color"
-                        value={props.snippetSettings.bgColor}
-                        onInput={e => {
-                          props.setSnippetSettings('bgColor', e.target.value)
+
+                      <Slider
+                        value={[props.snippetSettings.yPadding]}
+                        minValue={0}
+                        maxValue={200}
+                        onChange={e => {
+                          props.setSnippetSettings('yPadding', e[0])
                         }}
-                      />
-                    </div>
-                  )}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="layout">
-              <AccordionTrigger>Layout</AccordionTrigger>
-              <AccordionContent>
-                <div class="flex flex-col gap-4">
-                  <Slider
-                    value={[props.snippetSettings.snippetWidth]}
-                    minValue={0}
-                    maxValue={1500}
-                    onChange={e => {
-                      props.setSnippetSettings('snippetWidth', e[0])
-                    }}
-                  >
-                    <div class="flex w-full justify-between mb-2">
-                      <SliderLabel>Width</SliderLabel>
-                      <div class="flex flex-row">
-                        <SliderValueLabel />
-                        <span class="text-xs">px</span>
-                      </div>
-                    </div>
-                    <SliderTrack>
-                      <SliderFill />
-                      <SliderThumb />
-                    </SliderTrack>
-                  </Slider>
-
-                  <Slider
-                    value={[props.snippetSettings.yPadding]}
-                    minValue={0}
-                    maxValue={200}
-                    onChange={e => {
-                      props.setSnippetSettings('yPadding', e[0])
-                    }}
-                  >
-                    <div class="flex w-full justify-between mb-2">
-                      <SliderLabel>Padding (y)</SliderLabel>
-                      <div class="flex flex-row">
-                        <SliderValueLabel />
-                        <span class="text-xs">px</span>
-                      </div>
-                    </div>
-                    <SliderTrack>
-                      <SliderFill />
-                      <SliderThumb />
-                    </SliderTrack>
-                  </Slider>
-
-                  <Slider
-                    value={[props.snippetSettings.xPadding]}
-                    minValue={0}
-                    maxValue={200}
-                    onChange={e => {
-                      props.setSnippetSettings('xPadding', e[0])
-                    }}
-                  >
-                    <div class="flex w-full justify-between mb-2">
-                      <SliderLabel>Padding (x)</SliderLabel>
-                      <div class="flex flex-row">
-                        <SliderValueLabel />
-                        <span class="text-xs">px</span>
-                      </div>
-                    </div>
-                    <SliderTrack>
-                      <SliderFill />
-                      <SliderThumb />
-                    </SliderTrack>
-                  </Slider>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="shadow">
-              <AccordionTrigger>Shadow</AccordionTrigger>
-              <AccordionContent>
-                <div class="flex flex-col gap-4">
-                  <div class="flex flex-row items-center justify-between">
-                    <Label
-                      for="shadow-checkbox"
-                      onClick={() =>
-                        props.setSnippetSettings(
-                          'shadowEnabled',
-                          !props.snippetSettings.shadowEnabled,
-                        )
-                      }
-                    >
-                      Show Shadow
-                    </Label>
-                    <Checkbox
-                      id="shadow-checkbox"
-                      checked={props.snippetSettings.shadowEnabled}
-                      onChange={() => {
-                        props.setSnippetSettings(
-                          'shadowEnabled',
-                          !props.snippetSettings.shadowEnabled,
-                        )
-                      }}
-                    />
-                  </div>
-
-                  <div class="flex flex-row items-center justify-between">
-                    <Label for="shadow-color-input" class="font-normal">
-                      Color
-                    </Label>
-
-                    <input
-                      id="shadow-color-input"
-                      class="h-6 w-6 rounded"
-                      type="color"
-                      value={props.snippetSettings.shadowColor}
-                      onInput={e => props.setSnippetSettings('shadowColor', e.target.value)}
-                    />
-                  </div>
-                  <div class="flex flex-row items-center justify-between">
-                    <Slider
-                      value={[props.snippetSettings.shadowOpacity]}
-                      step={0.01}
-                      minValue={0}
-                      maxValue={1}
-                      onChange={e => {
-                        props.setSnippetSettings('shadowOpacity', e[0])
-                      }}
-                    >
-                      <div class="flex w-full justify-between mb-2">
-                        <SliderLabel>Opacity</SliderLabel>
-                        <SliderValueLabel />
-                      </div>
-                      <SliderTrack>
-                        <SliderFill />
-                        <SliderThumb />
-                      </SliderTrack>
-                    </Slider>
-                  </div>
-                  <div>
-                    <Slider
-                      value={[props.snippetSettings.shadowOffsetY]}
-                      minValue={0}
-                      maxValue={props.snippetSettings.yPadding}
-                      onChange={e => {
-                        props.setSnippetSettings('shadowOffsetY', e[0])
-                      }}
-                    >
-                      <div class="flex w-full justify-between mb-2">
-                        <SliderLabel>Offset Y</SliderLabel>
-                        <div class="flex flex-row">
-                          <SliderValueLabel />
-                          <span class="text-xs">px</span>
-                        </div>
-                      </div>
-                      <SliderTrack>
-                        <SliderFill />
-                        <SliderThumb />
-                      </SliderTrack>
-                    </Slider>
-                  </div>
-                  <div>
-                    <Slider
-                      value={[props.snippetSettings.shadowBlur]}
-                      minValue={0}
-                      maxValue={200}
-                      onChange={e => {
-                        props.setSnippetSettings('shadowBlur', e[0])
-                      }}
-                    >
-                      <div class="flex w-full justify-between mb-2">
-                        <SliderLabel>Blur</SliderLabel>
-                        <div class="flex flex-row">
-                          <SliderValueLabel />
-                          <span class="text-xs">px</span>
-                        </div>
-                      </div>
-                      <SliderTrack>
-                        <SliderFill />
-                        <SliderThumb />
-                      </SliderTrack>
-                    </Slider>
-                  </div>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="font">
-              <AccordionTrigger>Font</AccordionTrigger>
-              <AccordionContent>
-                <div class="flex flex-col gap-4">
-                  <div>
-                    <Label for="font-family">Family</Label>
-
-                    <Select<{ name: string }>
-                      id="font-family"
-                      value={supportedFontFamilies.find(
-                        option => option.name === props.snippetSettings.fontFamily,
-                      )}
-                      optionValue="name"
-                      optionTextValue="name"
-                      onChange={newFamily =>
-                        newFamily && props.setSnippetSettings('fontFamily', newFamily.name)
-                      }
-                      options={supportedFontFamilies}
-                      itemComponent={props => (
-                        <SelectItem item={props.item}>{props.item.rawValue.name}</SelectItem>
-                      )}
-                    >
-                      <SelectTrigger
-                        aria-label="Font Family"
-                        class="w-full"
-                        value={props.snippetSettings.fontFamily}
                       >
-                        <SelectValue<{ name: string }>>
-                          {state => state.selectedOption()?.name}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent />
-                    </Select>
-                  </div>
+                        <div class="flex w-full justify-between mb-2">
+                          <SliderLabel>Padding (y)</SliderLabel>
+                          <div class="flex flex-row">
+                            <SliderValueLabel />
+                            <span class="text-xs">px</span>
+                          </div>
+                        </div>
+                        <SliderTrack>
+                          <SliderFill />
+                          <SliderThumb />
+                        </SliderTrack>
+                      </Slider>
 
-                  <Slider
-                    value={[props.snippetSettings.fontSize]}
-                    minValue={1}
-                    maxValue={64}
-                    onChange={e => {
-                      props.setSnippetSettings('fontSize', e[0])
-                    }}
-                  >
-                    <div class="flex w-full justify-between mb-2">
-                      <SliderLabel>Size</SliderLabel>
-                      <div class="flex flex-row">
-                        <SliderValueLabel />
-                        <span class="text-xs">px</span>
+                      <Slider
+                        value={[props.snippetSettings.xPadding]}
+                        minValue={0}
+                        maxValue={200}
+                        onChange={e => {
+                          props.setSnippetSettings('xPadding', e[0])
+                        }}
+                      >
+                        <div class="flex w-full justify-between mb-2">
+                          <SliderLabel>Padding (x)</SliderLabel>
+                          <div class="flex flex-row">
+                            <SliderValueLabel />
+                            <span class="text-xs">px</span>
+                          </div>
+                        </div>
+                        <SliderTrack>
+                          <SliderFill />
+                          <SliderThumb />
+                        </SliderTrack>
+                      </Slider>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="shadow">
+                  <AccordionTrigger>Shadow</AccordionTrigger>
+                  <AccordionContent>
+                    <div class="flex flex-col gap-4">
+                      <div class="flex flex-row items-center justify-between">
+                        <Label
+                          for="shadow-checkbox"
+                          onClick={() =>
+                            props.setSnippetSettings(
+                              'shadowEnabled',
+                              !props.snippetSettings.shadowEnabled,
+                            )
+                          }
+                        >
+                          Show Shadow
+                        </Label>
+                        <Checkbox
+                          id="shadow-checkbox"
+                          checked={props.snippetSettings.shadowEnabled}
+                          onChange={() => {
+                            props.setSnippetSettings(
+                              'shadowEnabled',
+                              !props.snippetSettings.shadowEnabled,
+                            )
+                          }}
+                        />
+                      </div>
+
+                      <div class="flex flex-row items-center justify-between">
+                        <Label for="shadow-color-input" class="font-normal">
+                          Color
+                        </Label>
+
+                        <input
+                          id="shadow-color-input"
+                          class="h-6 w-6 rounded"
+                          type="color"
+                          value={props.snippetSettings.shadowColor}
+                          onInput={e => props.setSnippetSettings('shadowColor', e.target.value)}
+                        />
+                      </div>
+                      <div class="flex flex-row items-center justify-between">
+                        <Slider
+                          value={[props.snippetSettings.shadowOpacity]}
+                          step={0.01}
+                          minValue={0}
+                          maxValue={1}
+                          onChange={e => {
+                            props.setSnippetSettings('shadowOpacity', e[0])
+                          }}
+                        >
+                          <div class="flex w-full justify-between mb-2">
+                            <SliderLabel>Opacity</SliderLabel>
+                            <SliderValueLabel />
+                          </div>
+                          <SliderTrack>
+                            <SliderFill />
+                            <SliderThumb />
+                          </SliderTrack>
+                        </Slider>
+                      </div>
+                      <div>
+                        <Slider
+                          value={[props.snippetSettings.shadowOffsetY]}
+                          minValue={0}
+                          maxValue={props.snippetSettings.yPadding}
+                          onChange={e => {
+                            props.setSnippetSettings('shadowOffsetY', e[0])
+                          }}
+                        >
+                          <div class="flex w-full justify-between mb-2">
+                            <SliderLabel>Offset Y</SliderLabel>
+                            <div class="flex flex-row">
+                              <SliderValueLabel />
+                              <span class="text-xs">px</span>
+                            </div>
+                          </div>
+                          <SliderTrack>
+                            <SliderFill />
+                            <SliderThumb />
+                          </SliderTrack>
+                        </Slider>
+                      </div>
+                      <div>
+                        <Slider
+                          value={[props.snippetSettings.shadowBlur]}
+                          minValue={0}
+                          maxValue={200}
+                          onChange={e => {
+                            props.setSnippetSettings('shadowBlur', e[0])
+                          }}
+                        >
+                          <div class="flex w-full justify-between mb-2">
+                            <SliderLabel>Blur</SliderLabel>
+                            <div class="flex flex-row">
+                              <SliderValueLabel />
+                              <span class="text-xs">px</span>
+                            </div>
+                          </div>
+                          <SliderTrack>
+                            <SliderFill />
+                            <SliderThumb />
+                          </SliderTrack>
+                        </Slider>
                       </div>
                     </div>
-                    <SliderTrack>
-                      <SliderFill />
-                      <SliderThumb />
-                    </SliderTrack>
-                  </Slider>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="font">
+                  <AccordionTrigger>Font</AccordionTrigger>
+                  <AccordionContent>
+                    <div class="flex flex-col gap-4">
+                      <div>
+                        <Label for="font-family">Family</Label>
+
+                        <Select<{ name: string }>
+                          id="font-family"
+                          value={supportedFontFamilies.find(
+                            option => option.name === props.snippetSettings.fontFamily,
+                          )}
+                          optionValue="name"
+                          optionTextValue="name"
+                          onChange={newFamily =>
+                            newFamily && props.setSnippetSettings('fontFamily', newFamily.name)
+                          }
+                          options={supportedFontFamilies}
+                          itemComponent={props => (
+                            <SelectItem item={props.item}>{props.item.rawValue.name}</SelectItem>
+                          )}
+                        >
+                          <SelectTrigger
+                            aria-label="Font Family"
+                            class="w-full"
+                            value={props.snippetSettings.fontFamily}
+                          >
+                            <SelectValue<{ name: string }>>
+                              {state => state.selectedOption()?.name}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent />
+                        </Select>
+                      </div>
+
+                      <Slider
+                        value={[props.snippetSettings.fontSize]}
+                        minValue={1}
+                        maxValue={64}
+                        onChange={e => {
+                          props.setSnippetSettings('fontSize', e[0])
+                        }}
+                      >
+                        <div class="flex w-full justify-between mb-2">
+                          <SliderLabel>Size</SliderLabel>
+                          <div class="flex flex-row">
+                            <SliderValueLabel />
+                            <span class="text-xs">px</span>
+                          </div>
+                        </div>
+                        <SliderTrack>
+                          <SliderFill />
+                          <SliderThumb />
+                        </SliderTrack>
+                      </Slider>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </CollapsibleContent>
+          </Collapsible>
         </div>
         <div class="w-full h-full min-h-full">
           <Tabs

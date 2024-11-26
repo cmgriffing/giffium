@@ -113,7 +113,7 @@ export default function Header() {
                       alt={user()?.githubUsername}
                       class="w-6 h-6 rounded-full"
                     />
-                    {user()?.githubUsername}
+                    <span class="hidden md:visible">{user()?.githubUsername}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>

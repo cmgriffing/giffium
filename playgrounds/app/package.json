@@ -23,6 +23,7 @@
     "@fontsource/roboto": "^5.1.0",
     "@kobalte/core": "^0.13.7",
     "@libsql/client": "^0.14.0",
+    "@solid-primitives/media": "^2.2.9",
     "@solid-primitives/storage": "^4.2.1",
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.14.7",
