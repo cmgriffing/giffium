@@ -1,29 +1,31 @@
+import { makePersisted } from '@solid-primitives/storage'
 import { A } from '@solidjs/router'
-import { Button } from './ui/button'
+
+import { Show, createSignal } from 'solid-js'
+
+import { FaSolidMoon, FaSolidSun } from 'solid-icons/fa'
 import { OcMarkgithub2, OcQuestion2 } from 'solid-icons/oc'
-import { FaSolidSun, FaSolidMoon } from 'solid-icons/fa'
-import { createThemeSwitcher } from '~/components/theme-switcher'
-import { authToken } from '~/lib/store'
-import { createSignal, Show } from 'solid-js'
+import { TbCode, TbDoorExit, TbQuestionMark } from 'solid-icons/tb'
+
+import { Button } from '~/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '~/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
+
+import { createThemeSwitcher } from '~/components/theme-switcher'
+import { authToken } from '~/lib/store'
 import { user } from '~/lib/store'
-import { TbCode, TbDoorExit, TbQuestionMark } from 'solid-icons/tb'
 import { linkStyles } from '~/lib/styles'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '~/components/ui/dialog'
-import { makePersisted } from '@solid-primitives/storage'
 
 export default function Header() {
   const [isShowingHelpDialog, setIsShowingHelpDialog] = makePersisted(createSignal(true), {

@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+
 import { authToken } from './store'
 
 export function cn(...inputs: ClassValue[]) {

@@ -1,21 +1,57 @@
-import { interpolate, interpolateColors, Easing } from 'remotion'
+import wasmURL from '@ffmpeg/core/wasm?url'
+import coreURL from '@ffmpeg/core?url'
+import { FFmpeg } from '@ffmpeg/ffmpeg'
+import { fetchFile, toBlobURL } from '@ffmpeg/util'
+import { useNavigate } from '@solidjs/router'
+import clsx from 'clsx'
+import { openDB } from 'idb'
 import { encode } from 'modern-gif'
 import workerUrl from 'modern-gif/worker?url'
+import { Easing, interpolate, interpolateColors } from 'remotion'
+
+import { Show, createEffect, createMemo, createSignal, onCleanup, onMount } from 'solid-js'
+import { SetStoreFunction } from 'solid-js/store'
+
+import { FaSolidCaretDown, FaSolidCaretUp } from 'solid-icons/fa'
+import { HiOutlineCog } from 'solid-icons/hi'
+import { toast } from 'solid-sonner'
+
+import type { HighlighterGeneric } from 'shiki'
+import { bundledLanguages, bundledThemes, createHighlighter } from 'shiki'
 import 'shiki-magic-move/dist/style.css'
+import { ShikiMagicMove } from 'shiki-magic-move/solid'
+import { MagicMoveElement } from 'shiki-magic-move/types'
+
 import {
-  ComboboxItem,
-  ComboboxItemLabel,
-  ComboboxItemIndicator,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '~/components/ui/accordion'
+import { Button } from '~/components/ui/button'
+import { Checkbox } from '~/components/ui/checkbox'
+import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible'
+import {
+  Combobox,
+  ComboboxContent,
   ComboboxControl,
   ComboboxInput,
+  ComboboxItem,
+  ComboboxItemIndicator,
+  ComboboxItemLabel,
   ComboboxTrigger,
-  ComboboxContent,
-  Combobox,
 } from '~/components/ui/combobox'
-import { Button } from '~/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { TextField, TextFieldInput } from '~/components/ui/text-field'
-import { MagicMoveElement } from 'shiki-magic-move/types'
+import { Dialog, DialogContent, DialogFooter } from '~/components/ui/dialog'
+import { Label } from '~/components/ui/label'
+import { ProgressCircle } from '~/components/ui/progress-circle'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '~/components/ui/select'
+import { Separator } from '~/components/ui/separator'
 import {
   Slider,
   SliderFill,
@@ -24,55 +60,14 @@ import {
   SliderTrack,
   SliderValueLabel,
 } from '~/components/ui/slider'
-import clsx from 'clsx'
-import { Checkbox } from '~/components/ui/checkbox'
-import { Label } from '~/components/ui/label'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '~/components/ui/dialog'
-import {
-  createEffect,
-  createMemo,
-  createResource,
-  createSignal,
-  onCleanup,
-  Setter,
-  Show,
-  onMount,
-} from 'solid-js'
-import type { HighlighterGeneric } from 'shiki'
-import { createHighlighter, bundledThemes, bundledLanguages } from 'shiki'
-import { ShikiMagicMove } from 'shiki-magic-move/solid'
-import { AnimationFrameConfig, SnippetSettings } from '~/types'
-import { authFetch } from '~/lib/utils'
-import { useNavigate } from '@solidjs/router'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { TextField, TextFieldInput } from '~/components/ui/text-field'
+
 import { authToken } from '~/lib/store'
-import { toast } from 'solid-sonner'
-import { Separator } from './ui/separator'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from './ui/dropdown-menu'
+import { authFetch } from '~/lib/utils'
+import { AnimationFrameConfig, SnippetSettings } from '~/types'
+
 import { ShikiCodeBlock } from './ShikiCodeBlock'
-import { SetStoreFunction } from 'solid-js/store'
-import { FFmpeg } from '@ffmpeg/ffmpeg'
-import { fetchFile, toBlobURL } from '@ffmpeg/util'
-import coreURL from '@ffmpeg/core?url'
-import wasmURL from '@ffmpeg/core/wasm?url'
-import { openDB } from 'idb'
-import { ProgressCircle } from './ui/progress-circle'
-import { Collapsible, CollapsibleContent } from './ui/collapsible'
-import { FaSolidCaretDown, FaSolidCaretUp } from 'solid-icons/fa'
-import { HiOutlineCog } from 'solid-icons/hi'
 
 const animationSeconds = 1
 const animationFPS = 30

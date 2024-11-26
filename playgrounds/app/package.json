@@ -59,6 +59,7 @@
     "node": ">=18"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/jsonwebtoken": "^9.0.7",
     "drizzle-kit": "^0.26.2",
     "tsx": "^4.19.1"

@@ -1,5 +1,7 @@
 import { useNavigate, useSearchParams } from '@solidjs/router'
-import { createSignal, onMount, Show } from 'solid-js'
+
+import { Show, createSignal, onMount } from 'solid-js'
+
 import { setAuthToken, setUser, user } from '~/lib/store'
 
 export default function OAuth() {

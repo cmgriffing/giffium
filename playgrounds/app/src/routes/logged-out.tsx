@@ -1,6 +1,9 @@
-import { Button } from '~/components/ui/button'
-import { OcMarkgithub2 } from 'solid-icons/oc'
 import { onMount } from 'solid-js'
+
+import { OcMarkgithub2 } from 'solid-icons/oc'
+
+import { Button } from '~/components/ui/button'
+
 import { setAuthToken } from '~/lib/store'
 
 export default function LoggedOut() {

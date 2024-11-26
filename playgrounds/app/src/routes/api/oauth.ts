@@ -1,6 +1,7 @@
 import type { APIEvent } from '@solidjs/start/server'
 import 'dotenv/config'
 import { eq } from 'drizzle-orm'
+
 import { db } from '~/db/client'
 import { usersTable } from '~/db/schema'
 import { customNanoid } from '~/lib/ids'
