@@ -21,6 +21,12 @@ jobs:
           # This is important to fetch the changes to the previous commit
           fetch-depth: 0
 
+    steps:
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: true
+
       - name: Prettier Action
         uses: creyD/prettier_action@v4.3
         with:
