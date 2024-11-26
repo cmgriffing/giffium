@@ -34,9 +34,7 @@ export function ShikiMagicMove(props: ShikiMagicMoveProps) {
 
   const machine = createMemo(() => {
     const newCodeToTokens = codeToTokens()
-    return createMagicMoveMachine((code, lineNumbers) =>
-      newCodeToTokens(code, lineNumbers),
-    )
+    return createMagicMoveMachine((code, lineNumbers) => newCodeToTokens(code, lineNumbers))
   })
 
   const result = createMemo(() => {
