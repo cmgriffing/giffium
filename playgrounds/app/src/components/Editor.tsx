@@ -1196,6 +1196,11 @@ async function createAnimationFrame(
   canvas.width = width + xPadding * 2
   canvas.height = height + yPadding * 2
 
+  const textCanvas = document.createElement('canvas')
+  const textCtx = textCanvas.getContext('2d', { alpha: true })!
+  textCanvas.width = width + xPadding - 4
+  textCanvas.height = height + yPadding
+
   if (backgroundType === 'linearGradient') {
     // Convert angle to match CSS gradient angle (0deg = to top, 90deg = to right)
     const cssAngle = (backgroundGradientDirection + 90) % 360
@@ -1266,12 +1271,14 @@ async function createAnimationFrame(
       [el.color.start || 'rgba(0,0,0,0)', el.color.end || 'rgba(0,0,0,0)'],
     )
 
-    ctx.font = `${fontSize} ${fontFamily}`
-    ctx.fillStyle = color
-    ctx.globalAlpha = opacity
-    ctx.fillText(htmlDecode(el.el.innerHTML), x, y, width - x + xPadding / 2)
+    textCtx.font = `${fontSize} ${fontFamily}`
+    textCtx.fillStyle = color
+    textCtx.globalAlpha = opacity
+    textCtx.fillText(htmlDecode(el.el.innerHTML), x, y)
   })
   await Promise.all(elementPromises)
+
+  ctx.drawImage(textCanvas, 0, 0)
 
   return ctx.getImageData(0, 0, canvas.width, canvas.height)
 }
