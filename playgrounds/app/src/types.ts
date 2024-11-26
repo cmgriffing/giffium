@@ -27,6 +27,8 @@ export interface SnippetSettings {
   theme: string
   fontSize: number
   fontFamily: string
+  lineNumbersEnabled: boolean
+  lineNumberColor: string
 }
 
 export interface Snippet extends SnippetSettings {
@@ -58,6 +60,7 @@ export interface AnimationFrameStyling {
   backgroundGradientColorStart: string
   backgroundGradientColorEnd: string
   backgroundGradientDirection: number
+  lineNumberColor: string
 }
 
 export interface AnimationFrameConfig {

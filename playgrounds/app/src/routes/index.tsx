@@ -50,6 +50,8 @@ export default function Home() {
       theme: 'nord',
       fontSize: 16,
       fontFamily: 'Fira Code',
+      lineNumbersEnabled: true,
+      lineNumberColor: '#aaaaaa',
     }),
     { name: 'snippetSettings' },
   )

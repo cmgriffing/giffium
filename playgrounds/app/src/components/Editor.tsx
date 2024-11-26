@@ -236,6 +236,7 @@ export default function Editor(props: EditorProps) {
               backgroundGradientColorStart: props.snippetSettings.bgGradientColorStart,
               backgroundGradientColorEnd: props.snippetSettings.bgGradientColorEnd,
               backgroundGradientDirection: props.snippetSettings.bgGradientDirection,
+              lineNumberColor: props.snippetSettings.lineNumberColor,
             },
           },
         )
@@ -352,6 +353,50 @@ export default function Editor(props: EditorProps) {
                 collapsible
                 defaultValue={['background', 'layout', 'shadow', 'font']}
               >
+                <AccordionItem value="background">
+                  <AccordionTrigger>Line Numbers</AccordionTrigger>
+                  <AccordionContent>
+                    <div class="flex flex-col gap-4">
+                      <div class="flex flex-row items-center justify-between">
+                        <Label
+                          for="line-numbers-checkbox"
+                          onClick={() =>
+                            props.setSnippetSettings(
+                              'lineNumbersEnabled',
+                              !props.snippetSettings.lineNumbersEnabled,
+                            )
+                          }
+                        >
+                          Show Line Numbers
+                        </Label>
+                        <Checkbox
+                          id="line-numbers-checkbox"
+                          checked={props.snippetSettings.lineNumbersEnabled}
+                          onChange={() => {
+                            props.setSnippetSettings(
+                              'lineNumbersEnabled',
+                              !props.snippetSettings.lineNumbersEnabled,
+                            )
+                          }}
+                        />
+                      </div>
+                      <div class="flex flex-row items-center justify-between">
+                        <Label for="line-number-color" class="font-normal">
+                          Color
+                        </Label>
+                        <input
+                          id="line-number-color"
+                          class="h-6 w-6 rounded"
+                          type="color"
+                          value={props.snippetSettings.lineNumberColor}
+                          onInput={e => {
+                            props.setSnippetSettings('lineNumberColor', e.target.value)
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
                 <AccordionItem value="background">
                   <AccordionTrigger>Background</AccordionTrigger>
                   <AccordionContent>
@@ -563,7 +608,7 @@ export default function Editor(props: EditorProps) {
                           }}
                         />
                       </div>
-
+                      //
                       <div class="flex flex-row items-center justify-between">
                         <Label for="shadow-color-input" class="font-normal">
                           Color
@@ -839,7 +884,7 @@ export default function Editor(props: EditorProps) {
                                 options={{
                                   duration: 800,
                                   stagger: 0,
-                                  lineNumbers: false,
+                                  lineNumbers: props.snippetSettings.lineNumbersEnabled,
                                 }}
                               />
                               {/* The hidden shiki that we use to generate the magic move elements */}
@@ -859,7 +904,7 @@ export default function Editor(props: EditorProps) {
                                   options={{
                                     duration: 800,
                                     stagger: 0,
-                                    lineNumbers: false,
+                                    lineNumbers: props.snippetSettings.lineNumbersEnabled,
                                     onAnimationStart: async (elements, maxContainerDimensions) => {
                                       if (elements.length === 0) {
                                         return
@@ -1178,6 +1223,7 @@ async function createAnimationFrame(
   height: number = 100,
   config: AnimationFrameConfig,
 ) {
+  console.log({ elements })
   const { yPadding, xPadding } = config.layout
   const { shadowEnabled, shadowOffsetY, shadowBlur, shadowColor, shadowOpacity } = config.shadow
   const {
@@ -1189,6 +1235,7 @@ async function createAnimationFrame(
     backgroundGradientColorStart,
     backgroundGradientColorEnd,
     backgroundGradientDirection,
+    lineNumberColor,
   } = config.styling
 
   const canvas = document.createElement('canvas')
@@ -1260,10 +1307,16 @@ async function createAnimationFrame(
     const opacity = interpolate(frame, [0, animationFrames], [el.opacity.start, el.opacity.end], {
       easing: Easing.inOut(Easing.quad),
     })
+
+    let fallbackColor = 'rgba(0,0,0,0)'
+    if (el.el.classList.contains('shiki-magic-move-line-number')) {
+      fallbackColor = lineNumberColor || '#aaaaaa'
+    }
+
     const color = interpolateColors(
       frame,
       [0, animationFrames],
-      [el.color.start || 'rgba(0,0,0,0)', el.color.end || 'rgba(0,0,0,0)'],
+      [el.color.start || fallbackColor, el.color.end || fallbackColor],
     )
 
     ctx.font = `${fontSize} ${fontFamily}`
