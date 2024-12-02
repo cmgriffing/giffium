@@ -1,5 +1,6 @@
-import { createSignal, createEffect } from 'solid-js'
 import { makePersisted } from '@solid-primitives/storage'
+
+import { createEffect, createSignal } from 'solid-js'
 
 export function createThemeSwitcher() {
   const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)')

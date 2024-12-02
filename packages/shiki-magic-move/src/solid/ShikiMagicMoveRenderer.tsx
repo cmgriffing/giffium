@@ -21,15 +21,16 @@ export interface ShikiMagicMoveRendererProps {
  * A wrapper component to `MagicMoveRenderer`
  */
 export function ShikiMagicMoveRenderer(props: ShikiMagicMoveRendererProps) {
-  let container: HTMLPreElement
-  let renderer: Renderer
+  // eslint-disable-next-line no-undef-init, prefer-const
+  let container: HTMLPreElement | undefined = undefined
+  // eslint-disable-next-line no-undef-init
+  let renderer: Renderer | undefined = undefined
   const [isMounted, setIsMounted] = createSignal(false)
 
   createEffect(() => {
-    if (!container) return
-    if (!isMounted()) {
+    if (container !== undefined && !isMounted()) {
       // Remove previous content
-      container.innerHTML = ''
+      ;(container as HTMLPreElement).innerHTML = ''
       setIsMounted(true)
       renderer = new Renderer(container)
     }
@@ -37,16 +38,21 @@ export function ShikiMagicMoveRenderer(props: ShikiMagicMoveRendererProps) {
 
   createEffect(() => {
     async function render() {
-      if (!renderer) return
+      if (!renderer) {
+        return
+      }
 
       Object.assign(renderer.options, props.options)
 
       if (props.animate === undefined || props.animate === true) {
-        if (props.previous) renderer.replace(props.previous)
+        if (props.previous) {
+          renderer.replace(props.previous)
+        }
 
         props.onStart?.()
         await renderer.render(props.tokens)
         props.onEnd?.()
+        // eslint-disable-next-line style/brace-style
       } else {
         renderer.replace(props.tokens)
       }
@@ -57,7 +63,6 @@ export function ShikiMagicMoveRenderer(props: ShikiMagicMoveRendererProps) {
 
   return (
     <pre
-      // @ts-expect-error - TS doesn't know that `container` is a ref
       ref={container}
       class={`shiki-magic-move-container ${props.class || ''}`.trim()}
       style={props.style}

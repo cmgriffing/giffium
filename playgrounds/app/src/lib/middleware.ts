@@ -1,8 +1,10 @@
-import { usersTable } from '~/db/schema'
-import { decodeToken } from './jwt'
-import { db } from '~/db/client'
-import { eq } from 'drizzle-orm'
 import type { APIEvent } from '@solidjs/start/server'
+import { eq } from 'drizzle-orm'
+
+import { db } from '~/db/client'
+import { usersTable } from '~/db/schema'
+
+import { decodeToken } from './jwt'
 
 export async function getUser({ request }: APIEvent) {
   const token = request.headers.get('Authorization')?.replace('Bearer ', '')

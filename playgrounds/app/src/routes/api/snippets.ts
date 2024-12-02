@@ -1,10 +1,11 @@
 import type { APIEvent } from '@solidjs/start/server'
 import { eq } from 'drizzle-orm'
+
 import { db } from '~/db/client'
 import { snippetsTable } from '~/db/schema'
+import { customNanoid } from '~/lib/ids'
 import { getUser } from '~/lib/middleware'
 import { snippetValidator } from '~/lib/validators'
-import { customNanoid } from '~/lib/ids'
 
 export async function GET(event: APIEvent): Promise<Response> {
   const user = await getUser(event)

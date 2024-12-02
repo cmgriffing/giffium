@@ -1,7 +1,8 @@
-import { createSignal, onMount, createEffect } from 'solid-js'
+import { createEffect, createSignal, onMount } from 'solid-js'
+
 import { createHighlighter } from 'shiki'
-import { autoload, hookClosingPairs, hookTab, ShikiCode } from 'shikicode/plugins'
 import { shikiCode } from 'shikicode'
+import { ShikiCode, autoload, hookClosingPairs, hookTab } from 'shikicode/plugins'
 
 import { cn } from '~/lib/utils'
 

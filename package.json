@@ -9,7 +9,7 @@
   "scripts": {
     "postinstall": "pnpm build",
     "dev": "pnpm run --filter ./playgrounds/app dev",
-    "build": "cd packages/shikicode && pnpm build && cd ../shiki-magic-move && pnpm build && cd ../../playgrounds/app && pnpm build",
+    "build": "cd packages/shikicode && pnpm build && cd ../shiki-magic-move && pnpm build",
     "test": "turbo run test --filter=./packages/*",
     "typecheck": "turbo run typecheck --filter=./packages/*",
     "build-test": "turbo run build test --filter=./packages/*",
@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/node": "^18.11.18",
     "concurrently": "^7.6.0",
     "jsdom": "^21.0.0",

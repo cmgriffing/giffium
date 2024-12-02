@@ -1,8 +1,9 @@
-import { createSignal } from 'solid-js'
 import { makePersisted } from '@solid-primitives/storage'
+
+import { createStore } from 'solid-js/store'
+
 import Editor from '~/components/Editor'
 import { SnippetSettings } from '~/types'
-import { createStore } from 'solid-js/store'
 
 const left = `
 import { render } from "solid-js/web";

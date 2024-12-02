@@ -1,5 +1,6 @@
 import { Highlighter } from 'shiki'
 import { ShikiMagicMove } from 'shiki-magic-move/solid'
+
 import { Snippet } from '~/types'
 
 interface SnippetPreviewProps {

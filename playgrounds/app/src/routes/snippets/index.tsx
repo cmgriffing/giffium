@@ -1,6 +1,9 @@
 import { A } from '@solidjs/router'
-import { createHighlighter, bundledThemes, bundledLanguages } from 'shiki'
-import { createResource, Show } from 'solid-js'
+
+import { Show, createResource } from 'solid-js'
+
+import { bundledLanguages, bundledThemes, createHighlighter } from 'shiki'
+
 import { SnippetPreview } from '~/components/SnippetPreview'
 import { authFetch } from '~/lib/utils'
 import { Snippet } from '~/types'

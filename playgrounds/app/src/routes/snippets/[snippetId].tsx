@@ -1,5 +1,6 @@
-import { createEffect, createResource, Show } from 'solid-js'
+import { Show, createEffect, createResource } from 'solid-js'
 import { createStore } from 'solid-js/store'
+
 import Editor from '~/components/Editor'
 import { authFetch } from '~/lib/utils'
 import { Snippet, SnippetSettings } from '~/types'

@@ -1,5 +1,6 @@
 import type { APIEvent } from '@solidjs/start/server'
 import { and, eq } from 'drizzle-orm'
+
 import { db } from '~/db/client'
 import { snippetsTable } from '~/db/schema'
 import { getUser } from '~/lib/middleware'

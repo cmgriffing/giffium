@@ -1,5 +1,7 @@
 import { makePersisted } from '@solid-primitives/storage'
+
 import { createSignal } from 'solid-js'
+
 import { User } from '~/types'
 
 export const [authToken, setAuthToken] = makePersisted(createSignal(''), {

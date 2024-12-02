@@ -19,31 +19,40 @@ export interface ShikiMagicMoveProps {
 }
 
 export function ShikiMagicMove(props: ShikiMagicMoveProps) {
-  const codeToTokens = (code: string, lineNumbers?: boolean) =>
-    codeToKeyedTokens(
-      props.highlighter,
-      code,
-      {
-        lang: props.lang,
-        theme: props.theme,
-      },
-      lineNumbers,
-    )
+  const codeToTokens = createMemo(() => {
+    return (code: string, lineNumbers?: boolean) =>
+      codeToKeyedTokens(
+        props.highlighter,
+        code,
+        {
+          lang: props.lang,
+          theme: props.theme,
+        },
+        lineNumbers,
+      )
+  })
 
-  const machine = createMagicMoveMachine((code, lineNumbers) => codeToTokens(code, lineNumbers))
+  const machine = createMemo(() => {
+    const newCodeToTokens = codeToTokens()
+    return createMagicMoveMachine((code, lineNumbers) => newCodeToTokens(code, lineNumbers))
+  })
 
   const result = createMemo(() => {
     const lineNumbers = props.options?.lineNumbers ?? false
     if (
-      props.code === machine.current.code &&
-      props.theme === machine.current.themeName &&
-      props.lang === machine.current.lang &&
-      lineNumbers === machine.current.lineNumbers
+      props.code === machine().current.code &&
+      props.theme === machine().current.themeName &&
+      props.lang === machine().current.lang &&
+      lineNumbers === machine().current.lineNumbers
     ) {
-      return machine
+      return machine()
     }
-
-    return machine.commit(props.code, props.options)
+    try {
+      return machine().commit(props.code, props.options)
+      // eslint-disable-next-line unused-imports/no-unused-vars
+    } catch (e) {
+      return machine()
+    }
   })
 
   return (

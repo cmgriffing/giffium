@@ -1,4 +1,5 @@
 import { A } from '@solidjs/router'
+
 import { linkStyles } from '~/lib/styles'
 
 export default function Footer() {
