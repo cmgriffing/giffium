@@ -1019,7 +1019,7 @@ export default function Editor(props: EditorProps) {
                     setIsGeneratingVideo(true)
                     setVideoProgress(0)
                     await ffmpeg.writeFile('input.gif', dataURItoUInt8Array(gifDataUrl()))
-                    await ffmpeg.exec(['-i', 'input.gif', 'output.mp4'])
+                    await ffmpeg.exec(['-i', 'input.gif', '-vcodec', 'libx264', '-pix_fmt', 'yuv420p', 'output.mp4'])
                     const data = await ffmpeg.readFile('output.mp4')
                     const blob = new Blob([data], { type: 'video/mp4' })
                     const filename = 'giffium.mp4'
