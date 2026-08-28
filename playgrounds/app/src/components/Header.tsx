@@ -1,41 +1,44 @@
-import { makePersisted } from '@solid-primitives/storage'
-import { A } from '@solidjs/router'
+import { makePersisted } from "@solid-primitives/storage";
+import { A } from "@solidjs/router";
 
-import { Show, createSignal } from 'solid-js'
+import { Show, createSignal } from "solid-js";
 
-import { FaSolidMoon, FaSolidSun } from 'solid-icons/fa'
-import { OcMarkgithub2, OcQuestion2 } from 'solid-icons/oc'
-import { TbCode, TbDoorExit, TbQuestionMark } from 'solid-icons/tb'
+import { FaSolidMoon, FaSolidSun } from "solid-icons/fa";
+import { OcMarkgithub2, OcQuestion2 } from "solid-icons/oc";
+import { TbOutlineCode, TbOutlineDoorExit } from "solid-icons/tb";
 
-import { Button } from '~/components/ui/button'
+import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '~/components/ui/dialog'
+} from "~/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu'
+} from "~/components/ui/dropdown-menu";
 
-import { createThemeSwitcher } from '~/components/theme-switcher'
-import { authToken } from '~/lib/store'
-import { user } from '~/lib/store'
-import { linkStyles } from '~/lib/styles'
+import { createThemeSwitcher } from "~/components/theme-switcher";
+import { authToken } from "~/lib/store";
+import { user } from "~/lib/store";
+import { linkStyles } from "~/lib/styles";
 
 export default function Header() {
-  const [isShowingHelpDialog, setIsShowingHelpDialog] = makePersisted(createSignal(true), {
-    name: 'isShowingHelpDialog',
-  })
-  const [isDarkMode, toggleDarkMode] = createThemeSwitcher()
+  const [isShowingHelpDialog, setIsShowingHelpDialog] = makePersisted(
+    createSignal(true),
+    {
+      name: "isShowingHelpDialog",
+    },
+  );
+  const [isDarkMode, toggleDarkMode] = createThemeSwitcher();
 
   const handleToggle = () => {
-    toggleDarkMode() // Call without arguments
-  }
+    toggleDarkMode(); // Call without arguments
+  };
 
   return (
     <>
@@ -47,8 +50,13 @@ export default function Header() {
                 <h1 class="text-3xl font-title text-sky-500">Giffium</h1>
               </a>
               <p class="text-left mt-[-10px]">
-                by{' '}
-                <a href="https://cmgriffing.com" rel="dofollow" target="_blank" class={linkStyles}>
+                by{" "}
+                <a
+                  href="https://cmgriffing.com"
+                  rel="dofollow"
+                  target="_blank"
+                  class={linkStyles}
+                >
                   cmgriffing
                 </a>
               </p>
@@ -74,14 +82,14 @@ export default function Header() {
           </div>
           <div class="flex flex-row items-center gap-2">
             <Button
-              variant={'ghost'}
+              variant={"ghost"}
               class="flex flex-row items-center px-2"
               onClick={() => setIsShowingHelpDialog(true)}
             >
               <OcQuestion2 size={24} />
             </Button>
             <Button
-              variant={'ghost'}
+              variant={"ghost"}
               class="flex flex-row items-center px-2"
               onClick={handleToggle}
               aria-label="Toggle dark mode"
@@ -98,7 +106,7 @@ export default function Header() {
                 class="ml-4"
                 href={`https://github.com/login/oauth/authorize?client_id=${
                   import.meta.env.VITE_GITHUB_CLIENT_ID
-                }&scope=${encodeURIComponent('read:useruser:email')}&redirect_uri=${
+                }&scope=${encodeURIComponent("read:useruser:email")}&redirect_uri=${
                   window.location.origin
                 }/oauth`}
               >
@@ -115,18 +123,26 @@ export default function Header() {
                       alt={user()?.githubUsername}
                       class="w-6 h-6 rounded-full"
                     />
-                    <span class="hidden md:visible">{user()?.githubUsername}</span>
+                    <span class="hidden md:visible">
+                      {user()?.githubUsername}
+                    </span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem>
-                    <A href="/snippets" class="flex flex-row items-center gap-2">
-                      <TbCode /> Snippets
+                    <A
+                      href="/snippets"
+                      class="flex flex-row items-center gap-2"
+                    >
+                      <TbOutlineCode /> Snippets
                     </A>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <A href="/logged-out" class="flex flex-row items-center gap-2">
-                      <TbDoorExit />
+                    <A
+                      href="/logged-out"
+                      class="flex flex-row items-center gap-2"
+                    >
+                      <TbOutlineDoorExit />
                       Log out
                     </A>
                   </DropdownMenuItem>
@@ -136,7 +152,11 @@ export default function Header() {
           </div>
         </nav>
       </header>
-      <Dialog open={isShowingHelpDialog()} onOpenChange={setIsShowingHelpDialog} modal>
+      <Dialog
+        open={isShowingHelpDialog()}
+        onOpenChange={setIsShowingHelpDialog}
+        modal
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Welcome to Giffium</DialogTitle>
@@ -144,11 +164,15 @@ export default function Header() {
               <p class="mb-8 text-center font-bold text-lg dark:text-white text-black">
                 Create and share beautiful gifs of your source code diffs.
               </p>
-              <p class="dark:text-white text-black">Get started by following these steps.</p>
+              <p class="dark:text-white text-black">
+                Get started by following these steps.
+              </p>
               <ol class="list-disc list-inside pl-8 dark:text-white text-black">
                 <li>Enter your start and end code snippets.</li>
                 <li>Select the theme and language.</li>
-                <li>Click the Next button to preview your snippet animation.</li>
+                <li>
+                  Click the Next button to preview your snippet animation.
+                </li>
                 <li>Click the Generate button to generate a gif.</li>
               </ol>
 
@@ -160,5 +184,5 @@ export default function Header() {
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

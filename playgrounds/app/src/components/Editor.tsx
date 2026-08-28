@@ -1,30 +1,30 @@
-import wasmURL from '@ffmpeg/core/wasm?url'
-import coreURL from '@ffmpeg/core?url'
-import { FFmpeg } from '@ffmpeg/ffmpeg'
-import { fetchFile, toBlobURL } from '@ffmpeg/util'
-import { useNavigate } from '@solidjs/router'
-import clsx from 'clsx'
+import wasmURL from "@ffmpeg/core/wasm?url";
+import coreURL from "@ffmpeg/core?url";
+import { FFmpeg } from "@ffmpeg/ffmpeg";
+import { toBlobURL } from "@ffmpeg/util";
+import { useNavigate } from "@solidjs/router";
+import clsx from "clsx";
 
-import { Show, createEffect, createSignal, onCleanup, onMount } from 'solid-js'
+import { Show, createEffect, createSignal, onCleanup, onMount } from "solid-js";
 
-import { FaSolidCaretDown, FaSolidCaretUp } from 'solid-icons/fa'
-import { HiOutlineCog } from 'solid-icons/hi'
-import { toast } from 'solid-sonner'
+import { FaSolidCaretDown, FaSolidCaretUp } from "solid-icons/fa";
+import { HiOutlineCog } from "solid-icons/hi";
+import { toast } from "solid-sonner";
 
-import type { HighlighterGeneric } from 'shiki'
-import { bundledLanguages, bundledThemes, createHighlighter } from 'shiki'
-import 'shiki-magic-move/dist/style.css'
-import { ShikiMagicMove } from 'shiki-magic-move/solid'
+import type { HighlighterGeneric } from "shiki";
+import { bundledLanguages, bundledThemes, createHighlighter } from "shiki";
+import "shiki-magic-move/dist/style.css";
+import { ShikiMagicMove } from "shiki-magic-move/solid";
 
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '~/components/ui/accordion'
-import { Button } from '~/components/ui/button'
-import { Checkbox } from '~/components/ui/checkbox'
-import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible'
+} from "~/components/ui/accordion";
+import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
+import { Collapsible, CollapsibleContent } from "~/components/ui/collapsible";
 import {
   Combobox,
   ComboboxContent,
@@ -34,18 +34,18 @@ import {
   ComboboxItemIndicator,
   ComboboxItemLabel,
   ComboboxTrigger,
-} from '~/components/ui/combobox'
-import { Dialog, DialogContent, DialogFooter } from '~/components/ui/dialog'
-import { Label } from '~/components/ui/label'
-import { ProgressCircle } from '~/components/ui/progress-circle'
+} from "~/components/ui/combobox";
+import { Dialog, DialogContent, DialogFooter } from "~/components/ui/dialog";
+import { Label } from "~/components/ui/label";
+import { ProgressCircle } from "~/components/ui/progress-circle";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '~/components/ui/select'
-import { Separator } from '~/components/ui/separator'
+} from "~/components/ui/select";
+import { Separator } from "~/components/ui/separator";
 import {
   Slider,
   SliderFill,
@@ -53,9 +53,9 @@ import {
   SliderThumb,
   SliderTrack,
   SliderValueLabel,
-} from '~/components/ui/slider'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { TextField, TextFieldInput } from '~/components/ui/text-field'
+} from "~/components/ui/slider";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { TextField, TextFieldInput } from "~/components/ui/text-field";
 
 import {
   type SelectOption,
@@ -76,96 +76,98 @@ import {
   setSnippetSettings,
   snippetSettings,
   supportedFontFamilies,
-} from '~/lib/editor-state'
-import { authToken } from '~/lib/store'
-import { authFetch } from '~/lib/utils'
-import { registerEditorTools } from '~/lib/webmcp/register'
+} from "~/lib/editor-state";
+import { authToken } from "~/lib/store";
+import { authFetch } from "~/lib/utils";
+import { registerEditorTools } from "~/lib/webmcp/register";
 
-import { ShikiCodeBlock } from './ShikiCodeBlock'
+import { ShikiCodeBlock } from "./ShikiCodeBlock";
 
 interface EditorProps {
-  snippetId?: string
+  snippetId?: string;
 }
 
 export default function Editor(props: EditorProps) {
-  const navigate = useNavigate()
-  const [toggled, setToggled] = createSignal(false)
+  const navigate = useNavigate();
+  const [toggled, setToggled] = createSignal(false);
 
-  const [code, setCode] = createSignal(snippetSettings.codeLeft)
-  const [isResizing, setIsResizing] = createSignal(false)
-  const [isLooping, setIsLooping] = createSignal(true)
-  const [title, setTitle] = createSignal(snippetSettings.title)
-  const [isSaving, setIsSaving] = createSignal(false)
-  const [highlighter, setHighlighter] = createSignal<HighlighterGeneric<any, any> | undefined>()
+  const [code, setCode] = createSignal(snippetSettings.codeLeft);
+  const [isResizing, setIsResizing] = createSignal(false);
+  const [isLooping, setIsLooping] = createSignal(true);
+  const [title, setTitle] = createSignal(snippetSettings.title);
+  const [isSaving, setIsSaving] = createSignal(false);
+  const [highlighter, setHighlighter] = createSignal<
+    HighlighterGeneric<any, any> | undefined
+  >();
 
-  const [isShowingFfmpegDialog, setIsShowingFfmpegDialog] = createSignal(false)
-  const [ffmpegLoaded, setFfmpegLoaded] = createSignal(false)
-  const [isDownloadingFfmpeg, setIsDownloadingFfmpeg] = createSignal(false)
-  const [isGeneratingVideo, setIsGeneratingVideo] = createSignal(false)
-  const [videoProgress, setVideoProgress] = createSignal(0)
-  const ffmpeg = new FFmpeg()
-  const [settingsCollapsed, setSettingsCollapsed] = createSignal(false)
+  const [isShowingFfmpegDialog, setIsShowingFfmpegDialog] = createSignal(false);
+  const [ffmpegLoaded, setFfmpegLoaded] = createSignal(false);
+  const [isDownloadingFfmpeg, setIsDownloadingFfmpeg] = createSignal(false);
+  const [isGeneratingVideo, setIsGeneratingVideo] = createSignal(false);
+  const [videoProgress, setVideoProgress] = createSignal(0);
+  const ffmpeg = new FFmpeg();
+  const [settingsCollapsed, setSettingsCollapsed] = createSignal(false);
 
   onMount(() => {
     if (document.body.clientWidth < 768) {
-      setSettingsCollapsed(true)
+      setSettingsCollapsed(true);
     }
 
-    const registration = registerEditorTools()
+    const registration = registerEditorTools();
     onCleanup(() => {
-      registration.then(dispose => dispose())
-    })
-  })
+      registration.then((dispose) => dispose());
+    });
+  });
 
   createEffect(() => {
     createHighlighter({
       themes: [snippetSettings.theme],
       langs: [snippetSettings.language],
-    }).then(newHighlighter => {
-      setHighlighter(newHighlighter)
-    })
-  })
+    }).then((newHighlighter) => {
+      setHighlighter(newHighlighter);
+    });
+  });
 
   createEffect(() => {
-    setCode(snippetSettings.codeLeft)
-    setHiddenCode(snippetSettings.codeLeft)
-  })
+    setCode(snippetSettings.codeLeft);
+    setHiddenCode(snippetSettings.codeLeft);
+  });
 
   const intervalId = setInterval(() => {
     if (
-      selectedTab() === 'output' &&
-      snippetSettings.codeLeft !== '' &&
-      snippetSettings.codeRight !== '' &&
+      selectedTab() === "output" &&
+      snippetSettings.codeLeft !== "" &&
+      snippetSettings.codeRight !== "" &&
       !isResizing() &&
       !isShowingGifDialog() &&
       !isShowingFfmpegDialog() &&
       isLooping()
     ) {
       if (toggled()) {
-        setCode(snippetSettings.codeLeft)
+        setCode(snippetSettings.codeLeft);
       } else {
-        setCode(snippetSettings.codeRight)
+        setCode(snippetSettings.codeRight);
       }
-      setToggled(!toggled())
+      setToggled(!toggled());
     }
-  }, 3000)
+  }, 3000);
 
   onCleanup(() => {
-    clearInterval(intervalId)
-  })
+    clearInterval(intervalId);
+  });
 
-  document.body.addEventListener('mousemove', e => {
+  document.body.addEventListener("mousemove", (e) => {
     if (isResizing()) {
-      const deltaX = e.movementX
-      setSnippetSettings('snippetWidth', snippetSettings.snippetWidth + deltaX)
+      const deltaX = e.movementX;
+      setSnippetSettings("snippetWidth", snippetSettings.snippetWidth + deltaX);
     }
-  })
+  });
 
-  document.body.addEventListener('mouseup', e => {
+  document.body.addEventListener("mouseup", (e) => {
     if (isResizing()) {
-      setIsResizing(false)
+      setIsResizing(false);
     }
-  })
+  });
 
   return (
     <>
@@ -177,23 +179,33 @@ export default function Editor(props: EditorProps) {
           >
             <HiOutlineCog size={24} />
             Settings
-            <Show when={settingsCollapsed()} fallback={<FaSolidCaretUp size={16} />}>
+            <Show
+              when={settingsCollapsed()}
+              fallback={<FaSolidCaretUp size={16} />}
+            >
               <FaSolidCaretDown size={16} />
             </Show>
           </Button>
           <Collapsible open={!settingsCollapsed()}>
-            <CollapsibleContent title="Snippet Settings" class="collapsible__content">
+            <CollapsibleContent
+              title="Snippet Settings"
+              class="collapsible__content"
+            >
               <div class="pb-4">
                 <Label for="theme-selector">Theme</Label>
                 <Combobox
                   id="theme-selector"
                   value={snippetSettings.theme}
                   options={Object.keys(bundledThemes)}
-                  onChange={newTheme => setSnippetSettings('theme', newTheme || '')}
+                  onChange={(newTheme) =>
+                    setSnippetSettings("theme", newTheme || "")
+                  }
                   placeholder="Search a theme..."
-                  itemComponent={props => (
+                  itemComponent={(props) => (
                     <ComboboxItem item={props.item}>
-                      <ComboboxItemLabel>{props.item.rawValue}</ComboboxItemLabel>
+                      <ComboboxItemLabel>
+                        {props.item.rawValue}
+                      </ComboboxItemLabel>
                       <ComboboxItemIndicator />
                     </ComboboxItem>
                   )}
@@ -202,7 +214,9 @@ export default function Editor(props: EditorProps) {
                     <ComboboxInput />
                     <ComboboxTrigger />
                   </ComboboxControl>
-                  <ComboboxContent style={{ 'max-height': '200px', overflow: 'auto' }} />
+                  <ComboboxContent
+                    style={{ "max-height": "200px", overflow: "auto" }}
+                  />
                 </Combobox>
               </div>
 
@@ -212,11 +226,15 @@ export default function Editor(props: EditorProps) {
                   id="language-selector"
                   value={snippetSettings.language}
                   options={Object.keys(bundledLanguages)}
-                  onChange={newLanguage => setSnippetSettings('language', newLanguage || '')}
+                  onChange={(newLanguage) =>
+                    setSnippetSettings("language", newLanguage || "")
+                  }
                   placeholder="Search a Language..."
-                  itemComponent={props => (
+                  itemComponent={(props) => (
                     <ComboboxItem item={props.item}>
-                      <ComboboxItemLabel>{props.item.rawValue}</ComboboxItemLabel>
+                      <ComboboxItemLabel>
+                        {props.item.rawValue}
+                      </ComboboxItemLabel>
                       <ComboboxItemIndicator />
                     </ComboboxItem>
                   )}
@@ -225,7 +243,9 @@ export default function Editor(props: EditorProps) {
                     <ComboboxInput />
                     <ComboboxTrigger />
                   </ComboboxControl>
-                  <ComboboxContent style={{ 'max-height': '200px', overflow: 'auto' }} />
+                  <ComboboxContent
+                    style={{ "max-height": "200px", overflow: "auto" }}
+                  />
                 </Combobox>
               </div>
 
@@ -234,7 +254,7 @@ export default function Editor(props: EditorProps) {
               <Accordion
                 multiple={true}
                 collapsible
-                defaultValue={['background', 'layout', 'shadow', 'font']}
+                defaultValue={["background", "layout", "shadow", "font"]}
               >
                 <AccordionItem value="background">
                   <AccordionTrigger>Background</AccordionTrigger>
@@ -248,20 +268,22 @@ export default function Editor(props: EditorProps) {
                         <Select<SelectOption>
                           id="bg-type"
                           value={bgTypeOptions.find(
-                            option => option.value === snippetSettings.bgType,
+                            (option) => option.value === snippetSettings.bgType,
                           )}
                           optionValue="value"
                           optionTextValue="label"
-                          onChange={newType =>
+                          onChange={(newType) =>
                             newType &&
                             setSnippetSettings(
-                              'bgType',
-                              newType.value as 'solid' | 'linearGradient',
+                              "bgType",
+                              newType.value as "solid" | "linearGradient",
                             )
                           }
                           options={bgTypeOptions}
-                          itemComponent={props => (
-                            <SelectItem item={props.item}>{props.item.rawValue.label}</SelectItem>
+                          itemComponent={(props) => (
+                            <SelectItem item={props.item}>
+                              {props.item.rawValue.label}
+                            </SelectItem>
                           )}
                         >
                           <SelectTrigger
@@ -270,17 +292,20 @@ export default function Editor(props: EditorProps) {
                             value={snippetSettings.bgType}
                           >
                             <SelectValue<{ label: string; value: string }>>
-                              {state => state.selectedOption()?.label}
+                              {(state) => state.selectedOption()?.label}
                             </SelectValue>
                           </SelectTrigger>
                           <SelectContent />
                         </Select>
                       </div>
 
-                      {snippetSettings.bgType === 'linearGradient' && (
+                      {snippetSettings.bgType === "linearGradient" && (
                         <>
                           <div class="flex flex-row items-center justify-between">
-                            <Label for="bg-color-input-grad-start" class="font-normal">
+                            <Label
+                              for="bg-color-input-grad-start"
+                              class="font-normal"
+                            >
                               Color Start
                             </Label>
                             <input
@@ -288,13 +313,19 @@ export default function Editor(props: EditorProps) {
                               class="h-6 w-6 rounded"
                               type="color"
                               value={snippetSettings.bgGradientColorStart}
-                              onInput={e => {
-                                setSnippetSettings('bgGradientColorStart', e.target.value)
+                              onInput={(e) => {
+                                setSnippetSettings(
+                                  "bgGradientColorStart",
+                                  e.target.value,
+                                );
                               }}
                             />
                           </div>
                           <div class="flex flex-row items-center justify-between">
-                            <Label for="bg-color-input-grad-end" class="font-normal">
+                            <Label
+                              for="bg-color-input-grad-end"
+                              class="font-normal"
+                            >
                               Color End
                             </Label>
                             <input
@@ -302,8 +333,11 @@ export default function Editor(props: EditorProps) {
                               class="h-6 w-6 rounded"
                               type="color"
                               value={snippetSettings.bgGradientColorEnd}
-                              onInput={e => {
-                                setSnippetSettings('bgGradientColorEnd', e.target.value)
+                              onInput={(e) => {
+                                setSnippetSettings(
+                                  "bgGradientColorEnd",
+                                  e.target.value,
+                                );
                               }}
                             />
                           </div>
@@ -311,8 +345,8 @@ export default function Editor(props: EditorProps) {
                             value={[snippetSettings.bgGradientDirection]}
                             minValue={0}
                             maxValue={359}
-                            onChange={e => {
-                              setSnippetSettings('bgGradientDirection', e[0])
+                            onChange={(e) => {
+                              setSnippetSettings("bgGradientDirection", e[0]);
                             }}
                           >
                             <div class="flex justify-between items-center w-full">
@@ -330,7 +364,7 @@ export default function Editor(props: EditorProps) {
                           </Slider>
                         </>
                       )}
-                      {snippetSettings.bgType === 'solid' && (
+                      {snippetSettings.bgType === "solid" && (
                         <div class="flex flex-row items-center justify-between">
                           <Label for="bg-color-input" class="font-normal">
                             Background Color
@@ -340,8 +374,8 @@ export default function Editor(props: EditorProps) {
                             class="h-6 w-6 rounded"
                             type="color"
                             value={snippetSettings.bgColor}
-                            onInput={e => {
-                              setSnippetSettings('bgColor', e.target.value)
+                            onInput={(e) => {
+                              setSnippetSettings("bgColor", e.target.value);
                             }}
                           />
                         </div>
@@ -358,8 +392,8 @@ export default function Editor(props: EditorProps) {
                         value={[snippetSettings.snippetWidth]}
                         minValue={0}
                         maxValue={1500}
-                        onChange={e => {
-                          setSnippetSettings('snippetWidth', e[0])
+                        onChange={(e) => {
+                          setSnippetSettings("snippetWidth", e[0]);
                         }}
                       >
                         <div class="flex w-full justify-between mb-2">
@@ -379,8 +413,8 @@ export default function Editor(props: EditorProps) {
                         value={[snippetSettings.yPadding]}
                         minValue={0}
                         maxValue={200}
-                        onChange={e => {
-                          setSnippetSettings('yPadding', e[0])
+                        onChange={(e) => {
+                          setSnippetSettings("yPadding", e[0]);
                         }}
                       >
                         <div class="flex w-full justify-between mb-2">
@@ -400,8 +434,8 @@ export default function Editor(props: EditorProps) {
                         value={[snippetSettings.xPadding]}
                         minValue={0}
                         maxValue={200}
-                        onChange={e => {
-                          setSnippetSettings('xPadding', e[0])
+                        onChange={(e) => {
+                          setSnippetSettings("xPadding", e[0]);
                         }}
                       >
                         <div class="flex w-full justify-between mb-2">
@@ -428,7 +462,10 @@ export default function Editor(props: EditorProps) {
                         <Label
                           for="shadow-checkbox"
                           onClick={() =>
-                            setSnippetSettings('shadowEnabled', !snippetSettings.shadowEnabled)
+                            setSnippetSettings(
+                              "shadowEnabled",
+                              !snippetSettings.shadowEnabled,
+                            )
                           }
                         >
                           Show Shadow
@@ -437,7 +474,10 @@ export default function Editor(props: EditorProps) {
                           id="shadow-checkbox"
                           checked={snippetSettings.shadowEnabled}
                           onChange={() => {
-                            setSnippetSettings('shadowEnabled', !snippetSettings.shadowEnabled)
+                            setSnippetSettings(
+                              "shadowEnabled",
+                              !snippetSettings.shadowEnabled,
+                            );
                           }}
                         />
                       </div>
@@ -452,7 +492,9 @@ export default function Editor(props: EditorProps) {
                           class="h-6 w-6 rounded"
                           type="color"
                           value={snippetSettings.shadowColor}
-                          onInput={e => setSnippetSettings('shadowColor', e.target.value)}
+                          onInput={(e) =>
+                            setSnippetSettings("shadowColor", e.target.value)
+                          }
                         />
                       </div>
                       <div class="flex flex-row items-center justify-between">
@@ -461,8 +503,8 @@ export default function Editor(props: EditorProps) {
                           step={0.01}
                           minValue={0}
                           maxValue={1}
-                          onChange={e => {
-                            setSnippetSettings('shadowOpacity', e[0])
+                          onChange={(e) => {
+                            setSnippetSettings("shadowOpacity", e[0]);
                           }}
                         >
                           <div class="flex w-full justify-between mb-2">
@@ -480,8 +522,8 @@ export default function Editor(props: EditorProps) {
                           value={[snippetSettings.shadowOffsetY]}
                           minValue={0}
                           maxValue={snippetSettings.yPadding}
-                          onChange={e => {
-                            setSnippetSettings('shadowOffsetY', e[0])
+                          onChange={(e) => {
+                            setSnippetSettings("shadowOffsetY", e[0]);
                           }}
                         >
                           <div class="flex w-full justify-between mb-2">
@@ -502,8 +544,8 @@ export default function Editor(props: EditorProps) {
                           value={[snippetSettings.shadowBlur]}
                           minValue={0}
                           maxValue={200}
-                          onChange={e => {
-                            setSnippetSettings('shadowBlur', e[0])
+                          onChange={(e) => {
+                            setSnippetSettings("shadowBlur", e[0]);
                           }}
                         >
                           <div class="flex w-full justify-between mb-2">
@@ -533,16 +575,20 @@ export default function Editor(props: EditorProps) {
                         <Select<{ name: string }>
                           id="font-family"
                           value={supportedFontFamilies.find(
-                            option => option.name === snippetSettings.fontFamily,
+                            (option) =>
+                              option.name === snippetSettings.fontFamily,
                           )}
                           optionValue="name"
                           optionTextValue="name"
-                          onChange={newFamily =>
-                            newFamily && setSnippetSettings('fontFamily', newFamily.name)
+                          onChange={(newFamily) =>
+                            newFamily &&
+                            setSnippetSettings("fontFamily", newFamily.name)
                           }
                           options={supportedFontFamilies}
-                          itemComponent={props => (
-                            <SelectItem item={props.item}>{props.item.rawValue.name}</SelectItem>
+                          itemComponent={(props) => (
+                            <SelectItem item={props.item}>
+                              {props.item.rawValue.name}
+                            </SelectItem>
                           )}
                         >
                           <SelectTrigger
@@ -551,7 +597,7 @@ export default function Editor(props: EditorProps) {
                             value={snippetSettings.fontFamily}
                           >
                             <SelectValue<{ name: string }>>
-                              {state => state.selectedOption()?.name}
+                              {(state) => state.selectedOption()?.name}
                             </SelectValue>
                           </SelectTrigger>
                           <SelectContent />
@@ -562,8 +608,8 @@ export default function Editor(props: EditorProps) {
                         value={[snippetSettings.fontSize]}
                         minValue={1}
                         maxValue={64}
-                        onChange={e => {
-                          setSnippetSettings('fontSize', e[0])
+                        onChange={(e) => {
+                          setSnippetSettings("fontSize", e[0]);
                         }}
                       >
                         <div class="flex w-full justify-between mb-2">
@@ -599,14 +645,19 @@ export default function Editor(props: EditorProps) {
             <TabsContent value="snippets">
               <div class="flex flex-row p-2 gap-2 dark:bg-[#27272a] bg-gray-100 rounded-t justify-between">
                 <div class="flex flex-row gap-2 items-center">
-                  <div class="">Enter the code snippets you would like to diff</div>
+                  <div class="">
+                    Enter the code snippets you would like to diff
+                  </div>
                 </div>
                 <div class="flex flex-row gap-2">
                   <Button
                     onClick={() => {
-                      setSelectedTab('output')
+                      setSelectedTab("output");
                     }}
-                    disabled={snippetSettings.codeLeft === '' || snippetSettings.codeRight === ''}
+                    disabled={
+                      snippetSettings.codeLeft === "" ||
+                      snippetSettings.codeRight === ""
+                    }
                   >
                     Next
                   </Button>
@@ -621,7 +672,9 @@ export default function Editor(props: EditorProps) {
                     lang={snippetSettings.language}
                     theme={snippetSettings.theme}
                     class="min-h-[400px]"
-                    onChange={newCodeLeft => setSnippetSettings('codeLeft', newCodeLeft)}
+                    onChange={(newCodeLeft) =>
+                      setSnippetSettings("codeLeft", newCodeLeft)
+                    }
                   />
                 </div>
                 <div class="flex flex-col w-full md:w-1/2 gap-1">
@@ -631,7 +684,9 @@ export default function Editor(props: EditorProps) {
                     lang={snippetSettings.language}
                     theme={snippetSettings.theme}
                     class="min-h-[400px]"
-                    onChange={newEndCode => setSnippetSettings('codeRight', newEndCode)}
+                    onChange={(newEndCode) =>
+                      setSnippetSettings("codeRight", newEndCode)
+                    }
                   />
                 </div>
               </div>
@@ -646,7 +701,7 @@ export default function Editor(props: EditorProps) {
                   <Button
                     disabled={isGenerating()}
                     onClick={() => {
-                      runGeneration()
+                      runGeneration();
                     }}
                   >
                     Generate
@@ -658,16 +713,19 @@ export default function Editor(props: EditorProps) {
                 id="preview-wrapper"
                 class="dark:bg-[#27272a] bg-gray-100 p-2 rounded-b"
                 style={{
-                  'min-height': `${(maxContainerDimensions()?.height || 100) + 40}px`,
+                  "min-height": `${(maxContainerDimensions()?.height || 100) + 40}px`,
                 }}
               >
                 <p class="text-center">Preview</p>
-                <div id="snippet-wrapper" class="flex flex-row items-center justify-center">
+                <div
+                  id="snippet-wrapper"
+                  class="flex flex-row items-center justify-center"
+                >
                   <div
                     id="styled-snippet"
                     class="flex flex-row items-center justify-center overflow-hidden"
                     style={{
-                      ...(snippetSettings.bgType === 'linearGradient'
+                      ...(snippetSettings.bgType === "linearGradient"
                         ? {
                             background: `linear-gradient(${snippetSettings.bgGradientDirection}deg, ${snippetSettings.bgGradientColorStart}, ${snippetSettings.bgGradientColorEnd})`,
                           }
@@ -679,22 +737,22 @@ export default function Editor(props: EditorProps) {
                   >
                     <div class="flex flex-row items-center justify-center relative margin-auto w-fit">
                       <Show when={highlighter()}>
-                        {highlighter => (
+                        {(highlighter) => (
                           <>
                             <div
                               class="rounded"
                               style={{
                                 width: `${snippetSettings.snippetWidth}px`,
-                                'overflow-x': 'hidden',
-                                'box-shadow': snippetSettings.shadowEnabled
+                                "overflow-x": "hidden",
+                                "box-shadow": snippetSettings.shadowEnabled
                                   ? `0 ${snippetSettings.shadowOffsetY}px ${
                                       snippetSettings.shadowBlur
                                     }px ${snippetSettings.shadowColor}${(
                                       snippetSettings.shadowOpacity * 255
                                     ).toString(16)}`
-                                  : 'none',
-                                'font-family': snippetSettings.fontFamily,
-                                'font-size': `${snippetSettings.fontSize}px`,
+                                  : "none",
+                                "font-family": snippetSettings.fontFamily,
+                                "font-size": `${snippetSettings.fontSize}px`,
                               }}
                             >
                               <ShikiMagicMove
@@ -732,11 +790,13 @@ export default function Editor(props: EditorProps) {
                                       newMaxContainerDimensions,
                                     ) => {
                                       if (newElements.length === 0) {
-                                        return
+                                        return;
                                       }
 
-                                      setMagicMoveElements(newElements)
-                                      setMaxContainerDimensions(newMaxContainerDimensions)
+                                      setMagicMoveElements(newElements);
+                                      setMaxContainerDimensions(
+                                        newMaxContainerDimensions,
+                                      );
                                     },
                                   }}
                                 />
@@ -744,16 +804,16 @@ export default function Editor(props: EditorProps) {
                             </div>
                             <div
                               class={clsx(
-                                'w-[8px] bg-slate-400 opacity-10 hover:opacity-60 rounded-r h-full absolute top-0 left-[calc(100%-8px)] bottom-0 transition-opacity',
+                                "w-[8px] bg-slate-400 opacity-10 hover:opacity-60 rounded-r h-full absolute top-0 left-[calc(100%-8px)] bottom-0 transition-opacity",
                                 {
-                                  'opacity-60': isResizing(),
+                                  "opacity-60": isResizing(),
                                 },
                               )}
                               style={{
-                                cursor: isResizing() ? 'grabbing' : 'grab',
+                                cursor: isResizing() ? "grabbing" : "grab",
                               }}
-                              onMouseDown={e => {
-                                setIsResizing(true)
+                              onMouseDown={(e) => {
+                                setIsResizing(true);
                               }}
                             ></div>
                           </>
@@ -774,20 +834,20 @@ export default function Editor(props: EditorProps) {
                   type="text"
                   class="bg-white text-black"
                   value={title()}
-                  placeholder={'Snippet Title'}
+                  placeholder={"Snippet Title"}
                   aria-label="Snippet Title"
-                  onInput={e => setTitle(e.currentTarget.value)}
+                  onInput={(e) => setTitle(e.currentTarget.value)}
                 />
               </TextField>
               <Button
                 disabled={
                   isSaving() ||
-                  snippetSettings.codeLeft === '' ||
-                  snippetSettings.codeRight === '' ||
+                  snippetSettings.codeLeft === "" ||
+                  snippetSettings.codeRight === "" ||
                   !title()
                 }
                 onClick={async () => {
-                  setIsSaving(true)
+                  setIsSaving(true);
                   const body = JSON.stringify({
                     title: title(),
                     codeLeft: snippetSettings.codeLeft,
@@ -809,68 +869,74 @@ export default function Editor(props: EditorProps) {
                     fontSize: snippetSettings.fontSize,
                     language: snippetSettings.language,
                     theme: snippetSettings.theme,
-                  })
+                  });
 
-                  let url = '/api/snippets'
-                  let method = 'POST'
+                  let url = "/api/snippets";
+                  let method = "POST";
 
                   if (props.snippetId) {
-                    url = `/api/snippets/${props.snippetId}`
-                    method = 'PUT'
+                    url = `/api/snippets/${props.snippetId}`;
+                    method = "PUT";
                   }
 
                   const result = await authFetch(url, {
                     method,
                     headers: {
-                      'Content-Type': 'application/json',
-                      Accept: 'application/json',
+                      "Content-Type": "application/json",
+                      Accept: "application/json",
                     },
                     body,
-                  })
+                  });
 
                   if (result.ok) {
-                    const newSnippet = await result.json()
-                    navigate(`/snippets/${newSnippet.id}`)
+                    const newSnippet = await result.json();
+                    navigate(`/snippets/${newSnippet.id}`);
                   } else {
                     // notify with a toast
-                    toast.error('Error creating Snippet')
+                    toast.error("Error creating Snippet");
                   }
 
-                  setIsSaving(false)
+                  setIsSaving(false);
                 }}
               >
-                {isSaving() ? 'Saving...' : 'Save'}
+                {isSaving() ? "Saving..." : "Save"}
               </Button>
             </div>
           </Show>
         </div>
       </div>
-      <Dialog open={isShowingGifDialog()} onOpenChange={setIsShowingGifDialog} modal>
+      <Dialog
+        open={isShowingGifDialog()}
+        onOpenChange={setIsShowingGifDialog}
+        modal
+      >
         <DialogContent>
           <Show when={isGenerating()}>
             <div class="flex flex-col items-center justify-center gap-2 my-12">
               <span class="text-xl">Generating...</span>
-              <span class="text-sm">On slower devices, this could take up to 30 seconds.</span>
+              <span class="text-sm">
+                On slower devices, this could take up to 30 seconds.
+              </span>
             </div>
           </Show>
           <Show when={!isGenerating()}>
             <img src={gifDataUrl()} alt="Generated gif" class="mt-10" />
             <p class="">
-              Copying the image via right click will only copy the current frame. Please download
-              the GIF below by using the Download button or right clicking and using "Save Image
-              as...".
+              Copying the image via right click will only copy the current
+              frame. Please download the GIF below by using the Download button
+              or right clicking and using "Save Image as...".
             </p>
           </Show>
           <DialogFooter>
             <Show when={!isGenerating()}>
               <Button
                 onClick={async () => {
-                  const blob = dataURItoBlob(gifDataUrl())
-                  const filename = 'giffium.gif'
-                  const link = document.createElement('a')
-                  link.href = URL.createObjectURL(blob)
-                  link.download = filename
-                  link.click()
+                  const blob = dataURItoBlob(gifDataUrl());
+                  const filename = "giffium.gif";
+                  const link = document.createElement("a");
+                  link.href = URL.createObjectURL(blob);
+                  link.download = filename;
+                  link.click();
                 }}
               >
                 Download GIF
@@ -881,7 +947,7 @@ export default function Editor(props: EditorProps) {
                 fallback={
                   <Button
                     onClick={() => {
-                      setIsShowingFfmpegDialog(true)
+                      setIsShowingFfmpegDialog(true);
                     }}
                   >
                     Enable Video
@@ -891,26 +957,29 @@ export default function Editor(props: EditorProps) {
                 <Button
                   disabled={isGeneratingVideo()}
                   onClick={async () => {
-                    setIsGeneratingVideo(true)
-                    setVideoProgress(0)
-                    await ffmpeg.writeFile('input.gif', dataURItoUInt8Array(gifDataUrl()))
+                    setIsGeneratingVideo(true);
+                    setVideoProgress(0);
+                    await ffmpeg.writeFile(
+                      "input.gif",
+                      dataURItoUInt8Array(gifDataUrl()),
+                    );
                     await ffmpeg.exec([
-                      '-i',
-                      'input.gif',
-                      '-vcodec',
-                      'libx264',
-                      '-pix_fmt',
-                      'yuv420p',
-                      'output.mp4',
-                    ])
-                    const data = await ffmpeg.readFile('output.mp4')
-                    const blob = new Blob([data], { type: 'video/mp4' })
-                    const filename = 'giffium.mp4'
-                    const link = document.createElement('a')
-                    link.href = URL.createObjectURL(blob)
-                    link.download = filename
-                    link.click()
-                    setIsGeneratingVideo(false)
+                      "-i",
+                      "input.gif",
+                      "-vcodec",
+                      "libx264",
+                      "-pix_fmt",
+                      "yuv420p",
+                      "output.mp4",
+                    ]);
+                    const data = await ffmpeg.readFile("output.mp4");
+                    const blob = new Blob([data], { type: "video/mp4" });
+                    const filename = "giffium.mp4";
+                    const link = document.createElement("a");
+                    link.href = URL.createObjectURL(blob);
+                    link.download = filename;
+                    link.click();
+                    setIsGeneratingVideo(false);
                   }}
                 >
                   <Show when={isGeneratingVideo()} fallback="Download MP4">
@@ -931,12 +1000,17 @@ export default function Editor(props: EditorProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <Dialog open={isShowingFfmpegDialog()} onOpenChange={setIsShowingFfmpegDialog} modal>
+      <Dialog
+        open={isShowingFfmpegDialog()}
+        onOpenChange={setIsShowingFfmpegDialog}
+        modal
+      >
         <DialogContent>
           <Show when={!isDownloadingFfmpeg()} fallback={<p>Downloading...</p>}>
             <p class="">
-              To create video, must download ffmpeg.wasm. It's approximately 30MB. If you have
-              downloaded it here before, your browser cache should kick in.
+              To create video, must download ffmpeg.wasm. It's approximately
+              30MB. If you have downloaded it here before, your browser cache
+              should kick in.
             </p>
           </Show>
           <DialogFooter>
@@ -949,32 +1023,39 @@ export default function Editor(props: EditorProps) {
             <Button
               disabled={isDownloadingFfmpeg()}
               onClick={async () => {
-                setIsDownloadingFfmpeg(true)
-                const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
-                ffmpeg.on('log', ({ message }) => {
-                  console.log(message)
-                })
-                ffmpeg.on('progress', ({ progress, time }) => {
-                  setVideoProgress(Math.round(progress * 100))
-                })
+                setIsDownloadingFfmpeg(true);
+                const baseURL =
+                  "https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm";
+                ffmpeg.on("log", ({ message }) => {
+                  console.log(message);
+                });
+                ffmpeg.on("progress", ({ progress, time }) => {
+                  setVideoProgress(Math.round(progress * 100));
+                });
                 try {
                   // toBlobURL is used to bypass CORS issue, urls with the same
                   // domain can be used directly.
                   await ffmpeg.load({
-                    coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-                    wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+                    coreURL: await toBlobURL(
+                      `${baseURL}/ffmpeg-core.js`,
+                      "text/javascript",
+                    ),
+                    wasmURL: await toBlobURL(
+                      `${baseURL}/ffmpeg-core.wasm`,
+                      "application/wasm",
+                    ),
                     // We use the unpkg to reduce bandwidth usage to netlify
                     // coreURL,
                     // wasmURL,
-                  })
-                  setFfmpegLoaded(true)
+                  });
+                  setFfmpegLoaded(true);
                 } catch (e) {
-                  console.error(e)
-                  setFfmpegLoaded(false)
+                  console.error(e);
+                  setFfmpegLoaded(false);
                   // TODO: show error
                 }
-                setIsDownloadingFfmpeg(false)
-                setIsShowingFfmpegDialog(false)
+                setIsDownloadingFfmpeg(false);
+                setIsShowingFfmpegDialog(false);
               }}
             >
               Download
@@ -983,51 +1064,51 @@ export default function Editor(props: EditorProps) {
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }
 
 function dataURItoUInt8Array(dataURI: string) {
   // convert base64 to raw binary data held in a string
   // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
-  var byteString = atob(dataURI.split(',')[1])
+  var byteString = atob(dataURI.split(",")[1]);
 
   // separate out the mime component
-  var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+  var mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
 
   // write the bytes of the string to an ArrayBuffer
-  var ab = new ArrayBuffer(byteString.length)
+  var ab = new ArrayBuffer(byteString.length);
 
   // create a view into the buffer
-  var ia = new Uint8Array(ab)
+  var ia = new Uint8Array(ab);
 
   // set the bytes of the buffer to the correct values
   for (var i = 0; i < byteString.length; i++) {
-    ia[i] = byteString.charCodeAt(i)
+    ia[i] = byteString.charCodeAt(i);
   }
 
-  return ia
+  return ia;
 }
 
 function dataURItoBlob(dataURI: string) {
   // convert base64 to raw binary data held in a string
   // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
-  var byteString = atob(dataURI.split(',')[1])
+  var byteString = atob(dataURI.split(",")[1]);
 
   // separate out the mime component
-  var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+  var mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
 
   // write the bytes of the string to an ArrayBuffer
-  var ab = new ArrayBuffer(byteString.length)
+  var ab = new ArrayBuffer(byteString.length);
 
   // create a view into the buffer
-  var ia = new Uint8Array(ab)
+  var ia = new Uint8Array(ab);
 
   // set the bytes of the buffer to the correct values
   for (var i = 0; i < byteString.length; i++) {
-    ia[i] = byteString.charCodeAt(i)
+    ia[i] = byteString.charCodeAt(i);
   }
 
   // write the ArrayBuffer to a blob, and you're done
-  var blob = new Blob([ab], { type: mimeString })
-  return blob
+  var blob = new Blob([ab], { type: mimeString });
+  return blob;
 }
