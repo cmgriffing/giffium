@@ -50,6 +50,9 @@ export function ShikiCodeBlock(props: ShikiCodeBlockProps) {
     setLang(newLang)
 
     if (editor) {
+      if (editor.value !== code) {
+        editor.value = code
+      }
       editor.updateOptions({
         theme: newTheme,
         language: newLang,

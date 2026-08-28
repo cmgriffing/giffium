@@ -1,9 +1,14 @@
 import { Show, createEffect, createResource } from 'solid-js'
-import { createStore } from 'solid-js/store'
 
 import Editor from '~/components/Editor'
+import { setSnippetSettings } from '~/lib/editor-state'
 import { authFetch } from '~/lib/utils'
 import { Snippet, SnippetSettings } from '~/types'
+
+function toSnippetSettings(snippet: Snippet): SnippetSettings {
+  const { id, userId, createdAt, updatedAt, ...settings } = snippet
+  return settings
+}
 
 export default function ViewSnippet({ params }: { params: { snippetId: string } }) {
   const [snippet] = createResource<Snippet>(async () => {
@@ -16,25 +21,18 @@ export default function ViewSnippet({ params }: { params: { snippetId: string } 
     return data
   })
 
-  const [snippetSettings, setSnippetSettings] = createStore<SnippetSettings>({ ...snippet()! })
-
   createEffect(value => {
-    // console.log('snippet in effect', snippet())
-    const updatedSnippetSettings = snippet()
-    if (value !== updatedSnippetSettings && updatedSnippetSettings) {
-      setSnippetSettings(updatedSnippetSettings)
+    const updatedSnippet = snippet()
+    if (value !== updatedSnippet && updatedSnippet) {
+      setSnippetSettings(toSnippetSettings(updatedSnippet))
     }
-    return updatedSnippetSettings
+    return updatedSnippet
   })
 
   return (
     <main class="mx-auto text-gray-700  dark:text-gray-100 px-4 flex flex-col justify-center w-full flex-1 max-w-screen-2xl">
-      <Show when={snippet() && snippetSettings.theme && snippetSettings.language}>
-        <Editor
-          snippetId={params.snippetId}
-          snippetSettings={snippetSettings}
-          setSnippetSettings={setSnippetSettings}
-        />
+      <Show when={snippet()}>
+        <Editor snippetId={params.snippetId} />
       </Show>
     </main>
   )
