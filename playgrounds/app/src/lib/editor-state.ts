@@ -104,6 +104,21 @@ function sleep(ms: number) {
   return new Promise<void>(resolve => setTimeout(resolve, ms))
 }
 
+/**
+ * The snippet fonts are loaded from Google Fonts with display=swap and are not
+ * used until the output tab first renders. Generation that starts right after
+ * the tab mounts would capture token positions with fallback font metrics while
+ * the canvas draws with the loaded font, producing misplaced code chunks. Wait
+ * (bounded) for the configured font before capturing.
+ */
+async function waitForFont(fontFamily: string, fontSize: number) {
+  try {
+    await Promise.race([document.fonts.load(`${fontSize}px "${fontFamily}"`), sleep(1500)])
+  } catch {
+    // Proceed with whatever font state is available.
+  }
+}
+
 export async function runGeneration(signal?: AbortSignal): Promise<GenerationResult> {
   if (isGenerating()) {
     return {
@@ -133,6 +148,7 @@ export async function runGeneration(signal?: AbortSignal): Promise<GenerationRes
       setSelectedTab('output')
     }
     await nextFrame()
+    await waitForFont(snippetSettings.fontFamily, snippetSettings.fontSize)
     setHiddenCode(snippetSettings.codeRight)
     await sleep(100)
 
