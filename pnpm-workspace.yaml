@@ -1,3 +1,10 @@
 packages:
   - packages/*
   - playgrounds/*
+allowBuilds:
+  '@parcel/watcher': true
+  dprint: true
+  esbuild: true
+  simple-git-hooks: true
+  unrs-resolver: true
+  vue-demi: true
